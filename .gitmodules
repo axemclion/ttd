@@ -1,0 +1,3 @@
+[submodule "trialtool"]
+	path = trialtool
+	url = git@github.com:axemclion/trialtool.git

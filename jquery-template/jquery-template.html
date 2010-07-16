@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>Jquery Templates</title>
+        <script src="http://code.jquery.com/jquery.min.js" type="text/javascript">
+        </script>
+        <script src = "http://github.com/nje/jquery-tmpl/raw/master/jquery.tmpl.js" type = "text/javascript">
+        </script>
+    </head>
+    <body>
+        <ul>
+            <li class="example-set" id="example1">
+                <a style="display: inline;" class="example-set-name" href="#">Jquery Templates</a>
+                <ul>
+                    <li class="example" id="example1-1">
+                        <a style="display: inline;" class="example-name example-name-selected" href="#">Simple templates</a>
+                        <div style="display: none;" class="example-docs">
+                            This is an inline documentation for example 1.1.
+                        </div>
+                        <script type = "text/javascript">
+                            var clientData = [{
+                                name: "Rey Bango",
+                                id: 1
+                            }, {
+                                name: "Mark Goldberg",
+                                id: 2
+                            }, {
+                                name: "Jen Statford",
+                                id: 3
+                            }];
+                            
+                            $("<div>").html('<script id="clientTemplate" type="text/html"><li><a href="clients/${id}">${name}</a>< /li> <\/script>').appendTo(document.body);
+                            $("#clientTemplate").tmpl(clientData).appendTo("ul");
+                        </script>
+                    </li>
+                    <li class="example" id="example1-2" depends="example1-1">
+                        <a style="display: inline;" class="example-name">Nesting templates</a>
+                        <link style="display: none;" class="example-docs" href="div#doc-example1-2">
+                        <script type = "text/javascript">
+                            // This example depends on example 1.1 and requires example 1.1 to be executed first.
+                            // Click on the "Load Pre-requisites" button at the top to load code for example 1 also
+                            var b = 20;
+                            var c = {
+                                "a": 10,
+                                "b": {
+                                    "a": 20,
+                                    "b": 30
+                                },
+                                "c": [10, 20, 30]
+                            };
+                            document.write("Sum of a and b is ", a + b);
+                            document.write("JSON - ", c, c.b, c.c);
+                            document.write("Executed example 1.2");
+                        </script>
+                    </li>
+                    <li id="0.15886249792474139" class="example">
+                        <a class="example-name">Inline Expressions</a>
+                        <script type = "text/javascript">
+                            //Edit Me
+                        </script>
+                        <div class="example-docs">
+                            Edit Docs
+                            <div>
+                            </div>
+                        </div>
+                    </li>
+                    <li id="0.25839303631053756" class="example">
+                        <a class="example-name">Code Blocks</a>
+                        <script type = "text/javascript">
+                            //Edit Me
+                        </script>
+                        <div class="example-docs">
+                            Edit Docs
+                            <div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
