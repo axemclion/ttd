@@ -1,77 +1,132 @@
 <html>
     <head>
         <title>Jquery Templates</title>
-        <script src="http://code.jquery.com/jquery.min.js" type="text/javascript">
-        </script>
-        <script src = "http://github.com/nje/jquery-tmpl/raw/master/jquery.tmpl.js" type = "text/javascript">
+        <script src = "http://github.com/nje/jquery-tmpl/raw/gh-pages/samples/jquery.tmpl.js" type = "text/javascript">
         </script>
     </head>
     <body>
         <ul>
             <li class="example-set" id="example1">
-                <a style="display: inline;" class="example-set-name" href="#">Jquery Templates</a>
+                <a class="example-set-name" href="#">Jquery Templates</a>
                 <ul>
-                    <li class="example" id="example1-1">
-                        <a style="display: inline;" class="example-name example-name-selected" href="#">Simple templates</a>
-                        <div style="display: none;" class="example-docs">
-                            This is an inline documentation for example 1.1.
+                    <li class= "example" id = "prereq">
+                        <a class = "example-name">Define pre-requisite function</a>
+                        <div class = "example-docs">
+                            <h3>Pre-requisite</h3>
+                            <p>
+                                For convinence, defines a function to create a script tag and inserts that tag in the body.
+                            </p>
+                            <p>
+                                Ideally, you should have this the template enclosed within the script tags in your HTML file that write this in your HTML file
+                            </p>
                         </div>
                         <script type = "text/javascript">
-                            var clientData = [{
-                                name: "Rey Bango",
-                                id: 1
-                            }, {
-                                name: "Mark Goldberg",
-                                id: 2
-                            }, {
-                                name: "Jen Statford",
-                                id: 3
-                            }];
+                            /**
+                             * Encloses templates in a script with Id and inserts that script in the body
+                             * @param {Object} template
+                             * @param {Object} id
+                             */
+                            function createTemplate(template, id){
+                                var template = "<script type = 'text/html' id = '" + id + "'>" + template + "<\/script>";
+                                write("Using Template","#"+id ,template);
+                                $("div#console").append(template);
+                            }
                             
-                            $("<div>").html('<script id="clientTemplate" type="text/html"><li><a href="clients/${id}">${name}</a>< /li> <\/script>').appendTo(document.body);
-                            $("#clientTemplate").tmpl(clientData).appendTo("ul");
+						  var clientData = [
+						     { name: "Rey Bango", age: 42, id: 1, phone: [ "954-600-1234", "954-355-5555" ] },
+						     { name: "Mark Goldberg", age: 51, id: 2, phone: ["954-600-1234", "954-355-5555"] },
+						     { name: "Jen Statford", age: "25", id: 3, phone: ["954-600-1234", "954-355-5555"] }
+						 ];
                         </script>
                     </li>
-                    <li class="example" id="example1-2" depends="example1-1">
-                        <a style="display: inline;" class="example-name">Nesting templates</a>
-                        <link style="display: none;" class="example-docs" href="div#doc-example1-2">
+                    <li class="example" id="1" depends = "prereq">
+                        <a class="example-name" href="#">Simple templates</a>
+                        <div class="example-docs">
+                            <h3>Simple Templates</h3>
+                            <p>
+                                The cool thing about templates is that it lets you easily structure your content display without all the hassle of string concatenation. For example, say I had a data set containing an ID and a name and I wanted to display the name as a hyperlink. 
+                            </p>
+                            <p>
+                                The "script" tags are necessary and used because they allow your template to be embedded within the body of the page. Notice that we've defined the placeholders as ${id} & ${name}, the same names used in the identifiers in our data. The "${}" tells the template parser that the field needs to be replaced with the expected value.
+                            </p>
+                            <p>
+                                The plugin's .tmpl() method accepts the data we've defined and handles the parsing of the template we've selected. Then we use jQuery's .appendTo() method to append the results to an unordered list tag.
+                            </p>
+                        </div>
                         <script type = "text/javascript">
-                            // This example depends on example 1.1 and requires example 1.1 to be executed first.
-                            // Click on the "Load Pre-requisites" button at the top to load code for example 1 also
-                            var b = 20;
-                            var c = {
-                                "a": 10,
-                                "b": {
-                                    "a": 20,
-                                    "b": 30
-                                },
-                                "c": [10, 20, 30]
-                            };
-                            document.write("Sum of a and b is ", a + b);
-                            document.write("JSON - ", c, c.b, c.c);
-                            document.write("Executed example 1.2");
+                            // Click on the Load Pre-requisites button to load dependent function
+                            
+                            // Define the template and insert it in the body
+                            var template = '<li><a href="clients/${id}">${name}</a></li>';
+                            createTemplate(template, "template1");
+                            
+                            // Holding the final values from the template
+                            $("div#console").append("<ul id = 'example1'></ul>");
+                            
+                            // Substitute the data in the template
+                            $("#template1").tmpl(clientData).appendTo("ul#example1");
                         </script>
                     </li>
-                    <li id="0.15886249792474139" class="example">
+                    <li class="example" depends = "prereq">
+                        <a class="example-name">Nested templates</a>
+                        <div class="example-docs">
+                            <h3>Nested Templates</h3>
+                            <p>
+                                The nesting of templates can be valuable feature as it allows a componentized layout. Instead of having to create one enormous template to cover every scenario, you can break the layout apart into individual templates and piece them together
+                            </p>
+                            <p>
+                                The template above defines a phoneTemplate and then, nests it inside the outerTemplate using {{tmpl($data) "#phoneTemplate"}}
+                            </p>
+                        </div>
+                        <script type = "text/javascript">
+                            // Click on the Load Pre-requisites button to load dependent function
+                            
+                            // Creating the outer template for client
+                            createTemplate('<p><a href="clients/${id}">${name} - Age: ${age}</a></p>{{tmpl($data) "#phoneTemplate"}}', "template2");
+                            
+                            // Creating the inner template for phone
+                            createTemplate('<ul>{{each phone}}<li>${$value}</li>{{/each}}</ul>', "phoneTemplate");
+                            
+                            // Holding the final values from the template
+                            $("div#console").append("<div id = 'example2'></div>");
+                            
+                            // Substitute the data in the template
+                            $("#template2").tmpl(clientData).appendTo("div#example2");
+                        </script>
+                    </li>
+                    <li class="example" depends = "prereq">
                         <a class="example-name">Inline Expressions</a>
                         <script type = "text/javascript">
-                            //Edit Me
+                            //Define the template. Note that ${2010 -age} is an expression
+                            createTemplate('<li>${name} was born in ${2010 - age}</li>', "template3");
+                            // Process the template and show the result
+                            $("div#console").append("<ul id = 'example3'></ul>");
+                            $("#template3").tmpl(clientData).appendTo("ul#example3");
                         </script>
                         <div class="example-docs">
-                            Edit Docs
-                            <div>
-                            </div>
+                            <h3>Inline Expressions</h3>
+                            <p>
+                                Being able to use a template to create a succinct layout is very powerful but without the ability to manipulate the data that’s being rendered, you’d probably find templates a lot less useful. That’s where inline expressions come in. Inline expressions allow you to use common JavaScript expressions to effect a change in the way your data is rendered.
+                            </p>
+                            <p>
+                                In the example above, age is subtracted from the current year 2010, to find the year of birth
+                            </p>
                         </div>
                     </li>
-                    <li id="0.25839303631053756" class="example">
+                    <li class="example" depends= "prereq">
                         <a class="example-name">Code Blocks</a>
                         <script type = "text/javascript">
-                            //Edit Me
+                            // Define the template. Note that the age is embedded code
+                            createTemplate('<li>${name  + " is a " }{{if (age > 30)}}veteran coder!{{else}}rising star!{{/if}}</li>', "template4");
+                            // Process the template and show the result
+                            $("div#console").append("<ul id = 'example4'></ul>");
+                            $("#template4").tmpl(clientData).appendTo("ul#example4");
                         </script>
                         <div class="example-docs">
-                            Edit Docs
-                            <div>
-                            </div>
+                            <h3>Code Blocks</h3>
+                            <p>
+                                Code blocks allow us to specify a conditional statement for creating a descriptor based on the person’s age. The key is the “{{if..else}}” custom tag that’s been incorporated into the template plugin that allows you to specify conditional statements.
+                            </p>
                         </div>
                     </li>
                 </ul>
