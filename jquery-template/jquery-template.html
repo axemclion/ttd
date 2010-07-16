@@ -3,6 +3,13 @@
         <title>Jquery Templates</title>
         <script src = "http://github.com/nje/jquery-tmpl/raw/gh-pages/samples/jquery.tmpl.js" type = "text/javascript">
         </script>
+        <style>
+            .movieName {
+                color: blue;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        </style>
     </head>
     <body>
         <ul>
@@ -28,15 +35,26 @@
                              */
                             function createTemplate(template, id){
                                 var template = "<script type = 'text/html' id = '" + id + "'>" + template + "<\/script>";
-                                write("Using Template","#"+id ,template);
+                                write("Using Template", "#" + id, template);
                                 $("div#console").append(template);
                             }
                             
-						  var clientData = [
-						     { name: "Rey Bango", age: 42, id: 1, phone: [ "954-600-1234", "954-355-5555" ] },
-						     { name: "Mark Goldberg", age: 51, id: 2, phone: ["954-600-1234", "954-355-5555"] },
-						     { name: "Jen Statford", age: "25", id: 3, phone: ["954-600-1234", "954-355-5555"] }
-						 ];
+                            var clientData = [{
+                                name: "Rey Bango",
+                                age: 42,
+                                id: 1,
+                                phone: ["954-600-1234", "954-355-5555"]
+                            }, {
+                                name: "Mark Goldberg",
+                                age: 51,
+                                id: 2,
+                                phone: ["954-600-1234", "954-355-5555"]
+                            }, {
+                                name: "Jen Statford",
+                                age: "25",
+                                id: 3,
+                                phone: ["954-600-1234", "954-355-5555"]
+                            }];
                         </script>
                     </li>
                     <li class="example" id="1" depends = "prereq">
@@ -128,6 +146,213 @@
                                 Code blocks allow us to specify a conditional statement for creating a descriptor based on the person’s age. The key is the “{{if..else}}” custom tag that’s been incorporated into the template plugin that allows you to specify conditional statements.
                             </p>
                         </div>
+                    </li>
+                </ul>
+            </li>
+            <li class = "example-set">
+                <a class = "example-set-name">Examples on Jquery-tmpl Wiki</a>
+                <ul>
+                    <li class = "example" id = "prereq1">
+                        <a class = "example-name">Pre Requisites</a>
+                        <script>
+                            var movies = [{
+                                Name: "The Red Violin",
+                                ReleaseYear: "1998"
+                            }, {
+                                Name: "Eyes Wide Shut",
+                                ReleaseYear: "1999"
+                            }, {
+                                Name: "The Inheritance",
+                                ReleaseYear: "1976"
+                            }];
+                            /**
+                             * Encloses templates in a script with Id and inserts that script in the body
+                             * @param {Object} template
+                             * @param {Object} id
+                             */
+                            function createTemplate(template, id){
+                                var template = "<script type = 'text/html' id = '" + id + "'>" + template + "<\/script>";
+                                write("Using Template", "#" + id, template);
+                                $("div#console").append(template);
+                            }
+                        </script>
+                    </li>
+                    <li class = "example" depends = "prereq1">
+                        <a class = "example-name">Template in Script block</a>
+                        <script type="text/javascript">
+                            /* PLEASE RUN PRE REQUISITES BEFORE RUNNING THE SAMPLES */
+                            createTemplate("<li><strong>${Name}</strong> (${ReleaseYear})</li>", "movieTemplate1");
+                            
+                            // Render the template with the 'movies' data
+                            $("#movieTemplate1").tmpl(movies) // and insert the rendered HTML into the 'movieList'
+                            .appendTo("div#console");
+                        </script>
+                        <div class = "example-docs">
+                            <p>
+                                Using $( selector ).tmpl() to render a template declared in a script block
+                            </p>
+                        </div>
+                    </li>
+                    <li class = "example" depends = "prereq1">
+                        <a class = "example-name">HTML String Template</a>
+                        <script type="text/javascript">
+                            var movieTemplate = "<li><strong>${Name}</strong> (${ReleaseYear})</li>";
+                            $.tmpl(movieTemplate, movies).appendTo("div#console");
+                        </script>
+                        <div class = "example-docs">
+                            <p>
+                                Using jQuery.tmpl() to render a template provided as an HTML string
+                            </p>
+                        </div>
+                    </li>
+                    <li class = "example-set" depends = "prereq1">
+                        <a class = "example-set-name">tmplItem()</a>
+                        <ul>
+                            <li class = "example">
+                                <a class = "example-name">jQuery</a>
+                                <script type="text/javascript">
+                                    createTemplate('<li><strong class="movieName">${Name}</strong></li>', "movieTemplate2");
+                                    $("#movieTemplate2").tmpl(movies).appendTo("div#console");
+                                    $(".movieName").live("click", function(){
+                                        // Get the data structure for the 'template item' 
+                                        // which this clicked element belongs to
+                                        var movieTemplateItem = $.tmplItem(this);
+                                        
+                                        // Get the current data item
+                                        var movie = movieTemplateItem.data;
+                                        
+                                        // Get the HTML nodes that make up this template item
+                                        var htmlNodes = movieTemplateItem.nodes;
+                                        
+                                        alert("'" + movie.Name + "' was released in " +
+                                        movie.ReleaseYear +
+                                        ".");
+                                    });
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using jQuery.tmplItem() to get from an element to the data and HTML of the template item it belongs to
+                                    </p>
+                                </div>
+                            </li>
+                            <li class = "example">
+                                <a class = "example-name">Selector</a>
+                                <script type="text/javascript">
+                                    createTemplate('<li><strong class="movieName">${Name}</strong></li>', "movieTemplate3");
+                                    $("#movieTemplate3").tmpl(movies).appendTo("div#console");
+                                    $("<input>", {
+                                        "value": "Last Movie:details",
+                                        "type": "button"
+                                    }).appendTo("div#console").click(function(){
+                                    
+                                        // Get the data structure for the 'template item' 
+                                        // which the last '.movieName' element belongs to
+                                        var lastTemplateItem = $(".movieName:last").tmplItem();
+                                        
+                                        // Get the corresponding data item
+                                        var movie = lastTemplateItem.data;
+                                        
+                                        // Get the HTML nodes that make up the template item
+                                        var htmlNodes = lastTemplateItem.nodes;
+                                        
+                                        alert("'" + movie.Name + "' was released in " +
+                                        movie.ReleaseYear +
+                                        ".");
+                                    });
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using $( selector ).tmplItem() to get from an element to the data and HTML of the template item it belongs to
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class = "example-set">
+                        <a class = "example-set-name">Named Templates</a>
+                        <ul>
+                            <li class = "example">
+                                <a class = "example-name">Compile</a>
+                                <script type="text/javascript">
+                                    var dramaMovies = [{
+                                        Name: "The Red Violin",
+                                        ReleaseYear: "1998"
+                                    }, {
+                                        Name: "Eyes Wide Shut",
+                                        ReleaseYear: "1999"
+                                    }, {
+                                        Name: "The Inheritance",
+                                        ReleaseYear: "1976"
+                                    }];
+                                    
+                                    var sciFiMovies = [{
+                                        Name: "Brazil",
+                                        ReleaseYear: "1985"
+                                    }, {
+                                        Name: "Dune",
+                                        ReleaseYear: "1984 "
+                                    }, {
+                                        Name: "Lifeforce",
+                                        ReleaseYear: "1985"
+                                    }];
+                                    
+                                    $("<div>").appendTo("#console").html("<div id = 'dramaMovieList'/><div id = 'sciFiMovieList'/>");
+                                    // This line will compile the template, and provide access to it by name
+                                    $.templates("movieTmpl", "<li><strong>${Name}</strong> (${ReleaseYear})</li>");
+                                    
+                                    // The following lines use the compiled template to render data and HTML		
+                                    $.tmpl("movieTmpl", dramaMovies).appendTo("#dramaMovieList");
+                                    
+                                    $.tmpl("movieTmpl", sciFiMovies).appendTo("#sciFiMovieList");
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using .templates() to compile a template string into a reusable "named template"
+                                    </p>
+                                </div>
+                            </li>
+                            <li class = "example">
+                                <a class = "example-name">Define</a>
+                                <script type="text/javascript">
+                                    var dramaMovies = [{
+                                        Name: "The Red Violin",
+                                        ReleaseYear: "1998"
+                                    }, {
+                                        Name: "Eyes Wide Shut",
+                                        ReleaseYear: "1999"
+                                    }, {
+                                        Name: "The Inheritance",
+                                        ReleaseYear: "1976"
+                                    }];
+                                    
+                                    var sciFiMovies = [{
+                                        Name: "Brazil",
+                                        ReleaseYear: "1985"
+                                    }, {
+                                        Name: "Dune",
+                                        ReleaseYear: "1984 "
+                                    }, {
+                                        Name: "Lifeforce",
+                                        ReleaseYear: "1985"
+                                    }];
+                                    $("<div>").appendTo("#console").html("<div id = 'dramaMovieList1'/><div id = 'sciFiMovieList1'/>");
+                                    
+                                    // This line provides access to the compiled template by name
+                                    $("#movieTemplate").templates("movieTmpl");
+                                    
+                                    // The following lines acccess the compiled template by name, 
+                                    // to render data and HTML		
+                                    $.tmpl("movieTmpl", dramaMovies).appendTo("#dramaMovieList1");
+                                    
+                                    $.tmpl("movieTmpl", sciFiMovies).appendTo("#sciFiMovieList1");
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using jQuery.templates() to define a "named template"
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>
