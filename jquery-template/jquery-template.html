@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Jquery Templates</title>
-        <script src = "http://github.com/nje/jquery-tmpl/raw/gh-pages/samples/jquery.tmpl.js" type = "text/javascript">
+        <script src = "http://github.com/nje/jquery-tmpl/raw/master/jquery.tmpl.js" type = "text/javascript">
         </script>
         <style>
             .movieName {
@@ -177,33 +177,38 @@
                             }
                         </script>
                     </li>
-                    <li class = "example" depends = "prereq1">
-                        <a class = "example-name">Template in Script block</a>
-                        <script type="text/javascript">
-                            /* PLEASE RUN PRE REQUISITES BEFORE RUNNING THE SAMPLES */
-                            createTemplate("<li><strong>${Name}</strong> (${ReleaseYear})</li>", "movieTemplate1");
-                            
-                            // Render the template with the 'movies' data
-                            $("#movieTemplate1").tmpl(movies) // and insert the rendered HTML into the 'movieList'
-                            .appendTo("div#console");
-                        </script>
-                        <div class = "example-docs">
-                            <p>
-                                Using $( selector ).tmpl() to render a template declared in a script block
-                            </p>
-                        </div>
-                    </li>
-                    <li class = "example" depends = "prereq1">
-                        <a class = "example-name">HTML String Template</a>
-                        <script type="text/javascript">
-                            var movieTemplate = "<li><strong>${Name}</strong> (${ReleaseYear})</li>";
-                            $.tmpl(movieTemplate, movies).appendTo("div#console");
-                        </script>
-                        <div class = "example-docs">
-                            <p>
-                                Using jQuery.tmpl() to render a template provided as an HTML string
-                            </p>
-                        </div>
+                    <li class = "example-set" depends = "prereq1">
+                        <a class = "example-set-name">tmpl()</a>
+                        <ul>
+                            <li class = "example" depends = "prereq1">
+                                <a class = "example-name">Template in Script block</a>
+                                <script type="text/javascript">
+                                    /* PLEASE RUN PRE REQUISITES BEFORE RUNNING THE SAMPLES */
+                                    createTemplate("<li><strong>${Name}</strong> (${ReleaseYear})</li>", "movieTemplate1");
+                                    
+                                    // Render the template with the 'movies' data
+                                    $("#movieTemplate1").tmpl(movies) // and insert the rendered HTML into the 'movieList'
+                                    .appendTo("div#console");
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using $( selector ).tmpl() to render a template declared in a script block
+                                    </p>
+                                </div>
+                            </li>
+                            <li class = "example" depends = "prereq1">
+                                <a class = "example-name">HTML String Template</a>
+                                <script type="text/javascript">
+                                    var movieTemplate = "<li><strong>${Name}</strong> (${ReleaseYear})</li>";
+                                    $.tmpl(movieTemplate, movies).appendTo("div#console");
+                                </script>
+                                <div class = "example-docs">
+                                    <p>
+                                        Using jQuery.tmpl() to render a template provided as an HTML string
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
                     </li>
                     <li class = "example-set" depends = "prereq1">
                         <a class = "example-set-name">tmplItem()</a>
@@ -269,7 +274,7 @@
                         </ul>
                     </li>
                     <li class = "example-set">
-                        <a class = "example-set-name">Named Templates</a>
+                        <a class = "example-set-name">templates()</a>
                         <ul>
                             <li class = "example">
                                 <a class = "example-name">Compile</a>
