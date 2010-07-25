@@ -1,0 +1,947 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Event</a>
+                <ul>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Simple DOM Events</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                Clicking in the blue box will pop up a "Hello World!" alert window.  Clicking on the first link will take you to the YUI website; clicking on the second link, which has the same 
+                                <code>
+                                    href
+                                </code>
+                                attribute, will pop up an alert instead and not navigate to a new page.
+                            </p>
+                            <p>
+                                Event Utility is used here to do two things:
+                            </p>
+                            <ol>
+                                <li>
+                                    Attach the 
+                                    <code>
+                                        click
+                                    </code>
+                                    event handler to the blue box;
+                                </li>
+                                <li>
+                                    Attach an event handler to the second 
+                                    <code>
+                                        &lt;a&gt;
+                                    </code>
+                                    element that uses 
+                                    <code>
+                                        preventDefault()
+                                    </code>
+                                    to prevent the link, when clicked, from navigating to a new page. 
+                                </li>
+                            </ol>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <script language="javascript">
+                            
+                            YUI().use("node", function(Y){
+                            
+                                //A function that pops up a "Hello World" alert:
+                                var helloWorld = function(e){
+                                    Y.log("helloWorld function firing.", "info", "example");
+                                    alert("Hello World!");
+                                }
+                                
+                                //subscribe the helloWorld function as an event
+                                //handler for the click event on the container
+                                //div:
+                                Y.on("click", helloWorld, "#container");
+                                
+                                //A function that pops up an alert and
+                                //prevents the default behavior of the event
+                                //for which it is a handler:
+                                var interceptLink = function(e){
+                                    e.preventDefault();
+                                    Y.log("You clicked on the second YUI link.", "info", "example");
+                                    alert("You clicked on the second YUI link.  Because *preventDefault* was called, this link will not navigate away from the page.");
+                                }
+                                
+                                //subscribe our interceptLink function
+                                //as a click handler for the second anchor
+                                //element:
+                                Y.on("click", interceptLink, "#secondA");
+                                
+                                //log message to indicate that the example is ready:
+                                Y.log("When you begin interacting with the example at left, you'll see log messages appear here.", "info", "example");
+                            });
+                        </script>
+                        <div class="example-html">
+                            <div id="container">
+                                <p>
+                                    Click for Hello World alert.
+                                </p>
+                            </div>
+                            <p>
+                                <a href="http://developer.yahoo.com/yui" id="firstA">The YUI Library. (Link navigates away from page.)</a>
+                            </p>
+                            <p>
+                                <a href="http://developer.yahoo.com/yui" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a>
+                            </p>
+                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Using 'available', 'contentready', and 'domready'</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                As web pages get richer, they tend to get slower.  One way to make your
+                                pages as responsive as possible is to carefully storyboard the page-load and
+                                page-paint processes so that the interactions most central to the page's
+                                purpose are enabled as early as possible.  The window object's
+                                <code>
+                                    load
+                                </code>
+                                event won't happen until the full DOM and all image data have
+                                loaded.  Putting off script execution until after the page loads can be optimal
+                                for some scripts, but sometimes you won't want to wait that long to begin
+                                interacting with the page via script.
+                            </p>
+                            <p>
+                                The Event Utility gives you three additional interesting moments that occur 
+                                during a page's load process: 
+                            </p>
+                            <ol>
+                                <li>
+                                    <code>
+                                        <strong>available:</strong>
+                                    </code>
+                                    <code>
+                                        available
+                                    </code>
+                                    targets a single element and fires when that element is available (when it 
+                                    responds to 
+                                    <code>
+                                        document.getElementById()
+                                    </code>) — but you can't
+                                    count on the element's children having been loaded at this point.
+                                </li>
+                                <li>
+                                    <code>
+                                        <strong>contentready:</strong>
+                                    </code>
+                                    When you care about not
+                                    just your target element but its children as well, use
+                                    <code>
+                                        contentready
+                                    </code>. This event will tell you that your target
+                                    element and all of its children are present in the DOM.
+                                </li>
+                                <li>
+                                    <code>
+                                        <strong>domready:</strong>
+                                    </code>
+                                    Some DOM scripting operations
+                                    cannot be performed safely until the page's entire DOM has loaded. The
+                                    <code>
+                                        domready
+                                    </code>
+                                    event will let you know that the DOM is fully loaded 
+                                    and ready for you to modify  via script. This custom event takes the place of  
+                                    the 
+                                    <code>
+                                        onDOMReady
+                                    </code>
+                                    event from previous versions of YUI.
+                                </li>
+                            </ol>
+                            <p>
+                                In the example box below, 
+                                <code>
+                                    available
+                                </code>,
+                                <code>
+                                    contentready
+                                </code>
+                                and 
+                                <code>
+                                    domready
+                                </code>
+                                are all in use.  A
+                                <code>
+                                    &lt;div&gt;
+                                </code>
+                                (with a green background) loads; it has 100 chidren; 
+                                one of those children is an arbitrarily large image that will take awhile to 
+                                load. Keep an eye on the console, if you have one available in your browser.  
+                                You'll see that the 
+                                <code>
+                                    &lt;div&gt;
+                                </code>
+                                (1) becomes available, (2) its
+                                content becomes ready (after all of its 100 children have loaded), (3) the DOM
+                                becomes ready, and finally (4) the page loads.
+                            </p>
+                            <p>
+                                <strong>Internet Explorer note:</strong>
+                                It isn't always safe to modify 
+                                content during the available/contentready until after the 
+                                <code>
+                                    domready
+                                </code>
+                                moment.  In this browser, 
+                                <code>
+                                    domready
+                                </code>
+                                will execute before the
+                                available/contentready listeners.
+                            </p>
+                            <p>
+                                <strong>3.x note:</strong>
+                                This example has all of the YUI requirements included
+                                on the page.  This differs from the default YUI configuration, which will dynamically load required
+                                YUI modules.  Dynamic loading works asynchronously, so the domready moment 
+                                likely will have passed when it comes time to bind the listeners, and possibly 
+                                the window load event as well.  All of the event listeners will actually fire in this  
+                                case, but the order of the events will not be the same. 
+                                <code>
+                                    domready
+                                </code>
+                                will
+                                execute before the available/contentready listeners, and the window
+                                load event may as well.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== --><!-- include event dependencies -->
+                        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/oop/oop-debug.js">
+                        </script>
+                        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/event/event-debug.js">
+                        </script>
+                        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/dom/dom-debug.js">
+                        </script>
+                        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/node/node-debug.js">
+                        </script>
+                        <div class="example-html">
+                            <div id="contentContainer">
+                                <div id="demo">
+                                    <p>
+                                        As the page loads, you'll see the 'available', 'contentready', 'domready', and window load events logged here as they fire in sequence.
+                                    </p>
+                                    <p>
+                                        The 'available' event fired on the element 'contentContainer'.  That element is present in the DOM.
+                                    </p>
+                                    <p>
+                                        The 'contentready' event fired for the element 'contentContainer'.  That element and all of its children are present in the DOM.
+                                    </p>
+                                    <p>
+                                        The DOMContentLoaded event fired.  The DOM is now safe to modify via script.
+                                    </p>
+                                </div>
+                                <!--a ul with an arbitrarily large number of children:-->
+                                <ul>
+                                    <li id="li-0">
+                                        child node #0
+                                    </li>
+                                    <li id="li-1">
+                                        child node #1
+                                    </li>
+                                    <li id="li-2">
+                                        child node #2
+                                    </li>
+                                    <li id="li-3">
+                                        child node #3
+                                    </li>
+                                    <li id="li-4">
+                                        child node #4
+                                    </li>
+                                    <li id="li-5">
+                                        child node #5
+                                    </li>
+                                    <li id="li-6">
+                                        child node #6
+                                    </li>
+                                    <li id="li-7">
+                                        child node #7
+                                    </li>
+                                    <li id="li-8">
+                                        child node #8
+                                    </li>
+                                    <li id="li-9">
+                                        child node #9
+                                    </li>
+                                    <li id="li-10">
+                                        child node #10
+                                    </li>
+                                    <li id="li-11">
+                                        child node #11
+                                    </li>
+                                    <li id="li-12">
+                                        child node #12
+                                    </li>
+                                    <li id="li-13">
+                                        child node #13
+                                    </li>
+                                    <li id="li-14">
+                                        child node #14
+                                    </li>
+                                    <li id="li-15">
+                                        child node #15
+                                    </li>
+                                    <li id="li-16">
+                                        child node #16
+                                    </li>
+                                    <li id="li-17">
+                                        child node #17
+                                    </li>
+                                    <li id="li-18">
+                                        child node #18
+                                    </li>
+                                    <li id="li-19">
+                                        child node #19
+                                    </li>
+                                    <li id="li-20">
+                                        child node #20
+                                    </li>
+                                    <li id="li-21">
+                                        child node #21
+                                    </li>
+                                    <li id="li-22">
+                                        child node #22
+                                    </li>
+                                    <li id="li-23">
+                                        child node #23
+                                    </li>
+                                    <li id="li-24">
+                                        child node #24
+                                    </li>
+                                    <li id="li-25">
+                                        child node #25
+                                    </li>
+                                    <li id="li-26">
+                                        child node #26
+                                    </li>
+                                    <li id="li-27">
+                                        child node #27
+                                    </li>
+                                    <li id="li-28">
+                                        child node #28
+                                    </li>
+                                    <li id="li-29">
+                                        child node #29
+                                    </li>
+                                    <li id="li-30">
+                                        child node #30
+                                    </li>
+                                    <li id="li-31">
+                                        child node #31
+                                    </li>
+                                    <li id="li-32">
+                                        child node #32
+                                    </li>
+                                    <li id="li-33">
+                                        child node #33
+                                    </li>
+                                    <li id="li-34">
+                                        child node #34
+                                    </li>
+                                    <li id="li-35">
+                                        child node #35
+                                    </li>
+                                    <li id="li-36">
+                                        child node #36
+                                    </li>
+                                    <li id="li-37">
+                                        child node #37
+                                    </li>
+                                    <li id="li-38">
+                                        child node #38
+                                    </li>
+                                    <li id="li-39">
+                                        child node #39
+                                    </li>
+                                    <li id="li-40">
+                                        child node #40
+                                    </li>
+                                    <li id="li-41">
+                                        child node #41
+                                    </li>
+                                    <li id="li-42">
+                                        child node #42
+                                    </li>
+                                    <li id="li-43">
+                                        child node #43
+                                    </li>
+                                    <li id="li-44">
+                                        child node #44
+                                    </li>
+                                    <li id="li-45">
+                                        child node #45
+                                    </li>
+                                    <li id="li-46">
+                                        child node #46
+                                    </li>
+                                    <li id="li-47">
+                                        child node #47
+                                    </li>
+                                    <li id="li-48">
+                                        child node #48
+                                    </li>
+                                    <li id="li-49">
+                                        child node #49
+                                    </li>
+                                    <li id="li-50">
+                                        child node #50
+                                    </li>
+                                    <li id="li-51">
+                                        child node #51
+                                    </li>
+                                    <li id="li-52">
+                                        child node #52
+                                    </li>
+                                    <li id="li-53">
+                                        child node #53
+                                    </li>
+                                    <li id="li-54">
+                                        child node #54
+                                    </li>
+                                    <li id="li-55">
+                                        child node #55
+                                    </li>
+                                    <li id="li-56">
+                                        child node #56
+                                    </li>
+                                    <li id="li-57">
+                                        child node #57
+                                    </li>
+                                    <li id="li-58">
+                                        child node #58
+                                    </li>
+                                    <li id="li-59">
+                                        child node #59
+                                    </li>
+                                    <li id="li-60">
+                                        child node #60
+                                    </li>
+                                    <li id="li-61">
+                                        child node #61
+                                    </li>
+                                    <li id="li-62">
+                                        child node #62
+                                    </li>
+                                    <li id="li-63">
+                                        child node #63
+                                    </li>
+                                    <li id="li-64">
+                                        child node #64
+                                    </li>
+                                    <li id="li-65">
+                                        child node #65
+                                    </li>
+                                    <li id="li-66">
+                                        child node #66
+                                    </li>
+                                    <li id="li-67">
+                                        child node #67
+                                    </li>
+                                    <li id="li-68">
+                                        child node #68
+                                    </li>
+                                    <li id="li-69">
+                                        child node #69
+                                    </li>
+                                    <li id="li-70">
+                                        child node #70
+                                    </li>
+                                    <li id="li-71">
+                                        child node #71
+                                    </li>
+                                    <li id="li-72">
+                                        child node #72
+                                    </li>
+                                    <li id="li-73">
+                                        child node #73
+                                    </li>
+                                    <li id="li-74">
+                                        child node #74
+                                    </li>
+                                    <li id="li-75">
+                                        child node #75
+                                    </li>
+                                    <li id="li-76">
+                                        child node #76
+                                    </li>
+                                    <li id="li-77">
+                                        child node #77
+                                    </li>
+                                    <li id="li-78">
+                                        child node #78
+                                    </li>
+                                    <li id="li-79">
+                                        child node #79
+                                    </li>
+                                    <li id="li-80">
+                                        child node #80
+                                    </li>
+                                    <li id="li-81">
+                                        child node #81
+                                    </li>
+                                    <li id="li-82">
+                                        child node #82
+                                    </li>
+                                    <li id="li-83">
+                                        child node #83
+                                    </li>
+                                    <li id="li-84">
+                                        child node #84
+                                    </li>
+                                    <li id="li-85">
+                                        child node #85
+                                    </li>
+                                    <li id="li-86">
+                                        child node #86
+                                    </li>
+                                    <li id="li-87">
+                                        child node #87
+                                    </li>
+                                    <li id="li-88">
+                                        child node #88
+                                    </li>
+                                    <li id="li-89">
+                                        child node #89
+                                    </li>
+                                    <li id="li-90">
+                                        child node #90
+                                    </li>
+                                    <li id="li-91">
+                                        child node #91
+                                    </li>
+                                    <li id="li-92">
+                                        child node #92
+                                    </li>
+                                    <li id="li-93">
+                                        child node #93
+                                    </li>
+                                    <li id="li-94">
+                                        child node #94
+                                    </li>
+                                    <li id="li-95">
+                                        child node #95
+                                    </li>
+                                    <li id="li-96">
+                                        child node #96
+                                    </li>
+                                    <li id="li-97">
+                                        child node #97
+                                    </li>
+                                    <li id="li-98">
+                                        child node #98
+                                    </li>
+                                    <li id="li-99">
+                                        child node #99
+                                    </li>
+                                </ul>
+                                <img src="http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/large/uluru.jpg" alt="Uluru" id="image" width="500">
+                            </div>
+                        </div>
+                        <script language="javascript">
+                            YUI({
+                                filter: "debug",
+                                logInclude: {
+                                    true,
+                                    example: true
+                                }
+                            }).use("*", function(Y){
+                            
+                                var results = Y.one('#demo');
+                                
+                                //we'll use this handler for all of our callbacks; the
+                                //message being logged will always be the last argument.
+                                function fnHandler(e){
+                                    var message = arguments[arguments.length - 1];
+                                    // Y.log(message, "info", "example");
+                                    results.set('innerHTML', results.get('innerHTML') + '<p>' + message + '</p>');
+                                }
+                                
+                                //assign page load handler:
+                                Y.on("load", fnHandler, window, Y, "The window load event fired.  The page and all of its image data, including the large image of Uluru, has completed loading.");
+                                
+                                //assign domready handler:
+                                Y.on("domready", fnHandler, Y, "The DOMContentLoaded event fired.  The DOM is now safe to modify via script.");
+                                
+                                //assign 'contentready' handler:
+                                Y.on("contentready", fnHandler, "#contentContainer", Y, "The 'contentready' event fired for the element 'contentContainer'.  That element and all of its children are present in the DOM.");
+                                
+                                //assign 'available' handler:
+                                Y.on("available", fnHandler, "#contentContainer", Y, "The 'available' event fired on the element 'contentContainer'.  That element is present in the DOM.");
+                                
+                                fnHandler("", "As the page loads, you'll see the 'available', 'contentready', 'domready', and window load events logged here as they fire in sequence.");
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Using Custom Events</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                The Custom Event framework is one of the principle communication mechanisms 
+                                in YUI.  An object can be augmented with 
+                                <code>
+                                    EventTarget
+                                </code>, enabling it
+                                to be both a host and a target for Custom Events.  Custom Events fire from
+                                their host and optionally bubble up to one or more targets.  This allows you to
+                                make the interesting moments of your applications broadly available within a
+                                module, within a set of modules, or throughout a complex interface populated
+                                with rich elements.
+                            </p>
+                            <p>
+                                In this example, a simple Custom Event is illustrated:
+                                <code>
+                                    testEvent
+                                </code>.  This Custom Event is hosted on a Publisher object and
+                                bubbles up to a BubbleTarget object.
+                            </p>
+                            <p>
+                                <img src="assets/ce-example.gif" alt="An illustration of the relationship between the Custom Event,  its host,  and its Bubble Target.">
+                            </p>
+                            <p>
+                                Custom Events, like DOM events, can be stopped
+                                (
+                                <code>
+                                    stopPropagation
+                                </code>) and their default behavior can be suppressed
+                                (
+                                <code>
+                                    preventDefault
+                                </code>).
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <button id="fire" value="Fire">
+                                Fire publisher:testEvent
+                            </button>
+                            <br>
+                            <input id="stopPropagation" type="checkbox">
+                            <label for="stopPropagation">
+                                Stop Propagation (testEvent won't bubble to the BubbleTarget.)
+                            </label>
+                            <br>
+                            <input id="preventDefault" type="checkbox">
+                            <label for="preventDefault">
+                                Prevent Default (testEvent's defaultFn won't fire.)
+                            </label>
+                            <ol id="log">
+                                <li>
+                                    Custom Event log messages will appear here.
+                                </li>
+                            </ol>
+                        </div>
+                        <script language="javascript">
+                            
+                            //Create a YUI instance:
+                            YUI().use("node", "event-custom-complex", function(Y){
+                            
+                                //Shortcut for our logging div:
+                                var logger = Y.one("#log");
+                                
+                                //Our BubbleTarget object is an object to which our Custom Event
+                                //will be allowed to bubble.  It needs itself to be an EventTarget,
+                                //so we'll use augment to make it an EventTarget:
+                                var BubbleTarget = function(){
+                                    Y.log("Host constructor executed.", "info", "example");
+                                }
+                                //Augment BubbleTarget to make it an EventTarget:
+                                Y.augment(BubbleTarget, Y.EventTarget);
+                                
+                                //Create an instance of BubbleTarget:
+                                var bubbleTarget = new BubbleTarget();
+                                
+                                //Now we'll subscribe to the "publisher:testEvent" -- note
+                                //that we can do this even before this event is published:
+                                bubbleTarget.subscribe("publisher:testEvent", function(e){
+                                    Y.log("publisher:testEvent fired on the BubbleTarget object.", "info", "example");
+                                });
+                                
+                                //Now we'll create the constructor for the Publisher, which 
+                                //is the direct host of our Custom Event.  It will also be an
+                                //EventTarget, so we'll extend it as well:
+                                var Publisher = function(bubbleTarget){
+                                
+                                    //We'll specify now that Custom Events hosted by Publisher
+                                    //should bubble to the bubbleTarget instance passed into the
+                                    //the Publisher's constructor:
+                                    this.addTarget(bubbleTarget);
+                                    
+                                    //Here we publish the Custom Event.  Note that it's not
+                                    //necessary to publish the event at all if you don't have
+                                    //options you wish to configure -- firing the event or 
+                                    //subscribing to it will create it on the fly if necessary:
+                                    this.publish("publisher:testEvent", {
+                                        emitFacade: true,
+                                        //the defaultFn is what you want to have happen
+                                        //by default when no subscriber calls preventDefault:
+                                        defaultFn: function(){
+                                            Y.log("defaultFn: publisher:testEvent's defaultFn executed.", "info", "example");
+                                        },
+                                        //You can prevent the default function from firing by
+                                        //calling preventDefault from a listener (if the Custom
+                                        //Event's preventable option is set to true, as it is by
+                                        //default).  If the default is prevented, the preventedFn
+                                        //is called, allowing you to respond if necessary.
+                                        preventedFn: function(){
+                                            Y.log("preventedFn: A subscriber to publisher:testEvent called preventDefault().", "info", "example");
+                                        },
+                                        //The stoppedFn is called if a subscriber calls stopPropagation or
+                                        //stopImmediatePropagation:
+                                        stoppedFn: function(){
+                                            Y.log("stoppedFn: A subscriber to publisher:testEvent called stopPropagation().", "info", "example");
+                                        }
+                                    });
+                                    Y.log("Publisher constructor executed.");
+                                }
+                                //Augment Publisher to make it an EventTarget:
+                                Y.augment(Publisher, Y.EventTarget);
+                                
+                                //Create a Publisher instance:
+                                var p = new Publisher(bubbleTarget);
+                                
+                                //We've already subscribed to the event on the bubbleTarget, but
+                                //we can also subscribe to it here on the Publisher instance.
+                                //We'll see the event fire here before it bubbles up to the 
+                                //bubbleTarget:
+                                p.on("publisher:testEvent", function(e){
+                                    Y.log("publisher:testEvent subscriber fired on the publisher object.", "info", "example");
+                                    if (Y.one("#stopPropagation").get("checked")) {
+                                        //we will stopPropagation on the Custom Event, preventing
+                                        //it from bubbling to the bubbleTarget:
+                                        e.stopPropagation();
+                                    }
+                                    
+                                    if (Y.one("#preventDefault").get("checked")) {
+                                        //we will preventDefault on the Custom Event, preventing
+                                        //the testEvent's defaultFn from firing:
+                                        e.preventDefault();
+                                    }
+                                });
+                                
+                                //We can tie our testEvent to an interface gesture -- the click of a
+                                //button, for example.
+                                Y.on("click", function(e){
+                                    //clear out the logger:
+                                    logger.set("innerHTML", "");
+                                    p.fire("publisher:testEvent");
+                                }, "#fire");
+                                
+                                //write out log messages to the page:
+                                Y.on("yui:log", function(e){
+                                    var s = logger.get("innerHTML");
+                                    logger.set("innerHTML", s + "<li>" + e.msg + "</li>");
+                                });
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Skinning via Progressive Enhancement using the Event Utility and the Loader</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                Using Progressive Enhancement to skin checkboxes with the help of the <a href="../../api/Loader.html">Loader</a>,<a href="../../api/module_classnamemanager.html">ClassNameManager Utility</a>, 
+                                and the Event Utility's 
+                                <code>
+                                    focus
+                                </code>
+                                and 
+                                <code>
+                                    blur
+                                </code>
+                                events and the 
+                                <code>
+                                    delegate
+                                </code>
+                                method.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="checkboxes">
+                                <div>
+                                    <label for="field-1">
+                                        Field 1: 
+                                    </label>
+                                    <span class="yui-checkbox"><span><input id="field-1" name="field-1" value="1" type="checkbox"></span></span>
+                                </div>
+                                <div>
+                                    <label for="field-2">
+                                        Field 2: 
+                                    </label>
+                                    <span class="yui-checkbox"><span><input id="field-2" name="field-2" value="2" type="checkbox"></span></span>
+                                </div>
+                                <div>
+                                    <label for="field-3">
+                                        Field 3: 
+                                    </label>
+                                    <span class="yui-checkbox"><span><input id="field-3" name="field-3" value="3" type="checkbox"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            
+                            YUI({
+                            
+                                base: "http://yui.yahooapis.com/3.1.1/build/",
+                                
+                                //	Load the stylesheet for the skinned checkboxes via JavaScript, 
+                                //	since without JavaScript skinning of the checkboxes wouldn't 
+                                //	be possible.
+                                
+                                modules: {
+                                
+                                    "checkboxcss": {
+                                        type: "css",
+                                        fullpath: "assets/checkbox.css"
+                                    },
+                                    
+                                    "checkboxjs": {
+                                        type: "js",
+                                        fullpath: "assets/checkbox.js",
+                                        requires: ["classnamemanager", "event-focus", "node-event-delegate", "checkboxcss"]
+                                    }
+                                
+                                }
+                            
+                            }).use("checkboxjs", function(Y, result){
+                            
+                                //	The callback supplied to use() will be executed regardless of
+                                //	whether the operation was successful or not.  The second parameter
+                                //	is a result object that has the status of the operation.  We can
+                                //	use this to try to recover from failures or timeouts.
+                                
+                                if (!result.success) {
+                                
+                                    Y.log("Load failure: " + result.msg, "warn", "Example");
+                                    
+                                    //	Show the checkboxes if the loader failed that way the original 
+                                    //	unskinned checkboxes will be visible so that the user can
+                                    //	interact with them either way.
+                                    
+                                    document.documentElement.className = "";
+                                    
+                                }
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating a hover event for DOM subscription</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example will illustrate how to use the synthetic event creation API. 
+                                We'll create a 
+                                <code>
+                                    hover
+                                </code>
+                                event that accepts two functions at
+                                subscription time, the first being the function that executes when the hover
+                                begins, and the second when the hover ends.
+                            </p>
+                            <p>
+                                Subscribing to this new event will look like this:
+                            </p>
+                            <div id="syntax-1d55ced247ed447508958ad55dc7a7c4" class="yui-syntax-highlight">
+                                <div class="syn-header hidden">
+                                    <a href="#">view plain</a>
+                                    | <a href="#">print</a>
+                                    | <a href="#">toggle line numbers</a>
+                                </div>
+                                <div class="numbers">
+                                    <pre class="javascript" style="font-family: monospace;"><ol><li class="li1"><div class="de1">node.<span class="me1">on</span><span class="br0">(</span> <span class="st0">"hover"</span><span class="sy0">,</span> onHover<span class="sy0">,</span> endHover <span class="br0">)</span><span class="sy0">;</span></div></li></ol></pre>
+                                </div>
+                                <div class="nonumbers">
+                                    <pre class="javascript" style="font-family: monospace;">node.<span class="me1">on</span><span class="br0">(</span> <span class="st0">"hover"</span><span class="sy0">,</span> onHover<span class="sy0">,</span> endHover <span class="br0">)</span><span class="sy0">;</span></pre>
+                                </div>
+                                <textarea id="syntax-1d55ced247ed447508958ad55dc7a7c4-plain">
+                                    node.on( "hover", onHover, endHover );
+                                </textarea>
+                            </div>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo">
+                                <p>
+                                    Hover over me
+                                </p>
+                                <button type="button" id="attach">
+                                    Attach hover event
+                                </button>
+                                <button type="button" id="detach">
+                                    Detach hover event
+                                </button>
+                            </div>
+                        </div>
+                        <script>
+                            YUI().use("event-synthetic", "event-mouseenter", function(Y){
+                            
+                                Y.Event.define("hover", {
+                                    processArgs: function(args){
+                                        // Args received here match the Y.on(...) order, so
+                                        // [ 'hover', onHover, "#demo p", endHover, etc ]
+                                        var mouseleave = args[3];
+                                        args.splice(3, 1);
+                                        
+                                        // This will be stored in the subscription's '_extra' property
+                                        return mouseleave;
+                                    },
+                                    
+                                    on: function(node, sub, notifier){
+                                        var mouseleave = sub._extra;
+                                        
+                                        // To make detaching the associated DOM events easy, use a
+                                        // detach category, but keep the category unique per subscription
+                                        // by creating the category with Y.guid()
+                                        sub._evtGuid = Y.guid() + '|';
+                                        
+                                        node.on(sub._evtGuid + "mouseenter", function(e){
+                                            // Firing the notifier event executes the hover subscribers
+                                            notifier.fire();
+                                        });
+                                        
+                                        node.on(sub._evtGuid + "mouseleave", mouseleave);
+                                    },
+                                    
+                                    detach: function(node, sub, notifier){
+                                        // Detach the mouseenter and mouseout subscriptions using the
+                                        // detach category
+                                        node.detach(this._evtGuid + '*');
+                                    }
+                                });
+                                
+                                function onHover(e){
+                                    this.addClass("hover");
+                                }
+                                function endHover(e){
+                                    this.removeClass("hover");
+                                }
+                                
+                                Y.one("#attach").on("click", function(e){
+                                    Y.one("#demo p").on("hover", onHover, endHover);
+                                });
+                                
+                                Y.one("#detach").on("click", function(e){
+                                    Y.one("#demo p").detach("hover");
+                                });
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>

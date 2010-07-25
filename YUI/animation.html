@@ -10,10 +10,39 @@
             <li class="example-set" id="example1">
                 <a class="example-set-name" href="#">Animation</a>
                 <ul>
-                    <li class="example">
-                        <a class="example-name">Simple Animation</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim-base', function(Y){
+                    <li class = 'example'>
+                        <a class = 'example-name'>Basic Animation</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to animate the 
+                                <code>
+                                    opacity
+                                </code>
+                                of an element.
+                            </p>
+                            <p>
+                                Click the X in the header to fade the element out.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo" class="yui3-module">
+                                <div class="yui3-hd">
+                                    <h4>Animation Demo</h4>
+                                    <a href="remove.php?id=#demo" title="remove module" class="yui3-remove"><em>remove</em></a>
+                                </div>
+                                <div class="yui3-bd">
+                                    <p>
+                                        This an example of what you can do with the YUI Animation Utility.
+                                    </p>
+                                    <p>
+                                        <em>Follow the instructions above to see the animation in action.</em>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var anim = new Y.Anim({
                                     node: '#demo',
                                     to: {
@@ -27,13 +56,39 @@
                                 };
                                 
                                 Y.one('#demo .yui3-remove').on('click', onClick);
+                                
                             });
+                            
                         </script>
-                        <div class = "example-html">
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Animation Easing</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to use the 
+                                <code>
+                                    easing
+                                </code>
+                                attribute to change the behavior of the animation.
+                            </p>
+                            <p>
+                                Click the icon in the header to shrink the element's 
+                                <code>
+                                    height
+                                </code>
+                                to zero with 
+                                <code>
+                                    Y.Easing.backOut
+                                </code>.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
                             <div id="demo" class="yui3-module">
                                 <div class="yui3-hd">
                                     <h4>Animation Demo</h4>
-                                    <a title="remove module" class="yui3-remove"><em>x</em></a>
+                                    <a title="collapse module" class="yui3-toggle"><em>toggle</em></a>
                                 </div>
                                 <div class="yui3-bd">
                                     <p>
@@ -44,18 +99,16 @@
                                     </p>
                                 </div>
                             </div>
+                            <p>
+                                This is placeholder text used to demonstrate how the above animation affects subsequent content.
+                            </p>
                         </div>
-                        <div class="example-docs">
-                        </div>
-                    </li>
-                    <li id="0.32930913978212684" class="example">
-                        <a class="example-name">Easing</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var anim = new Y.Anim({
                                     node: '#demo .yui3-bd',
                                     to: {
-                                        height: 0
+                                        height: 1
                                     },
                                     easing: Y.Easing.backIn
                                 });
@@ -67,31 +120,26 @@
                                 Y.one('#demo .yui3-toggle').on('click', onClick);
                                 
                             });
+                            
                         </script>
-                        <div class="example-docs">
-                        </div>
-                        <div class = "example-html">
-                            <div id="demo" class="yui3-module">
-                                <div class="yui3-hd">
-                                    <h4>Animation Demo</h4>
-                                    <a title="remove module" class="yui3-toggle"><em>-</em></a>
-                                </div>
-                                <div class="yui3-bd">
-                                    <p>
-                                        This an example of what you can do with the YUI Animation Utility.
-                                    </p>
-                                    <p>
-                                        <em>Follow the instructions above to see the animation in action.</em>
-                                    </p>
-                                </div>
-                                This is placeholder text used to demonstrate how the above animation affects subsequent content.
-                            </div>
-                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
                     </li>
-                    <li id="0.3850954931858497" class="example">
-                        <a class="example-name">Colors</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim-color', function(Y){
+                    <li class = 'example'>
+                        <a class = 'example-name'>Animating Colors</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to animate color attributes.
+                            </p>
+                            <p>
+                                Mouse over the link to begin the animation.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <a href="#" id="demo">hover me</a>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var node = Y.one('#demo');
                                 
                                 var anim = new Y.Anim({
@@ -124,18 +172,34 @@
                                 };
                                 node.on('mouseover', hover);
                                 node.on('mouseout', hover);
+                                
                             });
+                            
                         </script>
-                        <div class="example-docs">
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Alternating Iterations</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to use the 
+                                <code>
+                                    iterations
+                                </code>
+                                attribute to run multiple iterations of the animation.
+                            </p>
+                            <p>
+                                Mouse over the link to begin the animation.
+                            </p>
                         </div>
-                        <div class = "example-html">
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
                             <a href="#" id="demo">hover me</a>
                         </div>
-                    </li>
-                    <li id="0.8901113208084409" class="example">
-                        <a class="example-name">Alternating Positions</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim-color', function(Y){
+                        <script type="text/javascript">
+                            YUI({
+                                filter: 'raw'
+                            }).use("anim", function(Y){
                                 var node = Y.one('#demo');
                                 
                                 var anim = new Y.Anim({
@@ -161,12 +225,14 @@
                                     var reverse = false, iterations = 'infinite';
                                     
                                     if (anim.get('running')) {
-                                        anim.pause();
+                                        anim.stop();
                                     }
+                                    
                                     if (e.type === 'mouseout') {
                                         reverse = true;
                                         iterations = 1;
                                     }
+                                    
                                     anim.setAttrs({
                                         'reverse': reverse,
                                         'iterations': iterations
@@ -178,15 +244,30 @@
                                 node.on('mouseover', hover);
                                 node.on('mouseout', hover);
                             });
+                            
                         </script>
-                        <div class="example-html">
-                            <a href="#" id="demo">hover me</a>
-                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
                     </li>
-                    <li class = "example">
-                        <a class = "example-name">XY Animation</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                    <li class = 'example'>
+                        <a class = 'example-name'>Animating XY Position</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to animate the 
+                                <code>
+                                    xy
+                                </code>
+                                position of an element.
+                            </p>
+                            <p>
+                                Click anywhere to move the element to your click position.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <span id="demo"></span>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var anim = new Y.Anim({
                                     node: '#demo',
                                     duration: 0.5,
@@ -199,82 +280,33 @@
                                     });
                                     anim.run();
                                 };
+                                
                                 Y.one('document').on('click', onClick);
+                                
                             });
+                            
                         </script>
-                        <div class = "example-html">
-                            <div id="demo" class="yui3-module">
-                                <div class="yui3-hd">
-                                    <h4>Animation Demo</h4>
-                                    <a title="remove module" class="yui3-remove"><em>x</em></a>
-                                </div>
-                                <div class="yui3-bd">
-                                    <p>
-                                        This an example of what you can do with the YUI Animation Utility.
-                                    </p>
-                                    <p>
-                                        <em>Follow the instructions above to see the animation in action.</em>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
                     </li>
-                    <li id="0.04069746381807293" class="example">
-                        <a class="example-name">Scrolling</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
-                                var node = Y.one('#demo .yui3-bd');
-                                var anim = new Y.Anim({
-                                    node: node,
-                                    to: {
-                                        scroll: function(node){
-                                            return [0, node.get('scrollTop') + node.get('offsetHeight')]
-                                        }
-                                    },
-                                    easing: Y.Easing.easeOut
-                                });
-                                
-                                var onClick = function(e){
-                                    var y = node.get('offsetHeight');
-                                    if (e.currentTarget.hasClass('yui-scrollup')) {
-                                        y = 0 - y;
-                                    }
-                                    
-                                    anim.set('to', {
-                                        scroll: [0, y + node.get('scrollTop')]
-                                    });
-                                    anim.run();
-                                };
-                                
-                                Y.all('#demo .yui3-hd a').on('click', onClick);
-                            });
-                        </script>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Animating Along a Curved Path</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to animate the position of an element along a 
+                                <code>
+                                    curve
+                                </code>.
+                            </p>
+                            <p>
+                                Click anywhere to move the element to your click position.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
                         <div class="example-html">
-                            <div id="demo" class="yui3-module">
-                                <div class="yui3-hd">
-                                    <h4>Animation Demo</h4>
-                                    <span class="yui3-scroll-controls"><a title="scroll up" class="yui3-scrollup"><em>scroll up</em></a><a title="scroll down" class="yui3-scrolldown"><em>scroll down</em></a></span>
-                                </div>
-                                <div class="yui3-bd yui-scroll">
-                                    <p>
-                                        This an example of what you can do with the YUI Animation Utility.
-                                    </p>
-                                    <p>
-                                        <em>Follow the instructions above to see the animation in action.</em>
-                                    </p>
-                                    <p>
-                                        Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. Het is in de jaren '60 populair geworden met de introductie van Letraset vellen met Lorem Ipsum passages en meer recentelijk door desktop publishing software zoals Aldus PageMaker die versies van Lorem Ipsum bevatten.
-                                        Waarom gebruiken we het?
-                                        Het is al geruime tijd een bekend gegeven dat een lezer, tijdens het bekijken van de layout van een pagina, afgeleid wordt door de tekstuele inhoud. Het belangrijke punt van het gebruik van Lorem Ipsum is dat het uit een min of meer normale verdeling van letters bestaat, in tegenstelling tot "Hier uw tekst, hier uw tekst" wat het tot min of meer leesbaar nederlands maakt. Veel desktop publishing pakketten en web pagina editors gebruiken tegenwoordig Lorem Ipsum als hun standaard model tekst, en een zoekopdracht naar "lorem ipsum" ontsluit veel websites die nog in aanbouw zijn. Verscheidene versies hebben zich ontwikkeld in de loop van de jaren, soms per ongeluk soms expres (ingevoegde humor en dergelijke).
-                                    </p>
-                                </div>
-                            </div>
+                            <span id="demo"></span>
                         </div>
-                    </li>
-                    <li id="0.6256072948735251" class="example">
-                        <a class="example-name">Curved Path</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var node = Y.one('#demo');
                                 
                                 var anim = new Y.Anim({
@@ -306,23 +338,122 @@
                                 Y.one('document').on('click', onClick);
                                 
                             });
+                            
                         </script>
-                        <div class="example-docs">
-                        </div>
-                        <div class="example-html">
-                            <span id="demo"></span>
-                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
                     </li>
-                    <li id="0.6873873874727301" class="example">
-                        <a class="example-name">Reversing</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                    <li class = 'example'>
+                        <a class = 'example-name'>Animated Scrolling</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to animate the 
+                                <code>
+                                    scroll
+                                </code>
+                                of an element.
+                            </p>
+                            <p>
+                                Click the arrows to scroll the content up or down.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo" class="yui3-module yui3-scroll">
+                                <div class="yui3-hd">
+                                    <h4>Animation Demo</h4>
+                                    <span class="yui3-scroll-controls"><a title="scroll up" class="yui3-scrollup"><em>scroll up</em></a><a title="scroll down" class="yui3-scrolldown"><em>scroll down</em></a></span>
+                                </div>
+                                <div class="yui3-bd">
+                                    <p>
+                                        This an example of what you can do with the YUI Animation Utility.
+                                    </p>
+                                    <p>
+                                        <em>Follow the instructions above to see the animation in action.</em>
+                                    </p>
+                                    <p>
+                                        Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. Het is in de jaren '60 populair geworden met de introductie van Letraset vellen met Lorem Ipsum passages en meer recentelijk door desktop publishing software zoals Aldus PageMaker die versies van Lorem Ipsum bevatten.
+                                        Waarom gebruiken we het?
+                                        Het is al geruime tijd een bekend gegeven dat een lezer, tijdens het bekijken van de layout van een pagina, afgeleid wordt door de tekstuele inhoud. Het belangrijke punt van het gebruik van Lorem Ipsum is dat het uit een min of meer normale verdeling van letters bestaat, in tegenstelling tot "Hier uw tekst, hier uw tekst" wat het tot min of meer leesbaar nederlands maakt. Veel desktop publishing pakketten en web pagina editors gebruiken tegenwoordig Lorem Ipsum als hun standaard model tekst, en een zoekopdracht naar "lorem ipsum" ontsluit veel websites die nog in aanbouw zijn. Verscheidene versies hebben zich ontwikkeld in de loop van de jaren, soms per ongeluk soms expres (ingevoegde humor en dergelijke).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
+                                var node = Y.one('#demo .yui3-bd');
+                                var anim = new Y.Anim({
+                                    node: node,
+                                    to: {
+                                        scroll: function(node){
+                                            return [0, node.get('scrollTop') + node.get('offsetHeight')]
+                                        }
+                                    },
+                                    easing: Y.Easing.easeOut
+                                });
+                                
+                                var onClick = function(e){
+                                    var y = node.get('offsetHeight');
+                                    if (e.currentTarget.hasClass('yui3-scrollup')) {
+                                        y = 0 - y;
+                                    }
+                                    
+                                    anim.set('to', {
+                                        scroll: [0, y + node.get('scrollTop')]
+                                    });
+                                    anim.run();
+                                };
+                                
+                                Y.all('#demo .yui3-hd a').on('click', onClick);
+                            });
+                            
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Reversing an Animation</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to use the 
+                                <code>
+                                    reverse
+                                </code>
+                                attribute to change the behavior of the animation.
+                            </p>
+                            <p>
+                                Click the icon in the header to toggle the element's 
+                                <code>
+                                    height
+                                </code>.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo" class="yui3-module">
+                                <div class="yui3-hd">
+                                    <h4>Animation Demo</h4>
+                                    <a title="show/hide content" class="yui3-toggle"><em>toggle</em></a>
+                                </div>
+                                <div class="yui3-bd">
+                                    <p>
+                                        This an example of what you can do with the YUI Animation Utility.
+                                    </p>
+                                    <p>
+                                        <em>Follow the instructions above to see the animation in action.</em>
+                                    </p>
+                                </div>
+                            </div>
+                            <p>
+                                This is placeholder text used to demonstrate how the above animation affects subsequent content.
+                            </p>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", "anim", function(Y){
                                 var module = Y.one('#demo');
                                 
                                 // add fx plugin to module body
                                 var content = module.query('.yui3-bd').plug(Y.Plugin.NodeFX, {
                                     from: {
-                                        height: 0
+                                        height: 1
                                     },
                                     to: {
                                         height: function(node){ // dynamic in case of change
@@ -335,8 +466,8 @@
                                 });
                                 
                                 var onClick = function(e){
-                                    module.toggleClass('yui-closed');
-                                    content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse
+                                    module.toggleClass('yui3-closed');
+                                    content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
                                     content.fx.run();
                                 };
                                 
@@ -348,13 +479,32 @@
                                 // append dynamic control to header section
                                 module.query('.yui3-hd').appendChild(control);
                                 control.on('click', onClick);
+                                
                             });
+                            
                         </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Using the End Event</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to use the 
+                                <code>
+                                    end
+                                </code>
+                                event.
+                            </p>
+                            <p>
+                                Click the X in the header to fade the element out and remove it from the document once the fade completes.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
                         <div class="example-html">
                             <div id="demo" class="yui3-module">
                                 <div class="yui3-hd">
                                     <h4>Animation Demo</h4>
-                                    <a title="remove module" class="yui3-toggle"><em>-</em></a>
+                                    <a title="remove module" class="yui3-remove"><em>x</em></a>
                                 </div>
                                 <div class="yui3-bd">
                                     <p>
@@ -365,12 +515,12 @@
                                     </p>
                                 </div>
                             </div>
+                            <p>
+                                This is placeholder text used to demonstrate how the above animation affects subsequent content.
+                            </p>
                         </div>
-                    </li>
-                    <li id="0.197217824434738" class="example">
-                        <a class="example-name">End Event</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var anim = new Y.Anim({
                                     node: '#demo',
                                     to: {
@@ -384,9 +534,34 @@
                                 };
                                 
                                 anim.on('end', onEnd);
+                                
                                 Y.one('#demo .yui3-remove').on('click', anim.run, anim);
+                                
                             });
+                            
                         </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Chaining Animations Using the 
+                            <code>
+                                end
+                            </code>
+                            Event
+                        </a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This demonstrates how to use the 
+                                <code>
+                                    end
+                                </code>
+                                event to chain animations runs together.
+                            </p>
+                            <p>
+                                Click the X in the header to fade the element out, then shrink its height to zero.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
                         <div class="example-html">
                             <div id="demo" class="yui3-module">
                                 <div class="yui3-hd">
@@ -402,12 +577,12 @@
                                     </p>
                                 </div>
                             </div>
+                            <p>
+                                This is placeholder text used to demonstrate how the above animation affects subsequent content.
+                            </p>
                         </div>
-                    </li>
-                    <li id="0.08909129747903521" class="example">
-                        <a class="example-name">Chaining Animations</a>
-                        <script type = "text/javascript">
-                            YUI().use('anim', function(Y){
+                        <script type="text/javascript">
+                            YUI().use("anim", function(Y){
                                 var anim = new Y.Anim({
                                     node: '#demo',
                                     to: {
@@ -418,7 +593,7 @@
                                 var onEnd = function(){
                                     this.setAttrs({
                                         to: {
-                                            height: 0
+                                            height: 1
                                         },
                                         easing: Y.Easing.bounceOut
                                     });
@@ -430,24 +605,9 @@
                                 Y.one('#demo .yui3-remove').on('click', anim.run, anim);
                                 
                             });
+                            
                         </script>
-                        <div class="example-html">
-                            <div id="demo" class="yui3-module">
-                                <div class="yui3-hd">
-                                    <h4>Animation Demo</h4>
-                                    <a title="remove module" class="yui3-remove"><em>x</em></a>
-                                </div>
-                                <div class="yui3-bd">
-                                    <p>
-                                        This an example of what you can do with the YUI Animation Utility.
-                                    </p>
-                                    <p>
-                                        <em>Follow the instructions above to see the animation in action.</em>
-                                    </p>
-                                </div>
-                            </div>
-                            This is placeholder text used to demonstrate how the above animation affects subsequent content.
-                        </div>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
                     </li>
                 </ul>
             </li>
