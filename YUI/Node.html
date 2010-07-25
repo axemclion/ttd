@@ -1,0 +1,367 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Node</a>
+                <ul>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Node Basics</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates how to get (
+                                <code>
+                                    Y.one()
+                                </code>) and use a 
+                                <code>
+                                    Node
+                                </code>
+                                instance to access DOM properties.
+                            </p>
+                            <p>
+                                Click the box to update the content of with the 
+                                <code>
+                                    tagName
+                                </code>
+                                of the click target's 
+                                <code>
+                                    parentNode
+                                </code>.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo">
+                                <p>
+                                    <em>Click me.</em>
+                                </p>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var node = Y.one('#demo p');
+                                
+                                var onClick = function(e){
+                                    var tag = e.target.get('parentNode.tagName'); // e.target === node || #demo p em
+                                    e.currentTarget.one('em').setContent('I am a child of ' + tag + '.'); // e.currentTarget === node
+                                };
+                                
+                                node.on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: NodeList Events</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates how to use events with NodeList instances.
+                            </p>
+                            <p>
+                                Clicking a box will update its content.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <ul id="demo">
+                                <li>
+                                    <p>
+                                        i am <em>lorem</em>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        i am <strong>ispum</strong>
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    e.currentTarget.setContent(e.type + ': ' + e.target.get('tagName')); // e.currentTarget === #demo li
+                                    this.addClass('yui3-pass'); // this defaults to the NodeList instance
+                                };
+                                
+                                Y.all('#demo li').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: NodeList</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates how to use a NodeList instance to work with multiple nodes.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <ul id="demo">
+                                <li>
+                                    lorem
+                                </li>
+                                <li>
+                                    ispum
+                                </li>
+                                <li>
+                                    dolor
+                                </li>
+                                <li>
+                                    sit
+                                </li>
+                            </ul>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var nodes = Y.all('#demo li');
+                                
+                                var onClick = function(e){
+                                    this.setContent('thanks from all of us!'); // this === nodes
+                                    e.currentTarget.setStyle('backgroundColor', 'green'); // e.currentTarget === #demo li
+                                };
+                                
+                                nodes.on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Delegating Node Events</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates using a single event listener on a list to delegate clicks on the list items.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <ul id="demo">
+                                <li>
+                                    <em>click me if you don't mind...</em>
+                                </li>
+                                <li>
+                                    <em>click me if you don't mind...</em>
+                                </li>
+                                <li>
+                                    <em>click me if you don't mind...</em>
+                                </li>
+                                <li>
+                                    <em>click me if you don't mind...</em>
+                                </li>
+                            </ul>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("selector-css3", "node", function(Y){
+                                var nodes = Y.all('#demo li');
+                                
+                                var onClick = function(e){
+                                    e.currentTarget.addClass('yui3-pass'); // e.currentTarget === #demo li 
+                                    e.target.setContent('thanks for the click!'); // e.target === #demo li or #demo li em
+                                    e.container.setStyle('border', '5px solid blue'); // e.container === #demo
+                                    nodes.filter(':not(.yui3-pass)').setContent('Click me too please!');
+                                };
+                                
+                                Y.one('#demo').delegate('click', onClick, 'li');
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Measuring the Window and Document</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example shows how to measure the size of the window and document.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <dl id="demo">
+                                <dt>
+                                    Window size
+                                </dt>
+                                <dd class="yui3-data-win">
+                                    Click me to find out
+                                </dd>
+                                <dt>
+                                    Document size
+                                </dt>
+                                <dd class="yui3-data-doc">
+                                    Click me to find out
+                                </dd>
+                            </dl>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    var target = e.target, h, w;
+                                    
+                                    if (target.test('dd')) {
+                                        if (target.test('.yui3-data-win')) {
+                                            h = target.get('winHeight');
+                                            w = target.get('winWidth');
+                                        }
+                                        else if (target.test('.yui3-data-doc')) {
+                                            h = target.get('docHeight');
+                                            w = target.get('docWidth');
+                                            
+                                        }
+                                        target.set('innerHTML', 'width: ' + w + ' height: ' + h);
+                                    }
+                                };
+                                
+                                Y.one('#demo').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Node Positioning</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example shows how to position an element based on the document XY coordinate system.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <span id="demo"></span>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    Y.one('#demo').setXY([e.pageX, e.pageY]);
+                                };
+                                
+                                Y.one('document').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Node Styling</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example shows how to style an element using Node.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div id="demo">
+                                <p>
+                                    Click me to change my color and show some style information.
+                                </p>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    var node = e.currentTarget;
+                                    if (!node.one('dl')) { // only create the DL once
+                                        node.setStyle('color', 'green');
+                                        var styleColor = node.getStyle('color'), computedColor = node.getComputedStyle('color');
+                                        
+                                        node.append('<dl>' +
+                                        '<dt>style.color</dt><dd>' +
+                                        styleColor +
+                                        '</dd>' +
+                                        '<dt>computedStyle.color</dt><dd>' +
+                                        computedColor +
+                                        '</dd>' +
+                                        '</dl>');
+                                    }
+                                };
+                                
+                                Y.one('#demo').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: Adding Node Content</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates how insert content when working with NodeList instances.
+                            </p>
+                            <p>
+                                Clicking a box will update its content.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <ul id="demo">
+                                <li>
+                                    foo
+                                </li>
+                                <li>
+                                    bar
+                                </li>
+                            </ul>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    var node = e.currentTarget;
+                                    node.prepend('<em>prepended</em> &nbsp;'); // added as firstChild 
+                                    node.append('&nbsp; <em>appended</em>'); // added as lastChild
+                                    node.insert('&nbsp; <strong>before last child</strong> &nbsp;', node.get('lastChild')); // added before lastChild 
+                                    node.insert('&nbsp; <strong>before childNodes[1]</strong> &nbsp;', 1); // added before childNodes[1]
+                                };
+                                
+                                Y.all('#demo li').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Node: DOM Methods</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates how to use the DOM methods of a Node instance.
+                            </p>
+                            <p>
+                                Click any of the boxes to move them to the other list.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <ul id="demo">
+                                <li>
+                                    lorem
+                                </li>
+                                <li>
+                                    ispum
+                                </li>
+                                <li>
+                                    dolor
+                                </li>
+                                <li>
+                                    sit
+                                </li>
+                            </ul>
+                            <ul id="demo2">
+                                <li>
+                                    foo
+                                </li>
+                            </ul>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", function(Y){
+                                var onClick = function(e){
+                                    var node = Y.one('#demo2').appendChild(e.currentTarget);
+                                    node.addClass('yui3-pass');
+                                };
+                                
+                                Y.all('#demo li').on('click', onClick);
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
