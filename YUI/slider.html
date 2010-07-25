@@ -1,0 +1,406 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/combo?3.1.1/build/slider/assets/skins/sam/slider.css&3.1.1/build/widget/assets/skins/sam/widget.css&"/>
+        <style type="text/css">
+            #demo input {
+                width: 2em;
+            }
+            
+            .horiz_slider {
+                margin-left: 1ex;
+            }
+            
+            .vert_slider {
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Animation</a>
+                <ul>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Basic Sliders</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example walks you through the basics of creating a Slider from script.
+                                Both Sliders in this example link to text input fields that expect numeric input.  The first Slider uses the default configuration, spanning values between 0 and 100, and is rendered inline.
+                            </p>
+                            <p>
+                                The second Slider is configured to orient vertically (along the y axis) and the configuration includes minimum, maximium, and initial values.  It is rendered into a 
+                                <code>
+                                    &lt;div&gt;
+                                </code>.
+                            </p>
+                            <p>
+                                The first Slider is set up in a more traditional JavaScript coding style and
+                                the second using the shorter, method chaining style.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="demo">
+                                    <h4>Horizontal Slider</h4>
+                                    <p>
+                                        <label for="horiz_value">
+                                            Value: 
+                                        </label>
+                                        <input id="horiz_value" value="0"><span class="horiz_slider"><span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_128003339468121"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_128003339468123"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_128003339468159" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span></span>
+                                    </p><h4>Vertical Slider</h4>
+                                    <p>
+                                        <label for="vert_value">
+                                            Value: 
+                                        </label>
+                                        <input id="vert_value" value="30">
+                                    </p>
+                                    <div class="vert_slider">
+                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033394681143"><span class="yui3-slider-content yui3-slider-y" id="yui_3_1_1_1_1280033394681145"><span style="height: 201px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-top"></span><span class="yui3-slider-rail-cap-bottom"></span><span style="top: 65px;" id="yui_3_1_1_1_1280033394681162" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-y.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-y.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            // Create a YUI instance and request the slider module and its dependencies
+                            YUI().use("slider", function(Y){
+                            
+                                var xInput, // input tied to xSlider
+                             yInput, // input tied to ySlider
+                             xSlider; // horizontal Slider
+                                // Function to pass input value back to the Slider
+                                function updateSlider(e){
+                                    var data = this.getData(), slider = data.slider, value = parseInt(this.get("value"), 10);
+                                    
+                                    if (data.wait) {
+                                        data.wait.cancel();
+                                    }
+                                    
+                                    // Update the Slider on a delay to allow time for typing
+                                    data.wait = Y.later(200, slider, function(){
+                                        data.wait = null;
+                                        this.set("value", value);
+                                    });
+                                }
+                                
+                                // Function to update the input value from the Slider value
+                                function updateInput(e){
+                                    this.set("value", e.newVal);
+                                }
+                                
+                                
+                                
+                                // Create a horizontal Slider using all defaults
+                                xSlider = new Y.Slider();
+                                
+                                // Link the input value to the Slider
+                                xInput = Y.one("#horiz_value");
+                                xInput.setData({
+                                    slider: xSlider
+                                });
+                                
+                                // Pass the input as the 'this' object inside updateInput
+                                xSlider.after("valueChange", updateInput, xInput);
+                                xInput.on("keyup", updateSlider);
+                                
+                                // Render the Slider next to the input
+                                xSlider.render('.horiz_slider')
+                                
+                                
+                                // Create the vertical Slider.
+                                yInput = Y.one("#vert_value");
+                                yInput.setData("slider", new Y.Slider({
+                                    axis: 'y',
+                                    min: 100, // min is the value at the top
+                                    max: -100, // max is the value at the bottom
+                                    value: 30, // initial value
+                                    length: '201px', // rail extended to afford all values
+                                    // construction-time event subscription
+                                    after: {
+                                        valueChange: Y.bind(updateInput, yInput)
+                                    }
+                                }).render(".vert_slider") // render returns the Slider
+                            ) // set( "data", ... ) returns the Node
+                            .on("keyup", updateSlider); // chain the keyup subscription
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating a Slider from existing markup</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example illustrates a few points:
+                            </p>
+                            <ol>
+                                <li>
+                                    How to create a Slider using existing markup
+                                </li>
+                                <li>
+                                    How to disable a Slider
+                                </li>
+                                <li>
+                                    How to use an image sprite to create a custom Slider skin
+                                </li>
+                            </ol>
+                            <p>
+                                The visualization of the Slider is based on the volume control in Mac OS X 10.5, with additional controls included for illustration. <strong>Click on the speaker icon to show the Slider</strong>.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="demo">
+                                    <div id="volume_control" class="volume-hide">
+                                        <label for="volume">
+                                            volume
+                                        </label>
+                                        <input size="3" maxlength="3" name="volume" id="volume" value="50" type="text">
+                                        <button type="button" id="volume_icon" class="level_2" title="Open volume slider">
+                                            <p>
+                                                Open
+                                            </p>
+                                        </button>
+                                        <span style="left: 105px;" id="volume_slider"><span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_128003339613826"><span class="yui3-slider-content yui3-slider-y" id="yui_3_1_1_1_128003339613828"><span id="yui_3_1_1_1_128003339613843" style="height: 105px;" class="yui3-slider-rail"><span style="top: 29px; left: 0px;" id="yui_3_1_1_1_128003339613844" class="yui3-slider-thumb yui3-dd-draggable"><img id="yui_3_1_1_1_1280033396138155" src="assets/images/sprite.png" height="384" width="31"></span></span></span></span></span>
+                                        <label for="mute">
+                                            <input id="mute" type="checkbox">mute
+                                        </label>
+                                    </div>
+                                    <div class="demo-content">
+                                        <p>
+                                            Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo, sed imperdiet lectus est ornare odio.
+                                        </p>
+                                        <p>
+                                            Phasellus wisi purus, interdum vitae, rutrum accumsan, viverra in, velit. Sed enim risus, congue non, tristique in, commodo eu, metus. Aenean tortor mi, imperdiet id, gravida eu, posuere eu, felis.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("slider", function(Y){
+                            
+                                var control = Y.one('#volume_control'), volInput = Y.one('#volume'), icon = Y.one('#volume_icon'), mute = Y.one('#mute'), open = false, level = 2, beforeMute = 0, wait, volume;
+                                
+                                Y.one("#volume_slider").setStyle('left', icon.get('offsetLeft') + 'px');
+                                
+                                volume = new Y.Slider({
+                                    axis: 'y',
+                                    min: 100,
+                                    max: 0,
+                                    value: 50,
+                                    length: '105px'
+                                });
+                                
+                                volume.renderRail = function(){
+                                    return Y.one("#volume_slider span.yui3-slider-rail");
+                                };
+                                volume.renderThumb = function(){
+                                    return this.rail.one("span.yui3-slider-thumb");
+                                };
+                                
+                                volume.render("#volume_slider");
+                                
+                                // Initialize event listeners
+                                volume.after('valueChange', updateInput);
+                                volume.after('valueChange', updateIcon);
+                                
+                                mute.on('click', muteVolume);
+                                
+                                volInput.on({
+                                    keydown: handleInput,
+                                    keyup: updateVolume
+                                });
+                                
+                                icon.on('click', showHideSlider);
+                                
+                                Y.one('doc').on('click', handleDocumentClick);
+                                
+                                // Support functions
+                                function updateInput(e){
+                                    if (e.src !== 'KEY') {
+                                        volInput.set('value', e.newVal);
+                                    }
+                                }
+                                
+                                function updateIcon(e){
+                                    var newLevel = e.newVal && Math.ceil(e.newVal / 34);
+                                    
+                                    if (level !== newLevel) {
+                                        icon.replaceClass('level_' + level, 'level_' + newLevel);
+                                        level = newLevel;
+                                    }
+                                }
+                                
+                                function muteVolume(e){
+                                    var disabled = !volume.get('disabled');
+                                    volume.set('disabled', disabled);
+                                    
+                                    if (disabled) {
+                                        beforeMute = volume.getValue();
+                                        volume.setValue(0);
+                                        volInput.set('disabled', 'disabled');
+                                    }
+                                    else {
+                                        volume.setValue(beforeMute);
+                                        volInput.set('disabled', '');
+                                    }
+                                }
+                                
+                                function handleInput(e){
+                                    // Allow only numbers and various other control keys
+                                    if (e.keyCode > 57) {
+                                        e.halt();
+                                    }
+                                }
+                                
+                                function updateVolume(e){
+                                    // delay input processing to give the user time to type
+                                    if (wait) {
+                                        wait.cancel();
+                                    }
+                                    
+                                    wait = Y.later(400, null, function(){
+                                        var value = parseInt(volInput.get('value'), 10) || 0;
+                                        
+                                        if (value > 100) {
+                                            volInput.set('value', 100);
+                                            value = 100
+                                        }
+                                        
+                                        volume.setValue(value);
+                                    });
+                                }
+                                
+                                function showHideSlider(e){
+                                    control.toggleClass('volume-hide');
+                                    open = !open;
+                                    
+                                    if (e) {
+                                        e.preventDefault();
+                                    }
+                                }
+                                
+                                function handleDocumentClick(e){
+                                    if (open && !icon.contains(e.target) &&
+                                    !volume.get('boundingBox').contains(e.target)) {
+                                        showHideSlider();
+                                    }
+                                }
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Alternate skins</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example demonstrates the alternate skins available for Slider, and how to apply them.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="demo">
+                                    <div class="yui-g">
+                                        <div class="yui-u first">
+                                            <div class="light">
+                                                <h4>Light skins</h4>
+                                                <div class="yui3-skin-sam">
+                                                    <h5>Sam skin</h5>
+                                                    <div id="sam">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_128003340007521"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_128003340007523"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_128003340007542" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-capsule">
+                                                    <h5>Capsule skin</h5>
+                                                    <div id="capsule">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075219"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075221"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075239" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/capsule/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/capsule/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-round">
+                                                    <h5>Round skin</h5>
+                                                    <div id="round">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075409"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075411"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075429" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/round/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/round/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-audio-light">
+                                                    <h5>Audio skin (light)</h5>
+                                                    <div id="audio_light">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075599"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075601"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075619" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/audio-light/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/audio-light/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="yui-u">
+                                            <div class="dark">
+                                                <h4>Dark skins</h4>
+                                                <div class="yui3-skin-sam-dark">
+                                                    <h5>Sam skin (dark)</h5>
+                                                    <div id="sam_dark">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075124"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075126"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075144" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam-dark/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/sam-dark/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-capsule-dark">
+                                                    <h5>Capsule skin (dark)</h5>
+                                                    <div id="capsule_dark">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075314"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075316"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075334" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/capsule-dark/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/capsule-dark/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-round-dark">
+                                                    <h5>Round skin (dark)</h5>
+                                                    <div id="round_dark">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075504"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075506"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075524" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/round-dark/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/round-dark/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="yui3-skin-audio">
+                                                    <h5>Audio skin</h5>
+                                                    <div id="audio">
+                                                        <span class="yui3-widget yui3-sliderbase yui3-slider" id="yui_3_1_1_1_1280033400075694"><span class="yui3-slider-content yui3-slider-x" id="yui_3_1_1_1_1280033400075696"><span style="width: 150px;" class="yui3-slider-rail"><span class="yui3-slider-rail-cap-left"></span><span class="yui3-slider-rail-cap-right"></span><span style="left: 0px;" id="yui_3_1_1_1_1280033400075714" class="yui3-slider-thumb yui3-dd-draggable" tabindex="-1"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/audio/thumb-x.png" alt="Slider thumb shadow" class="yui3-slider-thumb-shadow"><img src="http://yui.yahooapis.com/3.1.1/build/slider/assets/skins/audio/thumb-x.png" alt="Slider thumb" class="yui3-slider-thumb-image"></span></span></span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            YUI({
+                                skin: {
+                                    overrides: {
+                                        slider: ['sam', // The default skin
+                             'sam-dark', // Suited for dark backgrounds
+                             'capsule', // You only need to include one skin
+                             'capsule-dark', // in the overrides section unless you
+                                        // are using multiple skins on the same page
+                                        'round', 'round-dark', 'audio-light', 'audio']
+                                    }
+                                }
+                            }).use('slider', function(Y){
+                            
+                                new Y.Slider().render('#sam');
+                                new Y.Slider().render('#sam_dark');
+                                
+                                new Y.Slider().render('#capsule');
+                                new Y.Slider().render('#capsule_dark');
+                                
+                                new Y.Slider().render('#round');
+                                new Y.Slider().render('#round_dark');
+                                
+                                new Y.Slider().render('#audio_light');
+                                new Y.Slider().render('#audio');
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>

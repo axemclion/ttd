@@ -1,0 +1,1623 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/combo?3.1.1/build/widget/assets/skins/sam/widget.css&"/>
+        <style>		
+             ....loading....
+            
+            Response Body	759 B	(759)
+            Post Body	0	
+            Total Received*	1 KB	(1,042)
+            Total Sent*	523 B	(523)
+            *Including Headers
+             	
+            URL
+            	
+            Status
+            	
+            Domain
+            	
+            Size
+            	
+            Timeline
+            Firebug's log limit has been reached. 0 entries not shown.		Preferences	 
+            Net panel activated. Any requests while the net panel is inactive are not shown.
+             	
+            -
+            			
+            0KB
+            	
+            (0KB from cache)
+            0ms
+            Firebug's log limit has been reached. 0 entries not shown.		Preferences	 
+            text
+            Rulesets
+            
+                * Printable View
+                * Help
+            
+            YSlow Help
+            YSlow FAQ
+            YSlow Blog
+            YSlow Community
+            Send Feedback
+            YSlow Home
+            
+                * Grade
+                * Components
+                * Statistics
+                * Tools
+            
+            splash image
+            Grade your web pages with YSlow
+            YSlow gives you:
+            
+                * Grade based on the performance of the page (you can define your own ruleset)
+                * Summary of the page components
+                * Chart with statistics
+                * Tools for analyzing performance, including Smush.it™ and JSLint
+            
+            Autorun YSlow each time a web page is loaded
+            Run Test
+            »Learn more about YSlow and the Yahoo! Developer Network
+            Copyright © 2009 Yahoo! Inc. All rights reserved.
+            .yui3-js-enabled .yui3-spinner-loading {
+            display:none;
+            }
+            .yui3-spinner-hidden {
+            display:none;
+            }
+            .yui3-spinner {
+            display:inline-block;
+            vertical-align:middle;
+            }
+            .yui3-spinner-content {
+            padding:1px;
+            position:relative;
+            }
+            .yui3-spinner-value {
+            border:1px solid #000000;
+            height:1.5em;
+            margin-right:22px;
+            padding:2px;
+            text-align:right;
+            vertical-align:top;
+            width:2em;
+            }
+            .yui3-spinner-increment, .yui3-spinner-decrement {
+            border:1px solid #999999;
+            height:1em;
+            margin:0;
+            overflow:hidden;
+            padding:0;
+            position:absolute;
+            text-indent:-10em;
+            width:22px;
+            }
+            .yui3-spinner-increment {
+            background:url("assets/arrows.png") no-repeat scroll 50% 0 #DDDDDD;
+            right:1px;
+            top:1px;
+            }
+            .yui3-spinner-decrement {
+            background:url("assets/arrows.png") no-repeat scroll 50% -20px #DDDDDD;
+            bottom:1px;
+            right:1px;
+            }
+            #widget-extend-example {
+            padding:5px;
+            }
+            #widget-extend-example .hint {
+            color:#0000AA;
+            font-size:85%;
+            margin-top:10px;
+            }
+            
+            		
+        </style>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Widget</a>
+                <ul>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Extending the base widget class</a>
+                        <div class = 'example-docs'>
+                            This example shows how to extend the base 
+                            <code>
+                                Widget
+                            </code>
+                            class to create a simple, re-usable spinner control. The 
+                            <code>
+                                Spinner
+                            </code>
+                            class created in the example is not intended to be a fully featured spinner. It is used here as a concrete example, to convey some of the key concepts to keep in mind when extending the 
+                            <code>
+                                Widget
+                            </code>
+                            class.
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="widget-extend-example">
+                                    A basic spinner widget: 
+                                    <div class="yui3-widget yui3-spinner yui3-spinner-focused" id="yui_3_1_1_1_128003329831317">
+                                        <div class="yui3-spinner-content" id="yui_3_1_1_1_128003329831326">
+                                            <input title="Press the arrow up/down keys for minor increments, page up/down for major increments." class="yui3-spinner-value" type="text">
+                                            <button class="yui3-spinner-increment" title="Increment" type="button">
+                                                Increment
+                                            </button>
+                                            <button class="yui3-spinner-decrement" title="Decrement" type="button">
+                                                Decrement
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="hint">
+                                        Click the buttons, or the arrow up/down and page up/down keys on your keyboard to change the spinner's value
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("event-key", "widget", function(Y){
+                            
+                                var Lang = Y.Lang, Widget = Y.Widget, Node = Y.Node;
+                                
+                                /* Spinner class constructor */
+                                function Spinner(config){
+                                    Spinner.superclass.constructor.apply(this, arguments);
+                                }
+                                
+                                /* 
+                                 * Required NAME static field, to identify the Widget class and
+                                 * used as an event prefix, to generate class names etc. (set to the
+                                 * class name in camel case).
+                                 */
+                                Spinner.NAME = "spinner";
+                                
+                                /*
+                                 * The attribute configuration for the Spinner widget. Attributes can be
+                                 * defined with default values, get/set functions and validator functions
+                                 * as with any other class extending Base.
+                                 */
+                                Spinner.ATTRS = {
+                                    // The minimum value for the spinner.
+                                    min: {
+                                        value: 0
+                                    },
+                                    
+                                    // The maximum value for the spinner.
+                                    max: {
+                                        value: 100
+                                    },
+                                    
+                                    // The current value of the spinner.
+                                    value: {
+                                        value: 0,
+                                        validator: function(val){
+                                            return this._validateValue(val);
+                                        }
+                                    },
+                                    
+                                    // Amount to increment/decrement the spinner when the buttons or arrow up/down keys are pressed.
+                                    minorStep: {
+                                        value: 1
+                                    },
+                                    
+                                    // Amount to increment/decrement the spinner when the page up/down keys are pressed.
+                                    majorStep: {
+                                        value: 10
+                                    },
+                                    
+                                    // The strings for the spinner UI. This attribute is 
+                                    // defined by the base Widget class but has an empty value. The
+                                    // spinner is simply providing a default value for the attribute.
+                                    strings: {
+                                        value: {
+                                            tooltip: "Press the arrow up/down keys for minor increments, page up/down for major increments.",
+                                            increment: "Increment",
+                                            decrement: "Decrement"
+                                        }
+                                    }
+                                };
+                                
+                                /* Static constant used to identify the classname applied to the spinners value field */
+                                Spinner.INPUT_CLASS = Y.ClassNameManager.getClassName(Spinner.NAME, "value");
+                                
+                                /* Static constants used to define the markup templates used to create Spinner DOM elements */
+                                Spinner.INPUT_TEMPLATE = '<input type="text" class="' + Spinner.INPUT_CLASS + '">';
+                                Spinner.BTN_TEMPLATE = '<button type="button"></button>';
+                                
+                                /* 
+                                 * The HTML_PARSER static constant is used by the Widget base class to populate
+                                 * the configuration for the spinner instance from markup already on the page.
+                                 *
+                                 * The Spinner class attempts to set the value of the spinner widget if it
+                                 * finds the appropriate input element on the page.
+                                 */
+                                Spinner.HTML_PARSER = {
+                                    value: function(srcNode){
+                                        var val = parseInt(srcNode.get("value"));
+                                        return Y.Lang.isNumber(val) ? val : null;
+                                    }
+                                };
+                                
+                                /* Spinner extends the base Widget class */
+                                Y.extend(Spinner, Widget, {
+                                
+                                    /*
+                                     * initializer is part of the lifecycle introduced by
+                                     * the Widget class. It is invoked during construction,
+                                     * and can be used to setup instance specific state.
+                                     *
+                                     * The Spinner class does not need to perform anything
+                                     * specific in this method, but it is left in as an example.
+                                     */
+                                    initializer: function(){
+                                        // Not doing anything special during initialization
+                                    },
+                                    
+                                    /*
+                                     * destructor is part of the lifecycle introduced by
+                                     * the Widget class. It is invoked during destruction,
+                                     * and can be used to cleanup instance specific state.
+                                     *
+                                     * The spinner cleans up any node references it's holding
+                                     * onto. The Widget classes destructor will purge the
+                                     * widget's bounding box of event listeners, so spinner
+                                     * only needs to clean up listeners it attaches outside of
+                                     * the bounding box.
+                                     */
+                                    destructor: function(){
+                                        this._documentMouseUpHandle.detach();
+                                        
+                                        this.inputNode = null;
+                                        this.incrementNode = null;
+                                        this.decrementNode = null;
+                                    },
+                                    
+                                    /*
+                                     * renderUI is part of the lifecycle introduced by the
+                                     * Widget class. Widget's renderer method invokes:
+                                     *
+                                     *     renderUI()
+                                     *     bindUI()
+                                     *     syncUI()
+                                     *
+                                     * renderUI is intended to be used by the Widget subclass
+                                     * to create or insert new elements into the DOM.
+                                     *
+                                     * For spinner the method adds the input (if it's not already
+                                     * present in the markup), and creates the inc/dec buttons
+                                     */
+                                    renderUI: function(){
+                                        this._renderInput();
+                                        this._renderButtons();
+                                    },
+                                    
+                                    /*
+                                     * bindUI is intended to be used by the Widget subclass
+                                     * to bind any event listeners which will drive the Widget UI.
+                                     *
+                                     * It will generally bind event listeners for attribute change
+                                     * events, to update the state of the rendered UI in response
+                                     * to attribute value changes, and also attach any DOM events,
+                                     * to activate the UI.
+                                     *
+                                     * For spinner, the method:
+                                     *
+                                     * - Sets up the attribute change listener for the "value" attribute
+                                     *
+                                     * - Binds key listeners for the arrow/page keys
+                                     * - Binds mouseup/down listeners on the boundingBox, document respectively.
+                                     * - Binds a simple change listener on the input box.
+                                     */
+                                    bindUI: function(){
+                                        this.after("valueChange", this._afterValueChange);
+                                        
+                                        var boundingBox = this.get("boundingBox");
+                                        
+                                        // Looking for a key event which will fire continously across browsers while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
+                                        var keyEventSpec = (!Y.UA.opera) ? "down:" : "press:";
+                                        keyEventSpec += "38, 40, 33, 34";
+                                        
+                                        Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
+                                        Y.on("mousedown", Y.bind(this._onMouseDown, this), boundingBox);
+                                        this._documentMouseUpHandle = Y.on("mouseup", Y.bind(this._onDocMouseUp, this), boundingBox.get("ownerDocument"));
+                                        
+                                        Y.on("change", Y.bind(this._onInputChange, this), this.inputNode);
+                                    },
+                                    
+                                    /*
+                                     * syncUI is intended to be used by the Widget subclass to
+                                     * update the UI to reflect the current state of the widget.
+                                     *
+                                     * For spinner, the method sets the value of the input field,
+                                     * to match the current state of the value attribute.
+                                     */
+                                    syncUI: function(){
+                                        this._uiSetValue(this.get("value"));
+                                    },
+                                    
+                                    /*
+                                     * Creates the input control for the spinner and adds it to
+                                     * the widget's content box, if not already in the markup.
+                                     */
+                                    _renderInput: function(){
+                                        var contentBox = this.get("contentBox"), input = contentBox.one("." + Spinner.INPUT_CLASS), strings = this.get("strings");
+                                        
+                                        if (!input) {
+                                            input = Node.create(Spinner.INPUT_TEMPLATE);
+                                            contentBox.appendChild(input);
+                                        }
+                                        
+                                        input.set("title", strings.tooltip);
+                                        this.inputNode = input;
+                                    },
+                                    
+                                    /*
+                                     * Creates the button controls for the spinner and add them to
+                                     * the widget's content box, if not already in the markup.
+                                     */
+                                    _renderButtons: function(){
+                                        var contentBox = this.get("contentBox"), strings = this.get("strings");
+                                        
+                                        var inc = this._createButton(strings.increment, this.getClassName("increment"));
+                                        var dec = this._createButton(strings.decrement, this.getClassName("decrement"));
+                                        
+                                        this.incrementNode = contentBox.appendChild(inc);
+                                        this.decrementNode = contentBox.appendChild(dec);
+                                    },
+                                    
+                                    /*
+                                     * Utility method, to create a spinner button
+                                     */
+                                    _createButton: function(text, className){
+                                    
+                                        var btn = Y.Node.create(Spinner.BTN_TEMPLATE);
+                                        btn.set("innerHTML", text);
+                                        btn.set("title", text);
+                                        btn.addClass(className);
+                                        
+                                        return btn;
+                                    },
+                                    
+                                    /*
+                                     * Bounding box mouse down handler. Will determine if the mouse down
+                                     * is on one of the spinner buttons, and increment/decrement the value
+                                     * accordingly.
+                                     *
+                                     * The method also sets up a timer, to support the user holding the mouse
+                                     * down on the spinner buttons. The timer is cleared when a mouse up event
+                                     * is detected.
+                                     */
+                                    _onMouseDown: function(e){
+                                        var node = e.target, dir, handled = false, currVal = this.get("value"), minorStep = this.get("minorStep");
+                                        
+                                        if (node.hasClass(this.getClassName("increment"))) {
+                                            this.set("value", currVal + minorStep);
+                                            dir = 1;
+                                            handled = true;
+                                        }
+                                        else if (node.hasClass(this.getClassName("decrement"))) {
+                                            this.set("value", currVal - minorStep);
+                                            dir = -1;
+                                            handled = true;
+                                        }
+                                        
+                                        if (handled) {
+                                            this._setMouseDownTimers(dir, minorStep);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Override the default content box value, since we don't want the srcNode
+                                     * to be the content box for spinner.
+                                     */
+                                    _defaultCB: function(){
+                                        return null;
+                                    },
+                                    
+                                    /*
+                                     * Document mouse up handler. Clears the timers supporting
+                                     * the "mouse held down" behavior.
+                                     */
+                                    _onDocMouseUp: function(e){
+                                        this._clearMouseDownTimers();
+                                    },
+                                    
+                                    /*
+                                     * Bounding box Arrow up/down, Page up/down key listener.
+                                     *
+                                     * Increments/Decrement the spinner value, based on the key pressed.
+                                     */
+                                    _onDirectionKey: function(e){
+                                    
+                                        e.preventDefault();
+                                        
+                                        var currVal = this.get("value"), newVal = currVal, minorStep = this.get("minorStep"), majorStep = this.get("majorStep");
+                                        
+                                        switch (e.charCode) {
+                                            case 38:
+                                                newVal += minorStep;
+                                                break;
+                                            case 40:
+                                                newVal -= minorStep;
+                                                break;
+                                            case 33:
+                                                newVal += majorStep;
+                                                newVal = Math.min(newVal, this.get("max"));
+                                                break;
+                                            case 34:
+                                                newVal -= majorStep;
+                                                newVal = Math.max(newVal, this.get("min"));
+                                                break;
+                                        }
+                                        
+                                        if (newVal !== currVal) {
+                                            this.set("value", newVal);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Simple change handler, to make sure user does not input an invalid value
+                                     */
+                                    _onInputChange: function(e){
+                                        if (!this._validateValue(this.inputNode.get("value"))) {
+                                            this.syncUI();
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Initiates mouse down timers, to increment slider, while mouse button
+                                     * is held down
+                                     */
+                                    _setMouseDownTimers: function(dir, step){
+                                        this._mouseDownTimer = Y.later(500, this, function(){
+                                            this._mousePressTimer = Y.later(100, this, function(){
+                                                this.set("value", this.get("value") + (dir * step));
+                                            }, null, true)
+                                        });
+                                    },
+                                    
+                                    /*
+                                     * Clears timers used to support the "mouse held down" behavior
+                                     */
+                                    _clearMouseDownTimers: function(){
+                                        if (this._mouseDownTimer) {
+                                            this._mouseDownTimer.cancel();
+                                            this._mouseDownTimer = null;
+                                        }
+                                        if (this._mousePressTimer) {
+                                            this._mousePressTimer.cancel();
+                                            this._mousePressTimer = null;
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * value attribute change listener. Updates the
+                                     * value in the rendered input box, whenever the
+                                     * attribute value changes.
+                                     */
+                                    _afterValueChange: function(e){
+                                        this._uiSetValue(e.newVal);
+                                    },
+                                    
+                                    /*
+                                     * Updates the value of the input box to reflect
+                                     * the value passed in
+                                     */
+                                    _uiSetValue: function(val){
+                                        this.inputNode.set("value", val);
+                                    },
+                                    
+                                    /*
+                                     * value attribute default validator. Verifies that
+                                     * the value being set lies between the min/max value
+                                     */
+                                    _validateValue: function(val){
+                                        var min = this.get("min"), max = this.get("max");
+                                        
+                                        return (Lang.isNumber(val) && val >= min && val <= max);
+                                    }
+                                });
+                                
+                                // Create a new Spinner instance, drawing it's 
+                                // starting value from an input field already on the 
+                                // page (the #numberField text box)
+                                var spinner = new Spinner({
+                                    srcNode: "#numberField",
+                                    max: 100,
+                                    min: 0
+                                });
+                                spinner.render();
+                                spinner.focus();
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating custom widget classes</a>
+                        <div class = 'example-docs'>
+                            This example shows how you can mix and match the 
+                            <code>
+                                WidgetPosition
+                            </code>, 
+                            <code>
+                                WidgetPositionAlign
+                            </code>, 
+                            <code>
+                                WidgetStack
+                            </code>
+                            and 
+                            <code>
+                                WidgetStdMod
+                            </code>
+                            extensions to build custom versions of the 
+                            <code>
+                                Widget
+                            </code>
+                            class, using 
+                            <code>
+                                Base.create
+                            </code>.
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <ol>
+                                    <li>
+                                        <code>
+                                            Widget
+                                        </code>
+                                        with 
+                                        <code>
+                                            WidgetStdMod
+                                        </code>
+                                        <div class="widget-build-example" id="widget1-example">
+                                            <input id="content" value="" type="text">
+                                            <select id="section">
+                                                <option value="header">Header</option>
+                                                <option value="body">Body</option>
+                                                <option value="footer">Footer</option>
+                                            </select>
+                                            <button type="button" id="setContent">
+                                                Set Content
+                                            </button>
+                                            <button type="button" class="fail" id="tryMove">
+                                                move() (should fail)
+                                            </button>
+                                            <div style="height: 12em; width: 12em;" class="yui3-widget yui3-standardmodule" id="yui_3_1_1_1_128003288254816">
+                                                <div class="yui3-standardmodule-content yui3-widget-stdmod yui3-widget-content-expanded" id="widget1">
+                                                    <div class="yui3-widget-hd">
+                                                        Module Header
+                                                    </div>
+                                                    <div style="height: 74px;" class="yui3-widget-bd">
+                                                        Module Body
+                                                    </div>
+                                                    <div class="yui3-widget-ft">
+                                                        Module Footer
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="filler">
+                                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam.
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <code>
+                                            Widget
+                                        </code>
+                                        with 
+                                        <code>
+                                            WidgetPosition, WidgetStack
+                                        </code>
+                                        <div class="widget-build-example" id="widget2-example">
+                                            <label>
+                                                X: <input id="x" value="0" type="text">
+                                            </label>
+                                            <label>
+                                                Y: <input id="y" value="0" type="text">
+                                            </label>
+                                            <button type="button" id="move">
+                                                Move
+                                            </button>
+                                            <button type="button" class="fail" id="tryContent">
+                                                setStdModContent() (should fail)
+                                            </button>
+                                            <p id="yui_3_1_1_1_1280032882548108" class="filler">
+                                                <select>
+                                                    <option>Prevent IE6 Bleedthrough</option>
+                                                </select>
+                                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est. 
+                                            </p>
+                                            <div style="width: 10em; left: 45px; top: 387.1px; z-index: 1;" class="yui3-widget yui3-positionable yui3-widget-positioned yui3-widget-stacked" id="yui_3_1_1_1_128003288254872">
+                                                <div class="yui3-positionable-content" id="widget2">
+                                                    <strong>Positionable Widget</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <code>
+                                            Widget
+                                        </code>
+                                        with 
+                                        <code>
+                                            WidgetPosition, WidgetStack, WidgetPositionAlign
+                                        </code>
+                                        <div class="widget-build-example" id="widget3-example">
+                                            <button type="button" id="run">
+                                                Run Through Alignment
+                                            </button>
+                                            <p class="filler">
+                                                <select>
+                                                    <option>Prevent IE6 Bleedthrough</option>
+                                                </select>
+                                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est.
+                                            </p>
+                                            <div style="width: 13em; left: 356px; top: 652.1px; z-index: 1;" class="yui3-widget yui3-alignable yui3-widget-positioned yui3-widget-stacked" id="yui_3_1_1_1_1280032882548122">
+                                                <div class="yui3-alignable-content" id="yui_3_1_1_1_1280032882548124">
+                                                    <strong>Alignable Widget</strong>
+                                                    <div id="alignment">
+                                                        <p>
+                                                            #widget3-example
+                                                        </p>
+                                                        <p>
+                                                            [center, center]
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", "async-queue", function(Y){
+                            
+                            
+                            
+                                // WIDGET 1 : Build Widget with StdMod, but no positioning/stacking support.
+                                
+                                var StandardModule = Y.Base.create("standardModule", Y.Widget, [Y.WidgetStdMod]);
+                                
+                                var stdmod = new StandardModule({
+                                    srcNode: "#widget1",
+                                    width: "12em",
+                                    height: "12em"
+                                });
+                                stdmod.render();
+                                
+                                var contentInput = Y.one("#content");
+                                var sectionInput = Y.one("#section");
+                                
+                                Y.on("click", function(e){
+                                    var content = contentInput.get("value");
+                                    var section = sectionInput.get("value");
+                                    
+                                    stdmod.setStdModContent(section, content);
+                                    
+                                }, "#setContent");
+                                
+                                Y.on("click", function(e){
+                                    try {
+                                        stdmod.move([0, 0]);
+                                    } 
+                                    catch (e) {
+                                        alert("move() is " + typeof stdmod.move + ", stdmod.hasImpl(Y.WidgetPosition) : " + stdmod.hasImpl(Y.WidgetPosition));
+                                    }
+                                }, "#tryMove");
+                                
+                                // WIDGET 2: Build Widget with Position support and Stack support, but no StdMod support or Position Extras support.
+                                
+                                var Positionable = Y.Base.create("positionable", Y.Widget, [Y.WidgetPosition, Y.WidgetStack]);
+                                
+                                var positionable = new Positionable({
+                                    srcNode: "#widget2",
+                                    width: "10em",
+                                    zIndex: 1
+                                });
+                                positionable.render("#widget2-example");
+                                
+                                var xy = Y.one("#widget2-example > p").getXY();
+                                
+                                positionable.move(xy[0], xy[1]);
+                                
+                                var xInput = Y.one("#x");
+                                var yInput = Y.one("#y");
+                                
+                                xInput.set("value", Math.round(xy[0]));
+                                yInput.set("value", Math.round(xy[1]));
+                                
+                                Y.on("click", function(e){
+                                    var x = parseInt(xInput.get("value"));
+                                    var y = parseInt(yInput.get("value"));
+                                    
+                                    positionable.move(x, y);
+                                    
+                                }, "#move");
+                                
+                                Y.on("click", function(e){
+                                    try {
+                                        positionable.setStdModContent("header", "new content");
+                                    } 
+                                    catch (e) {
+                                        alert("setStdModContent() is " + typeof positionable.setStdModContent + ", positionable.hasImpl(Y.WidgetStdMod) : " + positionable.hasImpl(Y.WidgetStdMod));
+                                    }
+                                }, "#tryContent");
+                                
+                                
+                                
+                                // WIDGET 3: Build Widget with Position, PositionExt and Stack support, but no StdMod support.
+                                
+                                var Alignable = Y.Base.create("alignable", Y.Widget, [Y.WidgetPosition, Y.WidgetPositionAlign, Y.WidgetStack]);
+                                
+                                var alignable = new Alignable({
+                                    width: "13em",
+                                    align: {
+                                        node: "#widget3-example",
+                                        points: ["cc", "cc"]
+                                    },
+                                    zIndex: 1
+                                });
+                                alignable.get("contentBox").set("innerHTML", '<strong>Alignable Widget</strong><div id="alignment"><p>#widget3-example</p><p>[center, center]</p></div>');
+                                alignable.render("#widget3-example");
+                                
+                                Y.on('click', function(){
+                                    var stepDelay = 2500;
+                                    var currAlignment = Y.one("#alignment");
+                                    var steps = [function(){
+                                        alignable.set("align", {
+                                            node: "#widget3-example",
+                                            points: ["lc", "rc"]
+                                        });
+                                        currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[left-center, right-center]</p>");
+                                    }, function(){
+                                        alignable.set("align", {
+                                            node: "#widget3-example",
+                                            points: ["tr", "br"]
+                                        });
+                                        currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[top-right, bottom-right]</p>");
+                                    }, function(){
+                                        alignable.set("centered", "#widget3-example");
+                                        currAlignment.set("innerHTML", "<p>#widget3-example</p><p>centered</p>");
+                                    }, function(){
+                                        alignable.set("align", {
+                                            points: ["rc", "rc"]
+                                        });
+                                        currAlignment.set("innerHTML", "<p>viewport</p><p>[right-center, right-center]</p>");
+                                    }, function(){
+                                        alignable.set("centered", true);
+                                        currAlignment.set("innerHTML", "<p>viewport</p><p>centered</p>");
+                                    }, function(){
+                                        alignable.set("align", {
+                                            node: "#widget3-example",
+                                            points: ["cc", "cc"]
+                                        });
+                                        currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[center, center]</p>");
+                                    }
+                            ];
+                                    
+                                    var q = new Y.AsyncQueue();
+                                    for (var i = 0; i < steps.length; i++) {
+                                        q.add({
+                                            timeout: (i === 0) ? 0 : stepDelay,
+                                            fn: steps[i]
+                                        });
+                                    }
+                                    q.run();
+                                    
+                                }, "#run");
+                                
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating a widget plugin</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This example shows how you can use Widget's plugin infrastructure to add
+                                additional features to an existing widget.
+                            </p>
+                            <p>
+                                We create an IO plugin class for 
+                                <code>
+                                    Widget
+                                </code>
+                                called
+                                <code>
+                                    WidgetIO
+                                </code>. The plugin adds IO capabilities to the Widget, 
+                                which, by default, outputs to the 
+                                <code>
+                                    Widget
+                                </code>'s 
+                                <code>
+                                    contentBox
+                                </code>.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="demo">
+                                    <div class="yui3-widget" id="yui_3_1_1_1_128003289062720">
+                                        <div class="yui3-widget-content" id="yui_3_1_1_1_128003289062722">
+                                            <ul>
+                                                <li>
+                                                    <a href="http://bits.blogs.nytimes.com/2010/07/22/apples-web-browser-allows-sites-to-collect-personal-information/">
+                                                        <q>
+                                                            Apple’s Web Browser Allows Sites To Collect Personal Information
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        New York Times
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://news.yahoo.com/s/pcworld/20100723/tc_pcworld/safaribrowserhackrevealsautofillsecurityconcerns_1">
+                                                        <q>
+                                                            Safari Browser Hack Reveals AutoFill Security Concerns
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        PC World via Yahoo! News
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.tomshardware.com/reviews/opera-chrome-firefox,2689.html">
+                                                        <q>
+                                                            Web Browser Grand Prix 2: Running The Linux Circuit
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        Tom's Hardware
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.bbc.co.uk/sport1/hi/motorsport/formula_one/8851415.stm">
+                                                        <q>
+                                                            PRODUCTS &amp; SERVICES
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        BBC Radio 1
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.investopedia.com/ask/answers/09/browser-wars-netscape-internet-explorer.asp">
+                                                        <q>
+                                                            What are the "browser wars"?
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        Investopedia
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://lifehacker.com/5593480/web-store-link-shows-up-in-chrome-webapps-likely-coming-soon">
+                                                        <q>
+                                                            Web Store Link Shows Up in Chrome, Webapps Likely Coming Soon [Chrome]
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        Lifehacker
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://news.yahoo.com/s/mashable/20100724/tc_mashable/yolink_helps_web_researchers_search_behind_links_1">
+                                                        <q>
+                                                            Yolink Helps Web Researchers Search Behind Links
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        Mashable via Yahoo! News
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://blogs.wsj.com/digits/2010/07/22/apple-working-on-fix-for-browser-privacy-flaw/">
+                                                        <q>
+                                                            Apple Working on Fix for Browser Privacy Flaw
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        Wall Street Journal Blogs
+                                                    </cite>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.t3.com/news/safari-default-settings-put-users-information-at-risk?=47475&amp;ns_campaign=all&amp;ns_mchannel=rss&amp;ns_source=t3&amp;ns_linkname=0&amp;ns_fee=0">
+                                                        <q>
+                                                            Safari default settings put user's information at risk
+                                                        </q>
+                                                    </a>
+                                                    <cite>
+                                                        T3
+                                                    </cite>
+                                                </li>
+                                            </ul>
+                                            <!-- p1.ydn.re1.yahoo.com compressed/chunked Sat Jul 24 21:41:34 PDT 2010 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("widget", "gallery-widget-io", function(Y){
+                                var widget = new Y.Widget();
+                                
+                                widget.plug(Y.Plugin.WidgetIO, {
+                                    uri: 'assets/news.php?query=web+browser',
+                                    loading: '<img class="yui3-loading" width="32px" height="32px" src="assets/img/ajax-loader.gif">'
+                                });
+                                
+                                widget.render('#demo');
+                                widget.io.refresh();
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating a simple Tooltip widget</a>
+                        <div class = 'example-docs'>
+                            This is an advanced example, in which we create a Tooltip widget, by extending the base 
+                            <code>
+                                Widget
+                            </code>
+                            class, and adding 
+                            <code>
+                                WidgetStack
+                            </code>
+                            and 
+                            <code>
+                                WidgetPosition
+                            </code>
+                            extensions, through 
+                            <code>
+                                Base.build
+                            </code>. 
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <div id="delegate">
+                                    <div class="yui3-hastooltip yui3-tooltip-trigger" title="Tooltip 1" id="tt1">
+                                        Tooltip One <span>(content from title)</span>
+                                    </div>
+                                    <div class="yui3-hastooltip yui3-tooltip-trigger" title="Tooltip 2" id="tt2">
+                                        Tooltip Two <span>(content set in event listener)</span>
+                                    </div>
+                                    <div class="yui3-hastooltip yui3-tooltip-trigger" title="Tooltip 3" id="tt3">
+                                        Tooltip Three <span>(content from lookup)</span>
+                                    </div>
+                                    <div class="yui3-hastooltip yui3-tooltip-trigger" title="Tooltip 4" id="tt4">
+                                        Tooltip Four <span>(content from title)</span>
+                                    </div>
+                                    <label>
+                                        <input id="prevent" type="checkbox">Prevent Tooltip Four
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("event-mouseenter", "widget", "widget-position", "widget-stack", function(Y){
+                                var Lang = Y.Lang, Node = Y.Node, OX = -10000, OY = -10000;
+                                
+                                var Tooltip = Y.Base.create("tooltip", Y.Widget, [Y.WidgetPosition, Y.WidgetStack], {
+                                
+                                    // PROTOTYPE METHODS/PROPERTIES
+                                    
+                                    /*
+                                     * Initialization Code: Sets up privately used state
+                                     * properties, and publishes the events Tooltip introduces
+                                     */
+                                    initializer: function(config){
+                                    
+                                        this._triggerClassName = this.getClassName("trigger");
+                                        
+                                        // Currently bound trigger node information
+                                        this._currTrigger = {
+                                            node: null,
+                                            title: null,
+                                            mouseX: Tooltip.OFFSCREEN_X,
+                                            mouseY: Tooltip.OFFSCREEN_Y
+                                        };
+                                        
+                                        // Event handles - mouse over is set on the delegate
+                                        // element, mousemove and mouseleave are set on the trigger node
+                                        this._eventHandles = {
+                                            delegate: null,
+                                            trigger: {
+                                                mouseMove: null,
+                                                mouseOut: null
+                                            }
+                                        };
+                                        
+                                        // Show/hide timers
+                                        this._timers = {
+                                            show: null,
+                                            hide: null
+                                        };
+                                        
+                                        // Publish events introduced by Tooltip. Note the triggerEnter event is preventable,
+                                        // with the default behavior defined in the _defTriggerEnterFn method 
+                                        this.publish("triggerEnter", {
+                                            defaultFn: this._defTriggerEnterFn,
+                                            preventable: true
+                                        });
+                                        this.publish("triggerLeave", {
+                                            preventable: false
+                                        });
+                                    },
+                                    
+                                    /*
+                                     * Destruction Code: Clears event handles, timers,
+                                     * and current trigger information
+                                     */
+                                    destructor: function(){
+                                        this._clearCurrentTrigger();
+                                        this._clearTimers();
+                                        this._clearHandles();
+                                    },
+                                    
+                                    /*
+                                     * bindUI is used to bind attribute change and dom event
+                                     * listeners
+                                     */
+                                    bindUI: function(){
+                                        this.after("delegateChange", this._afterSetDelegate);
+                                        this.after("nodesChange", this._afterSetNodes);
+                                        
+                                        this._bindDelegate();
+                                    },
+                                    
+                                    /*
+                                     * syncUI is used to update the rendered DOM, based on the current
+                                     * Tooltip state
+                                     */
+                                    syncUI: function(){
+                                        this._uiSetNodes(this.get("triggerNodes"));
+                                    },
+                                    
+                                    /*
+                                     * Public method, which can be used by triggerEvent event listeners
+                                     * to set the content of the tooltip for the current trigger node
+                                     */
+                                    setTriggerContent: function(content){
+                                        var contentBox = this.get("contentBox");
+                                        contentBox.set("innerHTML", "");
+                                        
+                                        if (content) {
+                                            if (content instanceof Node) {
+                                                for (var i = 0, l = content.size(); i < l; ++i) {
+                                                    contentBox.appendChild(content.item(i));
+                                                }
+                                            }
+                                            else if (Lang.isString(content)) {
+                                                contentBox.set("innerHTML", content);
+                                            }
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Default attribute change listener for
+                                     * the triggerNodes attribute
+                                     */
+                                    _afterSetNodes: function(e){
+                                        this._uiSetNodes(e.newVal);
+                                    },
+                                    
+                                    /*
+                                     * Default attribute change listener for
+                                     * the delegate attribute
+                                     */
+                                    _afterSetDelegate: function(e){
+                                        this._bindDelegate(e.newVal);
+                                    },
+                                    
+                                    /*
+                                     * Updates the rendered DOM to reflect the
+                                     * set of trigger nodes passed in
+                                     */
+                                    _uiSetNodes: function(nodes){
+                                        if (this._triggerNodes) {
+                                            this._triggerNodes.removeClass(this._triggerClassName);
+                                        }
+                                        
+                                        if (nodes) {
+                                            this._triggerNodes = nodes;
+                                            this._triggerNodes.addClass(this._triggerClassName);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Attaches the default mouseover DOM listener to the
+                                     * current delegate node
+                                     */
+                                    _bindDelegate: function(){
+                                        var eventHandles = this._eventHandles;
+                                        
+                                        if (eventHandles.delegate) {
+                                            eventHandles.delegate.detach();
+                                            eventHandles.delegate = null;
+                                        }
+                                        eventHandles.delegate = Y.delegate("mouseenter", Y.bind(this._onNodeMouseEnter, this), this.get("delegate"), "." + this._triggerClassName);
+                                    },
+                                    
+                                    /*
+                                     * Default mouse enter DOM event listener.
+                                     *
+                                     * Delegates to the _enterTrigger method,
+                                     * if the mouseover enters a trigger node.
+                                     */
+                                    _onNodeMouseEnter: function(e){
+                                        var node = e.currentTarget;
+                                        if (node && (!this._currTrigger.node || !node.compareTo(this._currTrigger.node))) {
+                                            this._enterTrigger(node, e.pageX, e.pageY);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Default mouse leave DOM event listener
+                                     *
+                                     * Delegates to _leaveTrigger if the mouse
+                                     * leaves the current trigger node
+                                     */
+                                    _onNodeMouseLeave: function(e){
+                                        this._leaveTrigger(e.currentTarget);
+                                    },
+                                    
+                                    /*
+                                     * Default mouse move DOM event listener
+                                     */
+                                    _onNodeMouseMove: function(e){
+                                        this._overTrigger(e.pageX, e.pageY);
+                                    },
+                                    
+                                    /*
+                                     * Default handler invoked when the mouse enters
+                                     * a trigger node. Fires the triggerEnter
+                                     * event which can be prevented by listeners to
+                                     * show the tooltip from being displayed.
+                                     */
+                                    _enterTrigger: function(node, x, y){
+                                        this._setCurrentTrigger(node, x, y);
+                                        this.fire("triggerEnter", {
+                                            node: node,
+                                            pageX: x,
+                                            pageY: y
+                                        });
+                                    },
+                                    
+                                    /*
+                                     * Default handler for the triggerEvent event,
+                                     * which will setup the timer to display the tooltip,
+                                     * if the default handler has not been prevented.
+                                     */
+                                    _defTriggerEnterFn: function(e){
+                                        var node = e.node;
+                                        if (!this.get("disabled")) {
+                                            this._clearTimers();
+                                            var delay = (this.get("visible")) ? 0 : this.get("showDelay");
+                                            this._timers.show = Y.later(delay, this, this._showTooltip, [node]);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Default handler invoked when the mouse leaves
+                                     * the current trigger node. Fires the triggerLeave
+                                     * event and sets up the hide timer
+                                     */
+                                    _leaveTrigger: function(node){
+                                        this.fire("triggerLeave");
+                                        
+                                        this._clearCurrentTrigger();
+                                        this._clearTimers();
+                                        
+                                        this._timers.hide = Y.later(this.get("hideDelay"), this, this._hideTooltip);
+                                    },
+                                    
+                                    /*
+                                     * Default handler invoked for mousemove events
+                                     * on the trigger node. Stores the current mouse
+                                     * x, y positions
+                                     */
+                                    _overTrigger: function(x, y){
+                                        this._currTrigger.mouseX = x;
+                                        this._currTrigger.mouseY = y;
+                                    },
+                                    
+                                    /*
+                                     * Shows the tooltip, after moving it to the current mouse
+                                     * position.
+                                     */
+                                    _showTooltip: function(node){
+                                        var x = this._currTrigger.mouseX;
+                                        var y = this._currTrigger.mouseY;
+                                        
+                                        this.move(x + Tooltip.OFFSET_X, y + Tooltip.OFFSET_Y);
+                                        
+                                        this.show();
+                                        this._clearTimers();
+                                        
+                                        this._timers.hide = Y.later(this.get("autoHideDelay"), this, this._hideTooltip);
+                                    },
+                                    
+                                    /*
+                                     * Hides the tooltip, after clearing existing timers.
+                                     */
+                                    _hideTooltip: function(){
+                                        this._clearTimers();
+                                        this.hide();
+                                    },
+                                    
+                                    /*
+                                     * Set the rendered content of the tooltip for the current
+                                     * trigger, based on (in order of precedence):
+                                     *
+                                     * a). The string/node content attribute value
+                                     * b). From the content lookup map if it is set, or
+                                     * c). From the title attribute if set.
+                                     */
+                                    _setTriggerContent: function(node){
+                                        var content = this.get("content");
+                                        if (content && !(content instanceof Node || Lang.isString(content))) {
+                                            content = content[node.get("id")] || node.getAttribute("title");
+                                        }
+                                        this.setTriggerContent(content);
+                                    },
+                                    
+                                    /*
+                                     * Set the currently bound trigger node information, clearing
+                                     * out the title attribute if set and setting up mousemove/out
+                                     * listeners.
+                                     */
+                                    _setCurrentTrigger: function(node, x, y){
+                                    
+                                        var currTrigger = this._currTrigger, triggerHandles = this._eventHandles.trigger;
+                                        
+                                        this._setTriggerContent(node);
+                                        
+                                        triggerHandles.mouseMove = Y.on("mousemove", Y.bind(this._onNodeMouseMove, this), node);
+                                        triggerHandles.mouseOut = Y.on("mouseleave", Y.bind(this._onNodeMouseLeave, this), node);
+                                        
+                                        var title = node.getAttribute("title");
+                                        node.setAttribute("title", "");
+                                        
+                                        currTrigger.mouseX = x;
+                                        currTrigger.mouseY = y;
+                                        currTrigger.node = node;
+                                        currTrigger.title = title;
+                                    },
+                                    
+                                    /*
+                                     * Clear out the current trigger state, restoring
+                                     * the title attribute on the trigger node,
+                                     * if it was originally set.
+                                     */
+                                    _clearCurrentTrigger: function(){
+                                    
+                                        var currTrigger = this._currTrigger, triggerHandles = this._eventHandles.trigger;
+                                        
+                                        if (currTrigger.node) {
+                                            var node = currTrigger.node;
+                                            var title = currTrigger.title || "";
+                                            
+                                            currTrigger.node = null;
+                                            currTrigger.title = "";
+                                            
+                                            triggerHandles.mouseMove.detach();
+                                            triggerHandles.mouseOut.detach();
+                                            triggerHandles.mouseMove = null;
+                                            triggerHandles.mouseOut = null;
+                                            
+                                            node.setAttribute("title", title);
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Cancel any existing show/hide timers
+                                     */
+                                    _clearTimers: function(){
+                                        var timers = this._timers;
+                                        if (timers.hide) {
+                                            timers.hide.cancel();
+                                            timers.hide = null;
+                                        }
+                                        if (timers.show) {
+                                            timers.show.cancel();
+                                            timers.show = null;
+                                        }
+                                    },
+                                    
+                                    /*
+                                     * Detach any stored event handles
+                                     */
+                                    _clearHandles: function(){
+                                        var eventHandles = this._eventHandles;
+                                        
+                                        if (eventHandles.delegate) {
+                                            this._eventHandles.delegate.detach();
+                                        }
+                                        if (eventHandles.trigger.mouseOut) {
+                                            eventHandles.trigger.mouseOut.detach();
+                                        }
+                                        if (eventHandles.trigger.mouseMove) {
+                                            eventHandles.trigger.mouseMove.detach();
+                                        }
+                                    }
+                                }, {
+                                
+                                    // STATIC METHODS/PROPERTIES
+                                    
+                                    OFFSET_X: 15,
+                                    OFFSET_Y: 15,
+                                    OFFSCREEN_X: OX,
+                                    OFFSCREEN_Y: OY,
+                                    
+                                    ATTRS: {
+                                    
+                                        /* 
+                                         * The tooltip content. This can either be a fixed content value,
+                                         * or a map of id-to-values, designed to be used when a single
+                                         * tooltip is mapped to multiple trigger elements.
+                                         */
+                                        content: {
+                                            value: null
+                                        },
+                                        
+                                        /* 
+                                         * The set of nodes to bind to the tooltip instance. Can be a string,
+                                         * or a node instance.
+                                         */
+                                        triggerNodes: {
+                                            value: null,
+                                            setter: function(val){
+                                                if (val && Lang.isString(val)) {
+                                                    val = Node.all(val);
+                                                }
+                                                return val;
+                                            }
+                                        },
+                                        
+                                        /*
+                                         * The delegate node to which event listeners should be attached.
+                                         * This node should be an ancestor of all trigger nodes bound
+                                         * to the instance. By default the document is used.
+                                         */
+                                        delegate: {
+                                            value: null,
+                                            setter: function(val){
+                                                return Y.one(val) || Y.one("document");
+                                            }
+                                        },
+                                        
+                                        /*
+                                         * The time to wait, after the mouse enters the trigger node,
+                                         * to display the tooltip
+                                         */
+                                        showDelay: {
+                                            value: 250
+                                        },
+                                        
+                                        /*
+                                         * The time to wait, after the mouse leaves the trigger node,
+                                         * to hide the tooltip
+                                         */
+                                        hideDelay: {
+                                            value: 10
+                                        },
+                                        
+                                        /*
+                                         * The time to wait, after the tooltip is first displayed for
+                                         * a trigger node, to hide it, if the mouse has not left the
+                                         * trigger node
+                                         */
+                                        autoHideDelay: {
+                                            value: 2000
+                                        },
+                                        
+                                        /*
+                                         * Override the default visibility set by the widget base class
+                                         */
+                                        visible: {
+                                            value: false
+                                        },
+                                        
+                                        /*
+                                         * Override the default XY value set by the widget base class,
+                                         * to position the tooltip offscreen
+                                         */
+                                        xy: {
+                                            value: [OX, OY]
+                                        }
+                                    }
+                                });
+                                
+                                var tt = new Tooltip({
+                                    triggerNodes: ".yui3-hastooltip",
+                                    delegate: "#delegate",
+                                    content: {
+                                        tt3: "Tooltip 3 (from lookup)"
+                                    },
+                                    shim: false,
+                                    zIndex: 2
+                                });
+                                tt.render();
+                                
+                                tt.on("triggerEnter", function(e){
+                                    var node = e.node;
+                                    if (node && node.get("id") == "tt2") {
+                                        this.setTriggerContent("Tooltip 2 (from triggerEvent)");
+                                    }
+                                });
+                                
+                                var prevent = Y.one("#prevent");
+                                tt.on("triggerEnter", function(e){
+                                    var node = e.node;
+                                    if (prevent.get("checked")) {
+                                        if (node && node.get("id") == "tt4") {
+                                            e.preventDefault();
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                    <li class = 'example'>
+                        <a class = 'example-name'>Creating a hierarchical ListBox widget</a>
+                        <div class = 'example-docs'>
+                            <p>
+                                This is an advanced example, in which we create a ListBox widget with nested Option widgets, by extending the base 
+                                <code>
+                                    Widget
+                                </code>
+                                class, and adding 
+                                <code>
+                                    WidgetParent
+                                </code>
+                                and 
+                                <code>
+                                    WidgetChild
+                                </code>
+                                extensions, through 
+                                <code>
+                                    Base.build
+                                </code>.
+                            </p>
+                            <p>
+                                <a href="../tabview">TabView</a>
+                                which ships with 3.1.0, is also built using the WidgetParent and WidgetChild extensions.
+                            </p>
+                        </div>
+                        <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+                        <div class="example-html">
+                            <div class = "yui3-skin-sam  yui-skin-sam">
+                                <p id="selected">
+                                    Selected: <span id="selection">None</span>
+                                </p>
+                                <div id="exampleContainer">
+                                    <div style="height: 15em; width: 13em;" class="yui3-widget yui3-listbox" id="mylistbox">
+                                        <ul class="yui3-listbox-content yui3-widget-content-expanded" id="yui_3_1_1_1_128003288588919">
+                                            <li tabindex="0" class="yui3-widget yui3-option" id="yui_3_1_1_1_128003288588947">
+                                                <em class="yui3-option-content" id="yui_3_1_1_1_128003288588949">Item One</em>
+                                            </li>
+                                            <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_128003288588964">
+                                                <em class="yui3-option-content" id="yui_3_1_1_1_128003288588966">Item Two</em>
+                                            </li>
+                                            <li class="yui3-listbox-option">
+                                                <em class="yui3-listbox-label">Item Three</em>
+                                                <div class="yui3-widget yui3-listbox" id="yui_3_1_1_1_128003288588981">
+                                                    <ul class="yui3-listbox-content" id="yui_3_1_1_1_128003288588983">
+                                                        <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889106">
+                                                            <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889108">Item Three - One</em>
+                                                        </li>
+                                                        <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889123">
+                                                            <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889125">Item Three - Two</em>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889144">
+                                                <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889146">Item Four</em>
+                                            </li>
+                                            <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889161">
+                                                <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889163">Item Five</em>
+                                            </li>
+                                            <li class="yui3-listbox-option">
+                                                <em class="yui3-listbox-label">Item Six</em>
+                                                <div class="yui3-widget yui3-listbox" id="yui_3_1_1_1_1280032885889178">
+                                                    <ul class="yui3-listbox-content" id="yui_3_1_1_1_1280032885889180">
+                                                        <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889203">
+                                                            <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889205">Item Six - One</em>
+                                                        </li>
+                                                        <li tabindex="-1" class="yui3-widget yui3-option" id="yui_3_1_1_1_1280032885889220">
+                                                            <em class="yui3-option-content" id="yui_3_1_1_1_1280032885889222">Item Six - Two</em>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI({
+                                modules: {
+                                    "listbox": {
+                                        fullpath: "assets/listbox.js",
+                                        requires: ["substitute", "widget", "widget-parent", "widget-child", "node-focusmanager"]
+                                    }
+                                }
+                            }).use("listbox", function(Y){
+                            
+                                var listbox = new Y.ListBox({
+                                    id: "mylistbox",
+                                    width: "13em",
+                                    height: "15em",
+                                    children: [{
+                                        label: "Item One"
+                                    }, {
+                                        label: "Item Two"
+                                    }]
+                                });
+                                
+                                listbox.add({
+                                    type: "ListBox",
+                                    label: "Item Three",
+                                    children: [{
+                                        label: "Item Three - One"
+                                    }, {
+                                        label: "Item Three - Two"
+                                    }]
+                                });
+                                
+                                listbox.add({
+                                    label: "Item Four"
+                                });
+                                
+                                listbox.add(new Y.Option({
+                                    label: "Item Five"
+                                }));
+                                
+                                listbox.add({
+                                    type: "ListBox",
+                                    label: "Item Six",
+                                    children: [{
+                                        label: "Item Six - One"
+                                    }, {
+                                        label: "Item Six - Two"
+                                    }]
+                                });
+                                
+                                listbox.after("selectionChange", function(e){
+                                
+                                    var selection = this.get("selection");
+                                    if (selection instanceof Y.ListBox) {
+                                        selection = selection.get("selection");
+                                    }
+                                    
+                                    if (selection) {
+                                        Y.one("#selection").setContent(selection.get("label"));
+                                    }
+                                });
+                                
+                                listbox.render("#exampleContainer");
+                            });
+                        </script>
+                        <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
