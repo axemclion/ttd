@@ -1,0 +1,1393 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Drag and Drop</a>
+                <ul>
+                    <li class="example">
+                        <a class="example-name">Simple drag</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    cursor: move;
+                                }
+                            </style>
+                            <div id="demo">
+                                Drag Me
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-drag', function(Y){
+                                var dd = new Y.DD.Drag({
+                                    //Selector of the node to make draggable
+                                    node: '#demo'
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drag node plugin</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    position: relative;
+                                    padding: 7px;
+                                }
+                                
+                                #demo h2 {
+                                    padding: 0;
+                                    margin: 0;
+                                    position: absolute;
+                                    top: 5px;
+                                    right: 5px;
+                                    font-size: 110%;
+                                    color: black;
+                                    font-weight: bold;
+                                    cursor: move;
+                                }
+                            </style>
+                            <div id="demo">
+                                <h2>x</h2>Drag Me
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-plugin', function(Y){
+                                var node = Y.one('#demo');
+                                node.plug(Y.Plugin.Drag);
+                                node.dd.addHandle('h2');
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drag Drop proxy</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    cursor: move;
+                                }
+                            </style>
+                            <div id="demo">
+                                Drag Me
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-drag', 'dd-proxy', function(Y){
+                                var dd = new Y.DD.Drag({
+                                    //Selector of the node to make draggable
+                                    node: '#demo'
+                                }).plug(Y.Plugin.DDProxy); //This config option makes the node a Proxy Drag
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Constrained to a region</a>
+                        <div class = "example-html">
+                            <style>
+                                .dd-demo {
+                                    position: relative;
+                                    text-align: center;
+                                    color: #fff;
+                                    cursor: move;
+                                    height: 60px;
+                                    width: 60px;
+                                    padding: 0;
+                                    margin: 0;
+                                }
+                                
+                                .dd-demo div {
+                                    border: 1px solid black;
+                                    height: 58px;
+                                    width: 58px;
+                                }
+                                
+                                #dd-demo-canvas1 {
+                                    padding: 55px;
+                                    background-color: #004C6D;
+                                    border: 1px solid black;
+                                }
+                                
+                                #dd-demo-canvas2 {
+                                    padding: 25px;
+                                    background-color: #CDCDCD;
+                                    border: 1px solid black;
+                                }
+                                
+                                #dd-demo-canvas3 {
+                                    padding: 15px;
+                                    background-color: #8DD5E7;
+                                    border: 1px solid black;
+                                }
+                                
+                                #dd-demo-1 {
+                                    background-color: #8DD5E7;
+                                    top: 5px;
+                                    left: 5px;
+                                    color: #000;
+                                }
+                                
+                                #dd-demo-2 {
+                                    background-color: #CDCDCD;
+                                    top: 50px;
+                                    left: 100px;
+                                    color: #000;
+                                }
+                                
+                                #dd-demo-3 {
+                                    background-color: #004C6D;
+                                    top: -100px;
+                                    left: 200px;
+                                }
+                            </style>
+                            <div id="dd-demo-canvas1">
+                                <div id="dd-demo-canvas2">
+                                    <div id="dd-demo-canvas3">
+                                        <div id="dd-demo-1" class="dd-demo">
+                                            <div>
+                                                1
+                                            </div>
+                                        </div>
+                                        <div id="dd-demo-2" class="dd-demo">
+                                            <div>
+                                                2
+                                            </div>
+                                        </div>
+                                        <div id="dd-demo-3" class="dd-demo">
+                                            <div>
+                                                3
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            YUI().use('dd-constrain', function(Y){
+                                var dd1 = new Y.DD.Drag({
+                                    node: '#dd-demo-1'
+                                }).plug(Y.Plugin.DDConstrained, {
+                                    constrain2node: '#dd-demo-canvas3'
+                                });
+                                
+                                var dd2 = new Y.DD.Drag({
+                                    node: '#dd-demo-2'
+                                }).plug(Y.Plugin.DDConstrained, {
+                                    constrain2node: '#dd-demo-canvas2'
+                                });
+                                
+                                var dd3 = new Y.DD.Drag({
+                                    node: '#dd-demo-3'
+                                }).plug(Y.Plugin.DDConstrained, {
+                                    constrain2node: '#dd-demo-canvas1'
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Interaction Groupd</a>
+                        <div class = "example-html">
+                            <style>
+                                .slot {
+                                    border: 2px solid #808080;
+                                    background-color: #CDCDCD;
+                                    color: #666666;
+                                    text-align: center;
+                                    position: relative;
+                                    float: left;
+                                    margin: 4px;
+                                    width: 60px;
+                                    height: 60px;
+                                    z-index: 0;
+                                }
+                                
+                                .player {
+                                    border: 2px solid #808080;
+                                    color: #ffffff;
+                                    text-align: center;
+                                    position: relative;
+                                    float: left;
+                                    margin: 4px;
+                                    width: 60px;
+                                    height: 60px;
+                                    top: 150px;
+                                    z-index: 1;
+                                    cursor: move;
+                                }
+                                
+                                #pt1 {
+                                    clear: both;
+                                }
+                                
+                                .bottom {
+                                    top: 50px;
+                                }
+                                
+                                #pt1, #pt2 {
+                                    background-color: #71241A;
+                                }
+                                
+                                #pb1, #pb2 {
+                                    background-color: #004C6D;
+                                }
+                                
+                                #pboth1, #pboth2 {
+                                    background-color: #FFA928;
+                                }
+                                
+                                #workarea {
+                                    position: relative;
+                                    height: 300px;
+                                    width: 500px;
+                                }
+                                
+                                #workarea .yui3-dd-drop-active-valid {
+                                    border: 2px solid green;
+                                }
+                                
+                                #workarea .yui3-dd-drop-over {
+                                    background-color: green;
+                                }
+                                
+                                #workarea .yui3-dd-drop-active-invalid {
+                                    border: 2px solid red;
+                                }
+                            </style>
+                            <div id="workarea">
+                                <div class="slot" id="t1">
+                                    1
+                                </div>
+                                <div class="slot bottom" id="b1">
+                                    3
+                                </div>
+                                <div class="slot bottom" id="b2">
+                                    4
+                                </div>
+                                <div class="slot bottom" id="b3">
+                                    5
+                                </div>
+                                <div class="slot bottom" id="b4">
+                                    6
+                                </div>
+                                <div class="slot" id="t2">
+                                    2
+                                </div>
+                                <div class="player" id="pt1">
+                                    1
+                                </div>
+                                <div class="player" id="pt2">
+                                    2
+                                </div>
+                                <div class="player" id="pb1">
+                                    3
+                                </div>
+                                <div class="player" id="pb2">
+                                    4
+                                </div>
+                                <div class="player" id="pboth1">
+                                    5
+                                </div>
+                                <div class="player" id="pboth2">
+                                    6
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            var config = {};
+                            config.filter = 'raw';
+                            YUI(config).use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y){
+                            
+                                var slots = Y.one('#workarea').all('.slot');
+                                Y.each(slots, function(v, k){
+                                    var id = v.get('id'), groups = ['two'];
+                                    switch (id) {
+                                        case 't1':
+                                        case 't2':
+                                            groups = ['one'];
+                                            break;
+                                    }
+                                    var drop = new Y.DD.Drop({
+                                        node: v,
+                                        groups: groups
+                                    });
+                                });
+                                
+                                var players = Y.one('#workarea').all('.player');
+                                Y.each(players, function(v, k){
+                                    var id = v.get('id'), groups = ['one', 'two'];
+                                    switch (id) {
+                                        case 'pt1':
+                                        case 'pt2':
+                                            groups = ['one'];
+                                            break;
+                                        case 'pb1':
+                                        case 'pb2':
+                                            groups = ['two'];
+                                            break;
+                                    }
+                                    var drag = new Y.DD.Drag({
+                                        node: v,
+                                        groups: groups,
+                                        dragMode: 'intersect'
+                                    }).plug(Y.Plugin.DDProxy, {
+                                        moveOnEnd: false
+                                    }).plug(Y.Plugin.DDConstrained, {
+                                        constrain2node: '#workarea'
+                                    });
+                                    drag.on('drag:start', function(){
+                                        var p = this.get('dragNode'), n = this.get('node');
+                                        n.setStyle('opacity', .25);
+                                        if (!this._playerStart) {
+                                            this._playerStart = this.nodeXY;
+                                        }
+                                        p.set('innerHTML', n.get('innerHTML'));
+                                        p.setStyles({
+                                            backgroundColor: n.getStyle('backgroundColor'),
+                                            color: n.getStyle('color'),
+                                            opacity: .65
+                                        });
+                                    });
+                                    drag.on('drag:end', function(){
+                                        var n = this.get('node');
+                                        n.setStyle('opacity', '1');
+                                    });
+                                    drag.on('drag:drophit', function(e){
+                                        var xy = e.drop.get('node').getXY();
+                                        this.get('node').setXY(xy, Y.UA.ie);
+                                    });
+                                    drag.on('drag:dropmiss', function(e){
+                                        if (this._playerStart) {
+                                            this.get('node').setXY(this._playerStart, Y.UA.ie);
+                                            this._playerStart = null;
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drag Shim</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    cursor: move;
+                                    float: right;
+                                }
+                                
+                                #ifrm {
+                                    width: 400px;
+                                    height: 300px;
+                                }
+                            </style>
+                            <p>
+                                Try dragging the proxy element over the iframe below, in most browsers this will not happen. Now click the 
+                                <code>
+                                    Shim off
+                                </code>
+                                button and drag again. Now you can drag over the iframe.
+                            </p>
+                            <p>
+                                You can see the shim by clicking the 
+                                <code>
+                                    Debug Off
+                                </code>
+                                button.
+                            </p>
+                            <p>
+                                <button id="shim" value="off">
+                                    Shim Off
+                                </button>
+                                <button id="debugShim" value="off" disabled>
+ Debug Off
+                                </button>
+                            </p>
+                            <div id="demo">
+                                Drag Me
+                            </div>
+                            <iframe id="ifrm" src="assets/blank.htm">
+                            </iframe>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y){
+                                //Toggling the buttons
+                                Y.one('#shim').on('click', function(e){
+                                    var value = e.target.get('value');
+                                    if (value == 'off' || value == 'Shim Off') {
+                                        dd.set('useShim', true);
+                                        e.target.set('value', 'on');
+                                        e.target.set('innerHTML', 'Shim On');
+                                        Y.one('#debugShim').set('disabled', false);
+                                    }
+                                    else {
+                                        dd.set('useShim', false);
+                                        e.target.set('value', 'off');
+                                        e.target.set('innerHTML', 'Shim Off');
+                                        Y.one('#debugShim').set('disabled', true);
+                                    }
+                                });
+                                
+                                Y.one('#debugShim').on('click', function(e){
+                                    var value = e.target.get('value');
+                                    if (value == 'off' || value == 'Debug Off') {
+                                        Y.DD.DDM._debugShim = true;
+                                        e.target.set('value', 'on');
+                                        e.target.set('innerHTML', 'Debug On');
+                                    }
+                                    else {
+                                        Y.DD.DDM._debugShim = false;
+                                        e.target.set('value', 'off');
+                                        e.target.set('innerHTML', 'Debug Off');
+                                    }
+                                });
+                                
+                                var dd = new Y.DD.Drag({
+                                    //Selector of the node to make draggable
+                                    node: '#demo',
+                                    useShim: false
+                                }).plug(Y.Plugin.DDProxy, {
+                                    offsetNode: false,
+                                    resizeFrame: false
+                                });
+                                dd.on('drag:start', function(){
+                                    this.get('dragNode').setStyles({
+                                        height: '20px',
+                                        width: '100px',
+                                        backgroundColor: 'blue',
+                                        color: '#fff'
+                                    });
+                                    this.get('dragNode').set('innerHTML', 'Custom Proxy');
+                                    this.deltaXY = [this.deltaXY[0] - 20, this.deltaXY[1] - 20];
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drop based coding</a>
+                        <div class = "example-html">
+                            <style>
+                                .drag {
+                                    height: 50px;
+                                    width: 50px;
+                                    border: 1px solid black;
+                                    background-color: #004C6D;
+                                    color: white;
+                                    cursor: move;
+                                    float: left;
+                                    margin: 4px;
+                                    z-index: 2;
+                                }
+                                
+                                #play {
+                                    border: 1px solid black;
+                                    height: 300px;
+                                    position: relative;
+                                }
+                                
+                                #drop {
+                                    position: absolute;
+                                    bottom: 5px;
+                                    right: 5px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    height: 75px;
+                                    width: 65%;
+                                    z-index: 1;
+                                }
+                                
+                                #drop p {
+                                    margin: 1em;
+                                }
+                                
+                                #drop p strong {
+                                    font-weight: bold;
+                                }
+                                
+                                #drop.yui3-dd-drop-over {
+                                    background-color: #FFA928;
+                                }
+                            </style>
+                            <div id="play">
+                                <div id="drag1" class="drag">
+                                    Drag #1
+                                </div>
+                                <div id="drag2" class="drag">
+                                    Drag #2
+                                </div>
+                                <div id="drag3" class="drag">
+                                    Drag #3
+                                </div>
+                                <div id="drag4" class="drag">
+                                    Drag #4
+                                </div>
+                                <div id="drag5" class="drag">
+                                    Drag #5
+                                </div>
+                                <div id="drop">
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-drop', 'dd-constrain', function(Y){
+                                var data = {
+                                    'drag1': {
+                                        color: 'white',
+                                        size: 'x-small',
+                                        price: '$5.00'
+                                    },
+                                    'drag2': {
+                                        color: 'blue',
+                                        size: 'small',
+                                        price: '$6.00'
+                                    },
+                                    'drag3': {
+                                        color: 'green',
+                                        size: 'medium',
+                                        price: '$7.00'
+                                    },
+                                    'drag4': {
+                                        color: 'red',
+                                        size: 'large',
+                                        price: '$10.00'
+                                    },
+                                    'drag5': {
+                                        color: 'purple',
+                                        size: 'x-large',
+                                        price: '$15.00'
+                                    }
+                                };
+                                var drags = Y.Node.all('#play div.drag');
+                                drags.each(function(v, k){
+                                    var thisData = {};
+                                    Y.mix(thisData, data[v.get('id')]);
+                                    var dd = new Y.DD.Drag({
+                                        node: v,
+                                        dragMode: 'intersect',
+                                        data: thisData
+                                    }).plug(Y.Plugin.DDConstrained, {
+                                        constrain2node: '#play'
+                                    });
+                                    dd.on('drag:end', function(e){
+                                        e.preventDefault();
+                                    });
+                                });
+                                
+                                var drop = new Y.DD.Drop({
+                                    node: '#drop'
+                                });
+                                drop.on('drop:hit', function(e){
+                                    var drag = e.drag;
+                                    var data = drag.get('data');
+                                    var out = ['id: ' + drag.get('node').get('id')];
+                                    Y.each(data, function(v, k){
+                                        out[out.length] = k + ': ' + v;
+                                    });
+                                    var str = '<p><strong>Dropped</strong>: ' + out.join(', ') + '</p>';
+                                    this.get('node').set('innerHTML', str);
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Window Scrolling</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    position: relative;
+                                    padding: 7px;
+                                }
+                                
+                                #demo h2 {
+                                    padding: 0;
+                                    margin: 0;
+                                    position: absolute;
+                                    top: 5px;
+                                    right: 5px;
+                                    font-size: 110%;
+                                    color: black;
+                                    font-weight: bold;
+                                    cursor: move;
+                                }
+                            </style>
+                            <div id="demo">
+                                <h2>x</h2>Drag Me
+                            </div>
+                        </div>
+                        <script>
+                            YUI().use('dd-drag', 'dd-scroll', 'dd', function(Y){
+                                var dd = new Y.DD.Drag({
+                                    node: '#demo'
+                                }).addHandle('h2').plug(Y.Plugin.DDWinScroll);
+                                
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drag Delegation</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    height: 100px;
+                                    width: 100px;
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    position: relative;
+                                    padding: 7px;
+                                }
+                                
+                                #demo h2 {
+                                    padding: 0;
+                                    margin: 0;
+                                    position: absolute;
+                                    top: 5px;
+                                    right: 5px;
+                                    font-size: 110%;
+                                    color: black;
+                                    font-weight: bold;
+                                    cursor: move;
+                                }
+                            </style>
+                            <div id="demo">
+                                <h2>x</h2>Drag Me
+                            </div>
+                        </div>
+                        <script>
+                            YUI().use('dd-drag', 'dd-scroll', 'dd', function(Y){
+                                var dd = new Y.DD.Drag({
+                                    node: '#demo'
+                                }).addHandle('h2').plug(Y.Plugin.DDWinScroll);
+                                
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drag delegation with drop target</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                    width: 200px;
+                                }
+                                
+                                #demo ul li {
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    cursor: move;
+                                    margin: 3px;
+                                    list-style-type: none;
+                                    z-index: 2;
+                                }
+                                
+                                #play {
+                                    position: relative;
+                                }
+                                
+                                #drop {
+                                    border: 1px solid black;
+                                    background-color: #eee;
+                                    height: 50px;
+                                    width: 200px;
+                                    position: absolute;
+                                    bottom: 5px;
+                                    right: 5px;
+                                }
+                                
+                                #drop strong {
+                                    font-weight: bold;
+                                }
+                                
+                                #drop.yui3-dd-drop-over {
+                                    background-color: #ccc;
+                                }
+                            </style>
+                            <div id="play">
+                                <div id="demo">
+                                    <ul>
+                                        <li>
+                                            Item #1
+                                        </li>
+                                        <li>
+                                            Item #2
+                                        </li>
+                                        <li>
+                                            Item #3
+                                        </li>
+                                        <li>
+                                            Item #4
+                                        </li>
+                                        <li>
+                                            Item #5
+                                        </li>
+                                        <li>
+                                            Item #6
+                                        </li>
+                                        <li>
+                                            Item #7
+                                        </li>
+                                        <li>
+                                            Item #8
+                                        </li>
+                                        <li>
+                                            Item #9
+                                        </li>
+                                        <li>
+                                            Item #10
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="drop">
+                                    Drop on me
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-delegate', 'dd-drop-plugin', function(Y){
+                                var del = new Y.DD.Delegate({
+                                    container: '#demo',
+                                    nodes: 'li'
+                                });
+                                
+                                del.on('drag:end', function(e){
+                                    del.get('currentNode').setStyles({
+                                        top: 0,
+                                        left: 0
+                                    });
+                                });
+                                
+                                var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+                                drop.drop.on('drop:hit', function(e){
+                                    drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
+                                });
+                                
+                                
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Drop plugins with delegation</a>
+                        <div class = "example-html">
+                            <style>
+                                #demo {
+                                }
+                                
+                                #demo ul li {
+                                    border: 1px solid black;
+                                    background-color: #8DD5E7;
+                                    cursor: move;
+                                    margin: 3px;
+                                    list-style-type: none;
+                                    z-index: 2;
+                                    width: 200px;
+                                }
+                                
+                                #play {
+                                    position: relative;
+                                    padding: 2em;
+                                    border: 1px solid black;
+                                }
+                                
+                                #drop {
+                                    border: 1px solid black;
+                                    background-color: #eee;
+                                    height: 50px;
+                                    width: 200px;
+                                    position: absolute;
+                                    bottom: 5px;
+                                    right: 5px;
+                                }
+                                
+                                #drop strong {
+                                    font-weight: bold;
+                                }
+                                
+                                #drop.yui3-dd-drop-over {
+                                    background-color: #ccc;
+                                }
+                            </style>
+                            <div id="play">
+                                <div id="demo">
+                                    <ul>
+                                        <li>
+                                            Item #1
+                                        </li>
+                                        <li>
+                                            Item #2
+                                        </li>
+                                        <li>
+                                            Item #3
+                                        </li>
+                                        <li>
+                                            Item #4
+                                        </li>
+                                        <li>
+                                            Item #5
+                                        </li>
+                                        <li>
+                                            Item #6
+                                        </li>
+                                        <li>
+                                            Item #7
+                                        </li>
+                                        <li>
+                                            Item #8
+                                        </li>
+                                        <li>
+                                            Item #9
+                                        </li>
+                                        <li>
+                                            Item #10
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="drop">
+                                    Drop on me
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            
+                            YUI().use('dd-delegate', 'dd-drop-plugin', 'dd-constrain', 'dd-proxy', function(Y){
+                                var del = new Y.DD.Delegate({
+                                    container: '#demo',
+                                    nodes: 'li'
+                                });
+                                
+                                del.on('drag:start', function(e){
+                                    e.target.get('node').setStyle('opacity', '.5');
+                                });
+                                del.on('drag:end', function(e){
+                                    e.target.get('node').setStyle('opacity', '1');
+                                });
+                                
+                                del.dd.plug(Y.Plugin.DDConstrained, {
+                                    constrain2node: '#play'
+                                });
+                                
+                                del.dd.plug(Y.Plugin.DDProxy, {
+                                    moveOnEnd: false,
+                                    cloneNode: true
+                                });
+                                
+                                var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+                                drop.drop.on('drop:hit', function(e){
+                                    drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
+                                });
+                                
+                                
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">List reorder with bubbling</a>
+                        <div class = "example-html">
+                            <style type="text/css" media="screen">
+                                .yui3-dd-proxy {
+                                    text-align: left;
+                                }
+                                
+                                #play {
+                                    border: 1px solid black;
+                                    padding: 10px;
+                                    margin: 10px;
+                                    zoom: 1;
+                                }
+                                
+                                #play:after {
+                                    display: block;
+                                    clear: both;
+                                    visibility: hidden;
+                                    content: '.';
+                                    height: 0;
+                                }
+                                
+                                #play ul {
+                                    border: 1px solid black;
+                                    margin: 10px;
+                                    width: 200px;
+                                    height: 300px;
+                                    float: left;
+                                    padding: 0;
+                                    zoom: 1;
+                                    position: relative;
+                                }
+                                
+                                #play ul li {
+                                    background-image: none;
+                                    list-style-type: none;
+                                    padding-left: 20px;
+                                    padding: 5px;
+                                    margin: 2px;
+                                    cursor: move;
+                                    zoom: 1;
+                                    position: relative;
+                                }
+                                
+                                #play ul li.list1 {
+                                    background-color: #8DD5E7;
+                                    border: 1px solid #004C6D;
+                                }
+                                
+                                #play ul li.list2 {
+                                    background-color: #EDFF9F;
+                                    border: 1px solid #CDCDCD;
+                                }
+                            </style>
+                            <div id="play">
+                                <ul id="list1">
+                                    <li class="list1">
+                                        Item #1
+                                    </li>
+                                    <li class="list1">
+                                        Item #2
+                                    </li>
+                                    <li class="list1">
+                                        Item #3
+                                    </li>
+                                    <li class="list1">
+                                        Item #4
+                                    </li>
+                                    <li class="list1">
+                                        Item #5
+                                    </li>
+                                </ul>
+                                <ul id="list2">
+                                    <li class="list2">
+                                        Item #1
+                                    </li>
+                                    <li class="list2">
+                                        Item #2
+                                    </li>
+                                    <li class="list2">
+                                        Item #3
+                                    </li>
+                                    <li class="list2">
+                                        Item #4
+                                    </li>
+                                    <li class="list2">
+                                        Item #5
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y){
+                                //Listen for all drop:over events
+                                Y.DD.DDM.on('drop:over', function(e){
+                                    //Get a reference to our drag and drop nodes
+                                    var drag = e.drag.get('node'), drop = e.drop.get('node');
+                                    
+                                    //Are we dropping on a li node?
+                                    if (drop.get('tagName').toLowerCase() === 'li') {
+                                        //Are we not going up?
+                                        if (!goingUp) {
+                                            drop = drop.get('nextSibling');
+                                        }
+                                        //Add the node to this list
+                                        e.drop.get('node').get('parentNode').insertBefore(drag, drop);
+                                        //Resize this nodes shim, so we can drop on it later.
+                                        e.drop.sizeShim();
+                                    }
+                                });
+                                //Listen for all drag:drag events
+                                Y.DD.DDM.on('drag:drag', function(e){
+                                    //Get the last y point
+                                    var y = e.target.lastXY[1];
+                                    //is it greater than the lastY var?
+                                    if (y < lastY) {
+                                        //We are going up
+                                        goingUp = true;
+                                    }
+                                    else {
+                                        //We are going down.
+                                        goingUp = false;
+                                    }
+                                    //Cache for next check
+                                    lastY = y;
+                                });
+                                //Listen for all drag:start events
+                                Y.DD.DDM.on('drag:start', function(e){
+                                    //Get our drag object
+                                    var drag = e.target;
+                                    //Set some styles here
+                                    drag.get('node').setStyle('opacity', '.25');
+                                    drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
+                                    drag.get('dragNode').setStyles({
+                                        opacity: '.5',
+                                        borderColor: drag.get('node').getStyle('borderColor'),
+                                        backgroundColor: drag.get('node').getStyle('backgroundColor')
+                                    });
+                                });
+                                //Listen for a drag:end events
+                                Y.DD.DDM.on('drag:end', function(e){
+                                    var drag = e.target;
+                                    //Put our styles back
+                                    drag.get('node').setStyles({
+                                        visibility: '',
+                                        opacity: '1'
+                                    });
+                                });
+                                //Listen for all drag:drophit events
+                                Y.DD.DDM.on('drag:drophit', function(e){
+                                    var drop = e.drop.get('node'), drag = e.drag.get('node');
+                                    
+                                    //if we are not on an li, we must have been dropped on a ul
+                                    if (drop.get('tagName').toLowerCase() !== 'li') {
+                                        if (!drop.contains(drag)) {
+                                            drop.appendChild(drag);
+                                        }
+                                    }
+                                });
+                                
+                                //Static Vars
+                                var goingUp = false, lastY = 0;
+                                
+                                //Get the list of li's in the lists and make them draggable
+                                var lis = Y.Node.all('#play ul li');
+                                lis.each(function(v, k){
+                                    var dd = new Y.DD.Drag({
+                                        node: v,
+                                        target: {
+                                            padding: '0 0 0 20'
+                                        }
+                                    }).plug(Y.Plugin.DDProxy, {
+                                        moveOnEnd: false
+                                    }).plug(Y.Plugin.DDConstrained, {
+                                        constrain2node: '#play'
+                                    });
+                                });
+                                
+                                //Create simple targets for the 2 lists.
+                                var uls = Y.Node.all('#play ul');
+                                uls.each(function(v, k){
+                                    var tar = new Y.DD.Drop({
+                                        node: v
+                                    });
+                                });
+                                
+                            });
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">List reordering with scrolling</a>
+                        <div class = "example-html">
+                            <style type="text/css" media="screen">
+                                .yui3-dd-proxy {
+                                    text-align: left;
+                                }
+                                
+                                #play {
+                                    border: 1px solid black;
+                                    padding: 10px;
+                                    margin: 10px;
+                                    zoom: 1;
+                                }
+                                
+                                #play:after {
+                                    display: block;
+                                    clear: both;
+                                    visibility: hidden;
+                                    content: '.';
+                                    height: 0;
+                                }
+                                
+                                #play ul {
+                                    border: 1px solid black;
+                                    margin: 10px;
+                                    width: 200px;
+                                    height: 300px;
+                                    float: left;
+                                    padding: 0;
+                                    zoom: 1;
+                                    position: relative;
+                                    overflow: auto;
+                                }
+                                
+                                #play ul li {
+                                    background-image: none;
+                                    list-style-type: none;
+                                    padding-left: 20px;
+                                    padding: 5px;
+                                    margin: 2px;
+                                    cursor: move;
+                                    zoom: 1;
+                                    position: relative;
+                                }
+                                
+                                #play ul li.list1 {
+                                    background-color: #8DD5E7;
+                                    border: 1px solid #004C6D;
+                                }
+                                
+                                #play ul li.list2 {
+                                    background-color: #EDFF9F;
+                                    border: 1px solid #CDCDCD;
+                                }
+                            </style>
+                            <div id="play">
+                                <ul id="list1">
+                                    <li class="list1">
+                                        Item #1
+                                    </li>
+                                    <li class="list1">
+                                        Item #2
+                                    </li>
+                                    <li class="list1">
+                                        Item #3
+                                    </li>
+                                    <li class="list1">
+                                        Item #4
+                                    </li>
+                                    <li class="list1">
+                                        Item #5
+                                    </li>
+                                    <li class="list1">
+                                        Item #6
+                                    </li>
+                                    <li class="list1">
+                                        Item #7
+                                    </li>
+                                    <li class="list1">
+                                        Item #8
+                                    </li>
+                                    <li class="list1">
+                                        Item #9
+                                    </li>
+                                    <li class="list1">
+                                        Item #10
+                                    </li>
+                                    <li class="list1">
+                                        Item #11
+                                    </li>
+                                    <li class="list1">
+                                        Item #12
+                                    </li>
+                                    <li class="list1">
+                                        Item #13
+                                    </li>
+                                    <li class="list1">
+                                        Item #14
+                                    </li>
+                                    <li class="list1">
+                                        Item #15
+                                    </li>
+                                    <li class="list1">
+                                        Item #16
+                                    </li>
+                                    <li class="list1">
+                                        Item #17
+                                    </li>
+                                    <li class="list1">
+                                        Item #18
+                                    </li>
+                                    <li class="list1">
+                                        Item #19
+                                    </li>
+                                    <li class="list1">
+                                        Item #20
+                                    </li>
+                                </ul>
+                                <ul id="list2">
+                                    <li class="list2">
+                                        Item #1
+                                    </li>
+                                    <li class="list2">
+                                        Item #2
+                                    </li>
+                                    <li class="list2">
+                                        Item #3
+                                    </li>
+                                    <li class="list2">
+                                        Item #4
+                                    </li>
+                                    <li class="list2">
+                                        Item #5
+                                    </li>
+                                    <li class="list2">
+                                        Item #6
+                                    </li>
+                                    <li class="list2">
+                                        Item #7
+                                    </li>
+                                    <li class="list2">
+                                        Item #8
+                                    </li>
+                                    <li class="list2">
+                                        Item #9
+                                    </li>
+                                    <li class="list2">
+                                        Item #10
+                                    </li>
+                                    <li class="list2">
+                                        Item #11
+                                    </li>
+                                    <li class="list2">
+                                        Item #12
+                                    </li>
+                                    <li class="list2">
+                                        Item #13
+                                    </li>
+                                    <li class="list2">
+                                        Item #14
+                                    </li>
+                                    <li class="list2">
+                                        Item #15
+                                    </li>
+                                    <li class="list2">
+                                        Item #16
+                                    </li>
+                                    <li class="list2">
+                                        Item #17
+                                    </li>
+                                    <li class="list2">
+                                        Item #18
+                                    </li>
+                                    <li class="list2">
+                                        Item #19
+                                    </li>
+                                    <li class="list2">
+                                        Item #20
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', 'dd-scroll', function(Y){
+                                //Listen for all drop:over events
+                                //Y.DD.DDM._debugShim = true;
+                                
+                                Y.DD.DDM.on('drop:over', function(e){
+                                    //Get a reference to our drag and drop nodes
+                                    var drag = e.drag.get('node'), drop = e.drop.get('node');
+                                    
+                                    //Are we dropping on a li node?
+                                    if (drop.get('tagName').toLowerCase() === 'li') {
+                                        //Are we not going up?
+                                        if (!goingUp) {
+                                            drop = drop.get('nextSibling');
+                                        }
+                                        //Add the node to this list
+                                        e.drop.get('node').get('parentNode').insertBefore(drag, drop);
+                                        //Set the new parentScroll on the nodescroll plugin
+                                        e.drag.nodescroll.set('parentScroll', e.drop.get('node').get('parentNode'));
+                                        //Resize this nodes shim, so we can drop on it later.
+                                        e.drop.sizeShim();
+                                    }
+                                });
+                                //Listen for all drag:drag events
+                                Y.DD.DDM.on('drag:drag', function(e){
+                                    //Get the last y point
+                                    var y = e.target.lastXY[1];
+                                    //is it greater than the lastY var?
+                                    if (y < lastY) {
+                                        //We are going up
+                                        goingUp = true;
+                                    }
+                                    else {
+                                        //We are going down.
+                                        goingUp = false;
+                                    }
+                                    //Cache for next check
+                                    lastY = y;
+                                    Y.DD.DDM.syncActiveShims(true);
+                                });
+                                //Listen for all drag:start events
+                                Y.DD.DDM.on('drag:start', function(e){
+                                    //Get our drag object
+                                    var drag = e.target;
+                                    //Set some styles here
+                                    drag.get('node').setStyle('opacity', '.25');
+                                    drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
+                                    drag.get('dragNode').setStyles({
+                                        opacity: '.5',
+                                        borderColor: drag.get('node').getStyle('borderColor'),
+                                        backgroundColor: drag.get('node').getStyle('backgroundColor')
+                                    });
+                                });
+                                //Listen for a drag:end events
+                                Y.DD.DDM.on('drag:end', function(e){
+                                    var drag = e.target;
+                                    //Put our styles back
+                                    drag.get('node').setStyles({
+                                        visibility: '',
+                                        opacity: '1'
+                                    });
+                                });
+                                //Listen for all drag:drophit events
+                                Y.DD.DDM.on('drag:drophit', function(e){
+                                    var drop = e.drop.get('node'), drag = e.drag.get('node');
+                                    
+                                    //if we are not on an li, we must have been dropped on a ul
+                                    if (drop.get('tagName').toLowerCase() !== 'li') {
+                                        if (!drop.contains(drag)) {
+                                            drop.appendChild(drag);
+                                            //Set the new parentScroll on the nodescroll plugin
+                                            e.drag.nodescroll.set('parentScroll', e.drop.get('node'));
+                                        }
+                                    }
+                                });
+                                
+                                //Static Vars
+                                var goingUp = false, lastY = 0;
+                                
+                                //Get the list of li's in the lists and make them draggable
+                                var lis = Y.all('#play ul li');
+                                lis.each(function(v, k){
+                                    var dd = new Y.DD.Drag({
+                                        node: v,
+                                        target: {
+                                            padding: '0 0 0 20'
+                                        }
+                                    }).plug(Y.Plugin.DDProxy, {
+                                        moveOnEnd: false
+                                    }).plug(Y.Plugin.DDConstrained, {
+                                        constrain2node: '#play'
+                                    }).plug(Y.Plugin.DDNodeScroll, {
+                                        node: v.get('parentNode')
+                                    });
+                                });
+                                
+                                //Create simple targets for the 2 lists.
+                                var uls = Y.all('#play ul');
+                                uls.each(function(v, k){
+                                    var tar = new Y.DD.Drop({
+                                        node: v
+                                    });
+                                });
+                                
+                                
+                            });
+                            
+                        </script>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
