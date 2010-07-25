@@ -1,0 +1,395 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Data Type</a>
+                <ul>
+                    <li class="example">
+                        <a class="example-name">Language Resource Bundles</a>
+                        <script type="text/javascript" xml:space="preserve">
+                            
+                            var langNames = {
+                                "ar": "العربية",
+                                "ar-JO": "العربية (الأردن)",
+                                "ca": "català",
+                                "ca-ES": "català (Espanya)",
+                                "da": "dansk",
+                                "da-DK": "dansk (Danmark)",
+                                "de": "Deutsch",
+                                "de-AT": "Deutsch (Österreich)",
+                                "de-DE": "Deutsch (Deutschland)",
+                                "el": "ελληνικά",
+                                "el-GR": "ελληνικά (Ελλάδα)",
+                                "en": "English",
+                                "en-AU": "English (Australia)",
+                                "en-CA": "English (Canada)",
+                                "en-GB": "English (U.K.)",
+                                "en-IE": "English (Ireland)",
+                                "en-IN": "English (India)",
+                                "en-JO": "English (Jordan)",
+                                "en-MY": "English (Malaysia)",
+                                "en-NZ": "English (New Zealand)",
+                                "en-PH": "English (Philippines)",
+                                "en-SG": "English (Singapore)",
+                                "en-US": "English (U.S.)",
+                                "es": "español",
+                                "es-AR": "español (Argentina)",
+                                "es-BO": "español (Bolivia)",
+                                "es-CL": "español (Chile)",
+                                "es-CO": "español (Colombia)",
+                                "es-EC": "español (Ecuador)",
+                                "es-ES": "español (España)",
+                                "es-MX": "español (México)",
+                                "es-PE": "español (Perú)",
+                                "es-PY": "español (Paraguay)",
+                                "es-US": "español (Estados Unidos)",
+                                "es-UY": "español (Uruguay)",
+                                "es-VE": "español (Venezuela)",
+                                "fi": "suomi",
+                                "fi-FI": "suomi (Suomi)",
+                                "fr": "français",
+                                "fr-BE": "français (Belgique)",
+                                "fr-CA": "français (Canada)",
+                                "fr-FR": "français (France)",
+                                "hi": "हिंदी",
+                                "hi-IN": "हिंदी (भारत)",
+                                "id": "Bahasa Indonesia",
+                                "id-ID": "Bahasa Indonesia (Indonesia)",
+                                "it": "italiano",
+                                "it-IT": "italiano (Italia)",
+                                "ja": "日本語",
+                                "ja-JP": "日本語 (日本)",
+                                "ko": "한국어",
+                                "ko-KR": "한국어 (대한민국)",
+                                "ms": "Bahasa Melayu",
+                                "ms-MY": "Bahasa Melayu (Malaysia)",
+                                "nb": "norsk",
+                                "nb-NO": "norsk (Norge)",
+                                "nl": "Nederlands",
+                                "nl-BE": "Nederlands (België)",
+                                "nl-NL": "Nederlands (Nederland)",
+                                "pl": "polski",
+                                "pl-PL": "polski (Polska)",
+                                "pt": "português",
+                                "pt-BR": "português (Brasil)",
+                                "ro": "română",
+                                "ro-RO": "română (România)",
+                                "ru": "русский",
+                                "ru-RU": "русский (Россия)",
+                                "sv": "svenska",
+                                "sv-SE": "svenska (Sverige)",
+                                "th": "ไทย",
+                                "th-TH": "ไทย (ประเทศไทย)",
+                                "tr": "Türkçe",
+                                "tr-TR": "Türkçe (Türkiye)",
+                                "vi": "Tiếng Việt",
+                                "vi-VN": "Tiếng Việt (Việt Nam)",
+                                "zh-Hans": "中文（简体）",
+                                "zh-Hans-CN": "中文 (中国)",
+                                "zh-Hant": "繁體中文",
+                                "zh-Hant-HK": "中文 (香港)",
+                                "zh-Hant-TW": "中文 (臺灣)"
+                            };
+                            
+                            function isRTL(lang){
+                                var pos = lang.indexOf("-");
+                                if (pos >= 0) {
+                                    lang = lang.substring(0, pos);
+                                }
+                                // currently Arabic is our only RTL language
+                                return lang === "ar";
+                            }
+                            
+                            
+                            // Default Date Format (no language specified)
+                            YUI().use("node", "datatype-date", function(Y){
+                            
+                                Y.one("#default_lang_output").setContent(Y.DataType.Date.format(new Date(), {
+                                    format: "%x"
+                                }));
+                                
+                            });
+                            
+                            // Configure the YUI instance to use fr-FR
+                            YUI({
+                                lang: "fr-FR"
+                            }).use("node", "datatype-date", function(Y){
+                            
+                                Y.one("#single_lang_output").setContent(Y.DataType.Date.format(new Date(), {
+                                    format: "%x"
+                                }));
+                                
+                            });
+                            
+                            YUI().use("node", "datatype-date", function(Y){
+                            
+                                // Insert the languages available for the datatype-date module
+                                var availLangs = Y.Intl.getAvailableLangs("datatype-date"), select = Y.one("#demo_lang"), i, lang, langName, dir;
+                                
+                                for (i = 0; i < availLangs.length; i++) {
+                                    lang = availLangs[i];
+                                    langName = langNames[lang] || lang;
+                                    dir = isRTL(lang) ? "rtl" : "ltr";
+                                    select.append('<option value="' + lang + '" dir="' + dir + '">' + langName + '</option>');
+                                    select.addClass("yui3-avail-languages");
+                                }
+                                
+                                // Listen for language change
+                                Y.Intl.on("intl:langChange", function(e){
+                                    Y.one("#event_output").setContent('Language for "' + e.module + '" changed to "' + e.newVal + '"');
+                                });
+                                
+                                Y.on("click", function(e){
+                                
+                                    var lang = Y.one("#demo_lang").get("value"), output = Y.one("#demo_output");
+                                    
+                                    // Pull down a new language resource bundle for datatype-date
+                                    Y.use("lang/datatype-date_" + lang, function(Y){
+                                    
+                                        // You only need to set the language explicitly when switching languages,
+                                        // It is not required for the single language use case instances shown previously.
+                                        Y.Intl.setLang("datatype-date-format", lang);
+                                        
+                                        var formattedDate = Y.DataType.Date.format(new Date(), {
+                                            format: "%c"
+                                        }), rtl = isRTL(lang);
+                                        
+                                        output.setContent(formattedDate)
+                                        output.setAttribute("dir", rtl ? "rtl" : "ltr")
+                                        output.toggleClass("rtl", rtl);
+                                    });
+                                    
+                                }, "#demo_btn");
+                            });
+                        </script>
+                        <div class = "example-html">
+                            <div id="demo">
+                                <div class="output">
+                                    <span>Default Date Formatting (no language
+                                        specified):</span>
+                                    <span id="default_lang_output"/>
+                                </div>
+                                <div class="output">
+                                    <span>Date Formatted for
+                                        "fr-FR":</span>
+                                    <span id="single_lang_output"/>
+                                </div>
+                                <form id="switchlang">
+                                    <fieldset>
+                                        <label for="demo_lang">
+                                            Language:<select id="demo_lang"/>
+                                        </label><input id="demo_btn" type="button" value="Format Current Date/Time"/><span id="event_output"/>
+                                    </fieldset>
+                                </form><div class="output" id="demo_output"/>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="example">
+                        <a class="example-name">DataType.Date.format()</a>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-date", function(Y){
+                                Y.on("click", function(e){
+                                    var date = new Date(), output = Y.DataType.Date.format(date, {
+                                        format: Y.one("#demo_format").get("value"),
+                                        locale: Y.one("#demo_locale").get("value")
+                                    });
+                                    
+                                    if (output === "") {
+                                        output += "(Invalid input)"
+                                    }
+                                    Y.one("#demo_output").setContent(output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                }, "#demo_btn");
+                            });
+                        </script>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <fieldset>
+                                    <label for="demo_format">
+                                        Format (optional):
+                                    </label>
+                                    <input type="text" id="demo_format" value="%r">
+                                    <label for="demo_locale">
+                                        Locale (optional):
+                                    </label>
+                                    <input type="text" id="demo_locale" value="en-GB"><input type="button" id="demo_btn" value="Format current date =>">
+                                    <div id="demo_output" class="output">
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </li>
+                    <li class="example">
+                        <a class="example-name">Date.parse()</a>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-date", function(Y){
+                                Y.on("submit", function(e){
+                                    e.halt();
+                                    
+                                    var input = Y.one("#demo_input").get("value"), output = Y.DataType.Date.parse(input);
+                                    
+                                    if (output === null) {
+                                        output = "null"
+                                    }
+                                    
+                                    Y.one("#demo_output").setContent(output.toString());
+                                }, "#demo");
+                            });
+                        </script>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <fieldset>
+                                    <label for="demo_input">
+                                        String to parse:
+                                    </label>
+                                    <input type="text" id="demo_input" value="Jan 7, 2003"><input type="submit" id="demo_btn" value="Parse date">
+                                    <div id="demo_output" class="output">
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Number Format</a>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <fieldset>
+                                    <label for="demo_number">
+                                        Number to format: <input type="text" id="demo_number">
+                                    </label>
+                                </fieldset>
+                                <fieldset class="short">
+                                    <label for="demo_thousandsSeparator">
+                                        Thousands separator: <input type="text" id="demo_thousandsSeparator">
+                                    </label>
+                                    <label for="demo_decimalSeparator">
+                                        Decimal separator: <input type="text" id="demo_decimalSeparator">
+                                    </label>
+                                    <label for="demo_decimalPlaces">
+                                        Decimal places: <input type="text" id="demo_decimalPlaces">
+                                    </label>
+                                </fieldset>
+                                <fieldset class="medium">
+                                    <label for="demo_prefix">
+                                        Prefix: <input type="text" id="demo_prefix">
+                                    </label>
+                                    <label for="demo_suffix">
+                                        Suffix: <input type="text" id="demo_suffix">
+                                    </label>
+                                </fieldset>
+                                <fieldset>
+                                    <input type="button" id="demo_btn" value="Show formatted string">: <span id="demo_output"></span>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-number", function(Y){
+                                Y.on("click", function(e){
+                                    var number = Y.DataType.Number.parse(Y.one("#demo_number").get("value")), output = Y.DataType.Number.format(number, {
+                                        prefix: Y.one("#demo_prefix").get("value"),
+                                        thousandsSeparator: Y.one("#demo_thousandsSeparator").get("value"),
+                                        decimalSeparator: Y.one("#demo_decimalSeparator").get("value"),
+                                        decimalPlaces: Y.DataType.Number.parse(Y.one("#demo_decimalPlaces").get("value")),
+                                        suffix: Y.one("#demo_suffix").get("value")
+                                    });
+                                    
+                                    if (output === "") {
+                                        output += "(Invalid number)"
+                                    }
+                                    Y.one("#demo_output").setContent(output);
+                                }, "#demo_btn");
+                            });
+                        </script>
+                    </li>
+                    <li class ="example">
+                        <a class = "example-name">Parse Number</a>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <fieldset>
+                                    <label for="demo_input">
+                                        Value to parse: <input type="text" id="demo_input">
+                                    </label>
+                                </fieldset>
+                                <fieldset>
+                                    <input type="submit" id="demo_btn" value="Alert parsed number">
+                                </fieldset>
+                            </form>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-number", function(Y){
+                                Y.on("submit", function(e){
+                                    e.halt();
+                                    
+                                    var input = Y.one("#demo_input").get("value"), output = Y.DataType.Number.parse(input);
+                                    
+                                    if (output === "") {
+                                        output += "(Invalid value)"
+                                    }
+                                    alert(output);
+                                }, "#demo");
+                            });
+                        </script>
+                    </li>
+                    <li class ="example">
+                        <a class = "example-name">XML format</a>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <fieldset>
+                                    <input type="button" id="demo_btn" value="Show XML as a string">
+                                    <div id="demo_output" class="output">
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-xml", function(Y){
+                                Y.on("click", function(e){
+                                    var myXMLDoc = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>"), output = Y.DataType.XML.format(myXMLDoc);
+                                    
+                                    if (output === "") {
+                                        output += "(Invalid XML document)"
+                                    }
+                                    Y.one("#demo_output").setContent(output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                }, "#demo_btn");
+                            });
+                        </script>
+                    </li>
+                    <li class ="example">
+                        <a class = "example-name">XML Parse</a>
+                        <div>
+                            <form id="demo">
+                                <fieldset>
+                                    <label for="demo_input">
+                                        String to parse:
+                                    </label>
+                                    <textarea type="text" id="demo_input">
+                                        &lt;myroot&gt;&lt;item type='foo'&gt;&lt;name&gt;Abc&lt;/name&gt;&lt;rank&gt;1&lt;/rank&gt;&lt;/item&gt;&lt;item type='bar'&gt;&lt;name&gt;Def&lt;/name&gt;&lt;rank&gt;2&lt;/rank&gt;&lt;/item&gt;&lt;item type='bat'&gt;&lt;name&gt;Ghi&lt;/name&gt;&lt;rank&gt;3&lt;/rank&gt;&lt;/item&gt;&lt;/myroot&gt;
+                                    </textarea>
+                                    <input type="button" id="demo_btn" value="Alert node type of parsed output">
+                                </fieldset>
+                            </form>
+                        </div>
+                        <script type="text/javascript">
+                            YUI().use("node", "datatype-xml", function(Y){
+                                Y.on("click", function(e){
+                                    var input = Y.one("#demo_input").get("value"), output = Y.DataType.XML.parse(input);
+                                    
+                                    if (output === "") {
+                                        output += "(Invalid value)"
+                                    }
+                                    
+                                    alert("node type: " + output.nodeType);
+                                }, "#demo_btn");
+                            });
+                        </script>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>

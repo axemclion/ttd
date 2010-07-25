@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">Cookies</a>
+                <ul>
+                    <li class="example">
+                        <a class="example-name">Simple Cookie</a>
+                        <script type="text/javascript" xml:space="preserve">
+                            YUI().use("cookie", function(Y){
+                                var currentValue = Y.Cookie.get("example");
+                                alert("Cookie's current value is '" +
+                                currentValue +
+                                "'");
+                                var newValue = "yui" +
+                                Math.round(Math.random() *
+                                Math.PI *
+                                1000);
+                                alert("Setting cookie's value to '" +
+                                newValue +
+                                "'");
+                                Y.Cookie.set("example", newValue);
+                            });
+                        </script>
+                        <div class="example-docs">
+                        </div>
+                    </li>
+                    <li class="example">
+                        <a class="example-name">Simple Cookie</a>
+                        <div class = "example-html">
+                            <p>
+                                Click the buttons to interact with the
+                                cookie:
+                            </p>
+                            <input id="yui-cookie-btn1" type="button" value="Get Value"/><input id="yui-cookie-btn2" type="button" value="Set Random Value"/><input id="yui-cookie-btn3" type="button" value="Remove Value"/>
+                        </div>
+                        <script type="text/javascript" xml:space="preserve">
+                            YUI().use("node", "cookie", function(Y){
+                                Y.Node.get("#yui-cookie-btn1").on("click", function(){
+                                    var value = Y.Cookie.get("example");
+                                    alert(value);
+                                    Y.log("Cookie 'example' has a value of'" + value + "'");
+                                });
+                                Y.Node.get("#yui-cookie-btn2").on("click", function(){
+                                    var newValue = "yui" +
+                                    Math.round(Math.random() *
+                                    Math.PI *
+                                    1000);
+                                    Y.Cookie.set("example", newValue);
+                                    Y.log("Set cookie 'example' to '" +
+                                    newValue +
+                                    "'");
+                                });
+                                Y.Node.get("#yui-cookie-btn3").on("click", function(){
+                                    Y.Cookie.remove("example");
+                                    Y.log("Removed cookie 'example'.");
+                                });
+                            });
+                        </script>
+                    </li>
+                    <li class="example">
+                        <a class="example-name">Sub Cookie</a>
+                        <script type="text/javascript" xml:space="preserve">
+                            YUI().use("node", "cookie", function(Y){
+                                //get subcookie values
+                                var name = Y.Cookie.getSub("example", "name");
+                                var today = Y.Cookie.getSub("example", "today", function(value){
+                                    return new Date(value);
+                                });
+                                var count = Y.Cookie.getSub("example", "count", Number);
+                                alert("The subcookie 'name' is '" + name +
+                                "'(" +
+                                (typeof name) +
+                                ")");
+                                alert("The subcookie 'today' is '" +
+                                today +
+                                "'(" +
+                                (typeof today) +
+                                ")");
+                                alert("The subcookie 'count' is '" +
+                                count +
+                                "'(" +
+                                (typeof count) +
+                                ")");
+                                //set subcookie values
+                                Y.Cookie.setSub("example", "name", "Yahoo!");
+                                Y.Cookie.setSub("example", "today", (new Date()).toString());
+                                Y.Cookie.setSub("example", "count", Math.round(Math.random() * 30));
+                            });
+                        </script>
+                        <div class="example-docs">
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>

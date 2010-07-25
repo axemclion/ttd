@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js">
+        </script>
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.1.1/build/cssfonts/fonts-min.css" />
+        <link type="text/css" rel="stylesheet" href="http://developer.yahoo.com/yui/3/examples/anim/assets/anim.css"/>
+    </head>
+    <body>
+        <ul class = "yui3-skin-sam  yui-skin-sam">
+            <li class="example-set" id="example1">
+                <a class="example-set-name" href="#">DataSchema</a>
+                <ul>
+                    <li class="example">
+                        <a class="example-name">Array</a>
+                        <script type="text/javascript">
+                            YUI().use("dump", "node", "dataschema-array", function(Y){
+                                Y.on("click", function(e){
+                                    var data_in = [{
+                                        make: "Chevrolet",
+                                        model: "BelAir",
+                                        year: 1957
+                                    }, {
+                                        make: "Dodge",
+                                        model: "Dart",
+                                        year: 1964
+                                    }, {
+                                        make: "Ford",
+                                        model: "Mustang",
+                                        year: 1968
+                                    }], schema = {
+                                        resultFields: [{
+                                            key: "make"
+                                        }, {
+                                            key: "model"
+                                        }, {
+                                            key: "year"
+                                        }] // Or simply:
+                            ["make", "model", "year"]
+                                    };
+                                    Y.one("#demo_output_objects").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+                                }, "#demo_apply_objects");
+                                Y.on("click", function(e){
+                                    var data_in = [["Chevrolet", "Bel Air", 1957], ["Dodge", "Dart", 1964], ["Ford", "Mustang", 1968]], schema = {
+                                        resultFields: [{
+                                            key: "make"
+                                        }, {
+                                            key: "model"
+                                        }, {
+                                            key: "year"
+                                        }] // Or simply:
+                            ["make", "model", "year"]
+                                    };
+                                    Y.one("#demo_output_arrays").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+                                }, "#demo_apply_arrays");
+                                Y.on("click", function(e){
+                                    var data_in = ["1957 Chevrolet Bel Air", "1964 Dodge Dart", "1968 Ford Mustang"], schema = {
+                                        resultFields: [{
+                                            key: "make"
+                                        }, {
+                                            key: "model"
+                                        }, {
+                                            key: "year"
+                                        }] // Or simply:
+                            ["make", "model", "year"]
+                                    };
+                                    Y.one("#demo_output_simple").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+                                }, "#demo_apply_simple");
+                            });
+                        </script>
+                        <div class = "example-html">
+                            <form id="demo">
+                                <h4>Array of objects</h4>
+                                <h6>Data</h6>
+                                <span>[
+                                    {make:"Chevrolet", model:"Bel Air",
+                                    year:1957},
+                                    {make:"Dodge", model:"Dart", year:1964},
+                                    {make:"Ford", model:"Mustang", year:1968}
+                                    ]</span>
+                                <h6>Schema</h6>
+                                <span>{
+                                    resultFields: [{key:"make"}, {key:"model"},
+                                    {key:"year"}]
+                                    }</span>
+                                <h6>Normalized data</h6>
+                                <input id="demo_apply_objects" type="button" value="Apply schema =>"/><div class="output" id="demo_output_objects"/><h4>Array of arrays</h4>
+                                <h6>Data</h6>
+                                <span>[
+                                    ["Chevrolet", "Bel Air", 1957],
+                                    ["Dodge", "Dart", 1964],
+                                    ["Ford", "Mustang", 1968]
+                                    ]</span>
+                                <h6>Schema</h6>
+                                <span>{
+                                    resultFields: [{key:"make"}, {key:"model"},
+                                    {key:"year"}]
+                                    }</span>
+                                <h6>Normalized data</h6>
+                                <input id="demo_apply_arrays" type="button" value="Apply schema =>"/><div class="output" id="demo_output_arrays"/><h4>Simple array of primitives</h4>
+                                <h6>Data</h6>
+                                <span>[
+                                    "1957 Chevrolet Bel Air", "1964 Dodge
+                                    Dart", "1968 Ford Mustang"
+                                    ]</span>
+                                <h6>Schema</h6>
+                                <span>{
+                                    resultFields: [{key:"make"}, {key:"model"},
+                                    {key:"year"}]
+                                    }</span>
+                                <h6>Normalized data</h6>
+                                <input id="demo_apply_simple" type="button" value="Apply schema =>"/><div class="output" id="demo_output_simple"/>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
