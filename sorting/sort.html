@@ -1,0 +1,242 @@
+<html>
+    <head>
+        <title>Sorting algorithms</title>
+        <style>
+            #bars {
+                text-align: center;
+                padding: 0;
+                height: 100px;
+            }
+            
+            #bars div {
+                width: 2em;
+                margin: 1px;
+                border: SOLID 1px #343026;
+                background-color: #ABCDEF;
+                position: relative;
+                float: left;
+            }
+            
+            #bars .bar-selected {
+                background-color: YELLOW;
+            }
+            
+            .bar-mover {
+                position: absolute;
+                width: 2em;
+                height: 0px;
+                background-color: BLUE;
+                border: DASHED 2px BLACK;
+                display: none
+            }
+        </style>
+        <script type = "text/javascript" src = "http://localhost:8080/ttd/trialtool/lib/jquery/jquery-1.4.2.min.js">
+        </script>
+        <script>
+            var steps = [];
+            var isRunning = false;
+            
+            function runSteps(){
+                var operation = steps[0];
+                if (isRunning || !operation) 
+                    return;
+                isRunning = true;
+                operation.op.apply(visualization, operation.args);
+                var timerHandler = window.setInterval(function(){
+                    if (!isRunning) {
+                        window.clearInterval(timerHandler);
+                        steps.shift();
+                        runSteps();
+                    }
+                }, 10);
+            };
+            
+            function addStep(op, args){
+                steps.push({
+                    "op": op,
+                    "args": args
+                });
+                runSteps();
+            };
+            
+            var defaultFunc = function(){
+                isRunning = false;
+            }
+            var visualization = {
+                "init": defaultFunc,
+                "swap": defaultFunc,
+                "select": defaultFunc,
+            };
+        </script>
+        <script type="text/javascript">
+            var x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            var maxX = x[0];
+            for (var i = 0; i < x.length; i++) {
+                (maxX < x[i]) && (maxX = x[i]);
+            }
+            
+            function swap(a, b){
+                var tmp = x[b];
+                x[b] = x[a];
+                x[a] = tmp;
+                addStep(visualization.swap, [a, x[a], b, x[b]]);
+            }
+            
+            function greater(a, b){
+                addStep(visualization.select, [[a, b]]);
+                return x[a] > x[b] ? x[a] : x[b];
+            }
+        </script>
+    </head>
+    <body>
+        <div id = "console">
+        </div>
+        <ul>
+            <li class = "example-set" id = "prereq" depends = "visualization">
+                <a class = "example-set-name">Activate Visualization</a>
+                <ul>
+                    <li class = "example" id = "visualization">
+                        <a class = "example-name">Bars</a>
+                        <script type = "text/javascript">
+                            var BarVisualization = {
+                                init: function(){
+                                    var bars = $("#bars");
+                                    if (!bars.length) {
+                                        bars = $("<div>", {
+                                            "id": "bars"
+                                        }).appendTo("#console");
+                                    }
+                                    bars.empty();
+                                    for (var i = 0; i < x.length; i++) {
+                                        var bar = bars.children("#bar_" + i);
+                                        if (!bar.length) {
+                                            bar = $("<div>", {
+                                                "id": "bar_" + i
+                                            }).css("top", "50%").appendTo(bars);
+                                        }
+                                        bar.css({
+                                            "height": (x[i] * 100 / maxX) + "%",
+                                            "top": ((maxX - x[i]) * 50 / maxX) + "%"
+                                        });
+                                    }
+                                    isRunning = false;
+                                    $("<div>", {
+                                        "id": "barA"
+                                    }).appendTo("#console").addClass("bar-mover");
+                                    $("<div>", {
+                                        "id": "barB"
+                                    }).appendTo("#console").addClass("bar-mover");
+                                },
+                                
+                                select: function(list){
+                                    $("#bars").children("div").removeClass("bar-selected");
+                                    for (var i = 0; i < list.length; i++) {
+                                        $("#bar_" + list[i]).addClass("bar-selected");
+                                    }
+                                    window.setTimeout(function(){
+                                        isRunning = false;
+                                    }, 50);
+                                },
+                                
+                                swap: function(key1, val1, key2, val2){
+                                    var duration = 400;
+                                    var barA = $("#bar_" + key1);
+                                    var barB = $("#bar_" + key2);
+                                    
+                                    var posA = barA.offset();
+                                    var posB = barB.offset();
+                                    
+                                    $("#barA").css({
+                                        "height": barA.height(),
+                                        "top": posA.top,
+                                        "left": posA.left
+                                    }).show();
+                                    $("#barB").css({
+                                        "height": barB.height(),
+                                        "top": posB.top,
+                                        "left": posB.left
+                                    }).show();
+                                    
+                                    $("#barB").animate({
+                                        "left": posA.left
+                                    });
+                                    $("#barA").animate({
+                                        "left": posB.left
+                                    });
+                                    $("#bar_" + key1 + ",#bar_" + key2).css("opacity", 0.2);
+                                    window.setTimeout(function(){
+                                        $("#bar_" + key1).css({
+                                            "height": (val1 * 100 / maxX) + "%",
+                                            "top": ((maxX - val1) * 50 / maxX) + "%"
+                                        });
+                                        $("#bar_" + key2).css({
+                                            "height": (val2 * 100 / maxX) + "%",
+                                            "top": ((maxX - val2) * 50 / maxX) + "%"
+                                        });
+                                        
+                                        $("#bar_" + key1 + ",#bar_" + key2).css({
+                                            "opacity": 1
+                                        });
+                                        $("#barA, #barB").hide();
+                                        isRunning = false;
+                                    }, duration);
+                                }
+                            }
+                            BarVisualization.init();
+                            visualization = BarVisualization;
+                        </script>
+                    </li>
+                </ul>
+            </li>
+            <li class = "example-set" id = "input">
+                <a class = "example-set-name">Change Input</a>
+                <ul>
+                    <li class = "example">
+                        <a class = "example-name">Randomize Input</a>
+                        <script type = "text/javascript">
+                            for (var i = 0; i < x.length - 1; i++) {
+                                var b = i + 1 + parseInt(Math.random() * 100) % (x.length - i - 1);
+                                swap(i, b);
+                            }
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class ="example-name">Sorted Input</a>
+                        <script type = "text/javascript">
+                            for (var i = 0; i < maxX; i++) {
+                                x[i] = i + 1;
+                            }
+                            visualization.init();
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class ="example-name">Reverse Sorted Input</a>
+                        <script type = "text/javascript">
+                            for (var i = 0; i < maxX; i++) {
+                                x[i] = maxX - i;
+                            }
+                            visualization.init();
+                        </script>
+                    </li>
+                </ul>
+            </li>
+            <li class="example-set" id = "sorting">
+                <a class = "example-set-name" href = "#">Sorting Algorithms</a>
+                <ul>
+                    <li class = "example" id = "insertion-sort">
+                        <a class = "example-name" href = "#">Insertion Sort</a>
+                        <script type="text/javascript">
+                            for (var i = 0; i < x.length; i++) {
+                                for (var j = i + 1; j < x.length; j++) {
+                                    if (greater(i, j) === x[i]) {
+                                        swap(i, j);
+                                    }
+                                }
+                            }
+                        </script>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
