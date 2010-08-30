@@ -235,7 +235,7 @@
                                     var onCanplaythrough = function(){
                                         stillToLoad--;
                                         if (!stillToLoad) {
-                                            document.write("Initialized Grand Piano Sounds. You should have heard a sound.");
+                                            document.write("Initialized Drum Beat Sounds. You should have heard a sound.");
                                             audio[0].play();
                                             isRunning--;
                                         }
@@ -277,17 +277,78 @@
                         </script>
                     </li>
                     <li class = "example" depends = "drumBeats">
-                        <a class = "">Grand Piano</a>
+                        <a class = "example-name">Grand Piano</a>
                         <script type = "text/javascript">
                             var animationDuration = 100;
                             var base = "http://github.com/azoff/HTML5piano/raw/master/instruments/grandPiano/";
                             var soundFiles = ["a", "b", "bb", "c", "cs", "d", "e", "eb", "f", "fs", "g", "gs"];
+                            var Piano = (function(){
+                                var audio = new Audio("");
+                                var ext = "";
+                                if (audio.play) {
+                                    mime = audio.canPlayType("audio/mpeg");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".mp3";
+                                    }
+                                    mime = audio.canPlayType("audio/x-wav");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".wav";
+                                    }
+                                    mime = audio.canPlayType("audio/wav");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".wav";
+                                    }
+                                }
+                                var audio = [];
+                                var init = function(){
+                                    var onCanplaythrough = function(){
+                                        stillToLoad--;
+                                        if (!stillToLoad) {
+                                            document.write("Initialized Grand Piano Sounds. You should have heard a sound.");
+                                            audio[0].play();
+                                            isRunning--;
+                                        }
+                                    };
+                                    var stillToLoad = 0;
+                                    for (var i = 0; i < soundFiles.length; i++) {
+                                        audio[i] = new Audio("");
+                                        audio[i].src = base + soundFiles[i] + ext;
+                                        audio[i].load();
+                                        stillToLoad++;
+                                        audio[i].addEventListener("canplaythrough", onCanplaythrough, false);
+                                        audio[i].addEventListener("error", onCanplaythrough, false);
+                                    }
+                                };
+                                
+                                return {
+                                    init: init,
+                                    select: function(list){
+                                        for (var i = 0; i < list.length; i++) {
+                                            audio[list[i]].play();
+                                        }
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                    },
+                                    swap: function(key1, val1, key2, val2){
+                                        audio[val1 - 1].play();
+                                        audio[val2 - 1].play();
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                    },
+                                    "audio": audio
+                                };
+                            })();
+                            
+                            visualization.add(Piano);
+                            addStep(visualization.init);
                         </script>
                     </li>
                     <li class = "example">
                         <a class = "example-name">None</a>
                         <script type = "text/javascript">
-                            document.write(visualization.visualSet);
+                            document.write("Cleard all visualizations");
                             visualization.visualSet = [];
                         </script>
                     </li>
@@ -316,6 +377,16 @@
                         </script>
                     </li>
                     <li class = "example">
+                        <a class ="example-name">Almost Sorted Input</a>
+                        <script type = "text/javascript">
+                            addStep(visualization.init);
+                            for (var i = 0; i < sample.length / 2; i++) {
+                                var b = i + 1 + parseInt(Math.random() * 100) % (sample.length - i - 1);
+                                swap(i, b);
+                            }
+                        </script>
+                    </li>
+                    <li class = "example">
                         <a class ="example-name">Reverse Sorted Input</a>
                         <script type = "text/javascript">
                             for (var i = 0; i < maxX; i++) {
@@ -339,6 +410,43 @@
                                     }
                                 }
                             }
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Bubble Sort</a>
+                        <script type = "text/javascript">
+                            var n = sample.length;
+                            do {
+                                var newn = 0;
+                                for (var i = 0; i <= n - 2; i++) {
+                                    if (greater(i, i + 1) === sample[i]) {
+                                        swap(i, i + 1);
+                                        newn = i + 1;
+                                    }
+                                }
+                                n = newn;
+                            }
+                            while (n > 1)
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">Shell Sort</a>
+                        <script type = "text/javascript">
+                            var n = sample.length;
+                            var inc = Math.round(sample.length / 2);
+                            while (inc > 0) {
+                                for (var i = inc; i <= n - 1; i++) {
+                                    var temp = sample[i];
+                                    var j = i;
+                                    while (j >= inc && sample[j - inc] > temp) {
+                                        sample[j] = sample[j - inc];
+                                        j = j - inc;
+                                    }
+                                    sample[j] = temp;
+                                }
+                                inc = Math.round(inc / 2.2);
+                            }
+                            visualization.init();
                         </script>
                     </li>
                 </ul>
