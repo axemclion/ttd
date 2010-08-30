@@ -65,6 +65,7 @@
                 function setVisualizationFunction(operation){
                     return function(){
                         for (var i = 0; i < visualSet.length; i++) {
+                            visualSet[i].isRunning = true;
                             visualSet[i][operation].apply(visualSet[i], arguments);
                         }
                     }
@@ -80,7 +81,7 @@
             })();
         </script>
         <script type="text/javascript">
-            var x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            var x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
             var maxX = x[0];
             for (var i = 0; i < x.length; i++) {
                 (maxX < x[i]) && (maxX = x[i]);
@@ -196,6 +197,48 @@
                             }
                             BarVisualization.init();
                             visualization.add(BarVisualization);
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class ="example-name">Grand Piano Sounds</a>
+                        <script type="text/javascript">
+                            var AudioVisual = (function(){
+                                var soundFiles = ["a", "b", "bb", "c", "cs", "d", "e", "eb", "f", "fs", "g", "gs"];
+                                var audio = new Audio("");
+                                var ext = "";
+                                if (audio.play) {
+                                    mime = audio.canPlayType("audio/mpeg");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".mp3";
+                                    }
+                                    mime = audio.canPlayType("audio/x-wav");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".wav";
+                                    }
+                                    mime = audio.canPlayType("audio/wav");
+                                    if (mime.length > 0 && mime != "no") {
+                                        ext = ".wav";
+                                    }
+                                }
+                                
+                                var audio = [];
+                                var init = function(){
+                                    var stillToLoad = soundFiles.length;
+                                    var loaded = function onCanplaythrough(){
+                                        stillToLoad--;
+                                    }
+                                    for (var i = 0; i < soundFiles.length; i++) {
+                                        audio[i] = new Audio("");
+                                        audio[i].src = "grandPiano/" + sounds[i] + ext;
+                                        audio[i].load();
+                                        audio[i].addEventListener("canplaythrough", onCanplaythrough);
+                                    }
+                                }
+                                
+                                return {
+                                    "init": init
+                                }
+                            })();
                         </script>
                     </li>
                 </ul>
