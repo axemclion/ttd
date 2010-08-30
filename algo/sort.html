@@ -76,7 +76,6 @@
                     },
                     "add": function(visual){
                         visualSet.push(visual);
-                        document.write("Added", visual, "to ", visualSet)
                         lastAdded = visual;
                     },
                     "init": function(){
@@ -255,13 +254,12 @@
                                 return {
                                     init: init,
                                     select: function(list){
-                                        for (var i = 0; i < list; i++) {
+                                        for (var i = 0; i < list.length; i++) {
                                             audio[list[i]].play();
                                         }
                                         window.setTimeout(function(){
                                             isRunning--;
                                         }, animationDuration);
-                                        
                                     },
                                     swap: function(key1, val1, key2, val2){
                                         audio[val1 - 1].play();
