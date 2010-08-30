@@ -38,7 +38,7 @@
             
             function runSteps(){
                 var operation = steps[0];
-                if (isRunning || !operation) 
+                if (isRunning || !operation)         
                     return;
                 isRunning = true;
                 operation.op.apply(visualization, operation.args);
@@ -59,14 +59,25 @@
                 runSteps();
             };
             
-            var defaultFunc = function(){
-                isRunning = false;
-            }
-            var visualization = {
-                "init": defaultFunc,
-                "swap": defaultFunc,
-                "select": defaultFunc,
-            };
+            var visualization = (function(){
+                var visualSet = [];
+                
+                function setVisualizationFunction(operation){
+                    return function(){
+                        for (var i = 0; i < visualSet.length; i++) {
+                            visualSet[i][operation].apply(visualSet[i], arguments);
+                        }
+                    }
+                }
+                return {
+                    "init": setVisualizationFunction("init"),
+                    "swap": setVisualizationFunction("swap"),
+                    "select": setVisualizationFunction("select"),
+                    "add": function(visual){
+                        visualSet.push(visual);
+                    }
+                }
+            })();
         </script>
         <script type="text/javascript">
             var x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -98,6 +109,7 @@
                     <li class = "example" id = "visualization">
                         <a class = "example-name">Bars</a>
                         <script type = "text/javascript">
+                            var animationDuration = 200;
                             var BarVisualization = {
                                 init: function(){
                                     var bars = $("#bars");
@@ -135,11 +147,11 @@
                                     }
                                     window.setTimeout(function(){
                                         isRunning = false;
-                                    }, 50);
+                                    }, animationDuration);
                                 },
                                 
                                 swap: function(key1, val1, key2, val2){
-                                    var duration = 400;
+                                
                                     var barA = $("#bar_" + key1);
                                     var barB = $("#bar_" + key2);
                                     
@@ -159,10 +171,10 @@
                                     
                                     $("#barB").animate({
                                         "left": posA.left
-                                    });
+                                    }, animationDuration);
                                     $("#barA").animate({
                                         "left": posB.left
-                                    });
+                                    }, animationDuration);
                                     $("#bar_" + key1 + ",#bar_" + key2).css("opacity", 0.2);
                                     window.setTimeout(function(){
                                         $("#bar_" + key1).css({
@@ -179,11 +191,11 @@
                                         });
                                         $("#barA, #barB").hide();
                                         isRunning = false;
-                                    }, duration);
+                                    }, animationDuration);
                                 }
                             }
                             BarVisualization.init();
-                            visualization = BarVisualization;
+                            visualization.add(BarVisualization);
                         </script>
                     </li>
                 </ul>
@@ -194,6 +206,7 @@
                     <li class = "example">
                         <a class = "example-name">Randomize Input</a>
                         <script type = "text/javascript">
+                            visualization.init();
                             for (var i = 0; i < x.length - 1; i++) {
                                 var b = i + 1 + parseInt(Math.random() * 100) % (x.length - i - 1);
                                 swap(i, b);
