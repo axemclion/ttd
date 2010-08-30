@@ -27,20 +27,19 @@
                 height: 0px;
                 background-color: BLUE;
                 border: DASHED 2px BLACK;
-                display: none
+                display: none;
             }
         </style>
         <script type = "text/javascript" src = "http://localhost:8080/ttd/trialtool/lib/jquery/jquery-1.4.2.min.js">
         </script>
         <script>
             var steps = [];
-            var isRunning = false;
+            var isRunning = 0;
             
             function runSteps(){
                 var operation = steps[0];
-                if (isRunning || !operation)         
+                if (isRunning || !operation) 
                     return;
-                isRunning = true;
                 operation.op.apply(visualization, operation.args);
                 var timerHandler = window.setInterval(function(){
                     if (!isRunning) {
@@ -61,42 +60,52 @@
             
             var visualization = (function(){
                 var visualSet = [];
-                
-                function setVisualizationFunction(operation){
-                    return function(){
-                        for (var i = 0; i < visualSet.length; i++) {
-                            visualSet[i].isRunning = true;
-                            visualSet[i][operation].apply(visualSet[i], arguments);
-                        }
-                    }
-                }
+                var lastAdded = null;
                 return {
-                    "init": setVisualizationFunction("init"),
-                    "swap": setVisualizationFunction("swap"),
-                    "select": setVisualizationFunction("select"),
+                    "swap": function(key1, val1, key2, val2){
+                        for (var i = 0; i < visualSet.length; i++) {
+                            isRunning++;
+                            visualSet[i].swap.apply(visualSet[i], [key1, val1, key2, val2]);
+                        }
+                    },
+                    "select": function(list){
+                        for (var i = 0; i < visualSet.length; i++) {
+                            isRunning++;
+                            visualSet[i].select.call(visualSet[i], list);
+                        }
+                    },
                     "add": function(visual){
                         visualSet.push(visual);
-                    }
+                        document.write("Added", visual, "to ", visualSet)
+                        lastAdded = visual;
+                    },
+                    "init": function(){
+                        if (lastAdded && typeof lastAdded.init === "function") {
+                            isRunning++;
+                            lastAdded.init();
+                        }
+                    },
+                    "visualSet": visualSet
                 }
             })();
         </script>
         <script type="text/javascript">
-            var x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-            var maxX = x[0];
-            for (var i = 0; i < x.length; i++) {
-                (maxX < x[i]) && (maxX = x[i]);
+            var sample = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            var maxX = sample[0];
+            for (var i = 0; i < sample.length; i++) {
+                (maxX < sample[i]) && (maxX = sample[i]);
             }
             
             function swap(a, b){
-                var tmp = x[b];
-                x[b] = x[a];
-                x[a] = tmp;
-                addStep(visualization.swap, [a, x[a], b, x[b]]);
+                var tmp = sample[b];
+                sample[b] = sample[a];
+                sample[a] = tmp;
+                addStep(visualization.swap, [a, sample[a], b, sample[b]]);
             }
             
             function greater(a, b){
                 addStep(visualization.select, [[a, b]]);
-                return x[a] > x[b] ? x[a] : x[b];
+                return sample[a] > sample[b] ? sample[a] : sample[b];
             }
         </script>
     </head>
@@ -104,10 +113,10 @@
         <div id = "console">
         </div>
         <ul>
-            <li class = "example-set" id = "prereq" depends = "visualization">
+            <li class = "example-set" id = "prereq">
                 <a class = "example-set-name">Activate Visualization</a>
                 <ul>
-                    <li class = "example" id = "visualization">
+                    <li class = "example">
                         <a class = "example-name">Bars</a>
                         <script type = "text/javascript">
                             var animationDuration = 200;
@@ -120,7 +129,7 @@
                                         }).appendTo("#console");
                                     }
                                     bars.empty();
-                                    for (var i = 0; i < x.length; i++) {
+                                    for (var i = 0; i < sample.length; i++) {
                                         var bar = bars.children("#bar_" + i);
                                         if (!bar.length) {
                                             bar = $("<div>", {
@@ -128,11 +137,11 @@
                                             }).css("top", "50%").appendTo(bars);
                                         }
                                         bar.css({
-                                            "height": (x[i] * 100 / maxX) + "%",
-                                            "top": ((maxX - x[i]) * 50 / maxX) + "%"
+                                            "height": (sample[i] * 100 / maxX) + "%",
+                                            "top": ((maxX - sample[i]) * 50 / maxX) + "%"
                                         });
                                     }
-                                    isRunning = false;
+                                    isRunning--;
                                     $("<div>", {
                                         "id": "barA"
                                     }).appendTo("#console").addClass("bar-mover");
@@ -147,12 +156,11 @@
                                         $("#bar_" + list[i]).addClass("bar-selected");
                                     }
                                     window.setTimeout(function(){
-                                        isRunning = false;
+                                        isRunning--;
                                     }, animationDuration);
                                 },
                                 
                                 swap: function(key1, val1, key2, val2){
-                                
                                     var barA = $("#bar_" + key1);
                                     var barB = $("#bar_" + key2);
                                     
@@ -191,19 +199,22 @@
                                             "opacity": 1
                                         });
                                         $("#barA, #barB").hide();
-                                        isRunning = false;
+                                        isRunning--;
                                     }, animationDuration);
                                 }
                             }
-                            BarVisualization.init();
                             visualization.add(BarVisualization);
+                            addStep(visualization.init);
                         </script>
                     </li>
-                    <li class = "example">
-                        <a class ="example-name">Grand Piano Sounds</a>
+                    <li class = "example" id = "drumBeats">
+                        <a class ="example-name">Drum Beats</a>
                         <script type="text/javascript">
-                            var AudioVisual = (function(){
-                                var soundFiles = ["a", "b", "bb", "c", "cs", "d", "e", "eb", "f", "fs", "g", "gs"];
+                            var animationDuration = 10;
+                            var base = "http://www.randomthink.net/labs/html5drums/drumkit/";
+                            var soundFiles = ["Bass%20Hit", "Clap", "Cow%20Bell", "Hi%20Hat%20Closed", "Hi%20Hat%20Long", "Hi%20Hat%20Short", "Rimshot", "Snare%wav", "Tambourine", "Tom%20Hi", "Tom%20Low", "Tom%20Mid"];
+                            
+                            var Sounds = (function(){
                                 var audio = new Audio("");
                                 var ext = "";
                                 if (audio.play) {
@@ -220,25 +231,66 @@
                                         ext = ".wav";
                                     }
                                 }
-                                
                                 var audio = [];
                                 var init = function(){
-                                    var stillToLoad = soundFiles.length;
-                                    var loaded = function onCanplaythrough(){
+                                    var onCanplaythrough = function(){
                                         stillToLoad--;
-                                    }
+                                        if (!stillToLoad) {
+                                            document.write("Initialized Grand Piano Sounds. You should have heard a sound.");
+                                            audio[0].play();
+                                            isRunning--;
+                                        }
+                                    };
+                                    var stillToLoad = 0;
                                     for (var i = 0; i < soundFiles.length; i++) {
                                         audio[i] = new Audio("");
-                                        audio[i].src = "grandPiano/" + sounds[i] + ext;
+                                        audio[i].src = base + soundFiles[i] + ext;
                                         audio[i].load();
-                                        audio[i].addEventListener("canplaythrough", onCanplaythrough);
+                                        stillToLoad++;
+                                        audio[i].addEventListener("canplaythrough", onCanplaythrough, false);
+                                        audio[i].addEventListener("error", onCanplaythrough, false);
                                     }
-                                }
+                                };
                                 
                                 return {
-                                    "init": init
-                                }
+                                    init: init,
+                                    select: function(list){
+                                        for (var i = 0; i < list; i++) {
+                                            audio[list[i]].play();
+                                        }
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                        
+                                    },
+                                    swap: function(key1, val1, key2, val2){
+                                        audio[val1 - 1].play();
+                                        audio[val2 - 1].play();
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                    },
+                                    "audio": audio
+                                };
                             })();
+                            
+                            visualization.add(Sounds);
+                            addStep(visualization.init);
+                        </script>
+                    </li>
+                    <li class = "example" depends = "drumBeats">
+                        <a class = "">Grand Piano</a>
+                        <script type = "text/javascript">
+                            var animationDuration = 100;
+                            var base = "http://github.com/azoff/HTML5piano/raw/master/instruments/grandPiano/";
+                            var soundFiles = ["a", "b", "bb", "c", "cs", "d", "e", "eb", "f", "fs", "g", "gs"];
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class = "example-name">None</a>
+                        <script type = "text/javascript">
+                            document.write(visualization.visualSet);
+                            visualization.visualSet = [];
                         </script>
                     </li>
                 </ul>
@@ -249,9 +301,9 @@
                     <li class = "example">
                         <a class = "example-name">Randomize Input</a>
                         <script type = "text/javascript">
-                            visualization.init();
-                            for (var i = 0; i < x.length - 1; i++) {
-                                var b = i + 1 + parseInt(Math.random() * 100) % (x.length - i - 1);
+                            addStep(visualization.init);
+                            for (var i = 0; i < sample.length - 1; i++) {
+                                var b = i + 1 + parseInt(Math.random() * 100) % (sample.length - i - 1);
                                 swap(i, b);
                             }
                         </script>
@@ -260,7 +312,7 @@
                         <a class ="example-name">Sorted Input</a>
                         <script type = "text/javascript">
                             for (var i = 0; i < maxX; i++) {
-                                x[i] = i + 1;
+                                sample[i] = i + 1;
                             }
                             visualization.init();
                         </script>
@@ -269,7 +321,7 @@
                         <a class ="example-name">Reverse Sorted Input</a>
                         <script type = "text/javascript">
                             for (var i = 0; i < maxX; i++) {
-                                x[i] = maxX - i;
+                                sample[i] = maxX - i;
                             }
                             visualization.init();
                         </script>
@@ -282,9 +334,9 @@
                     <li class = "example" id = "insertion-sort">
                         <a class = "example-name" href = "#">Insertion Sort</a>
                         <script type="text/javascript">
-                            for (var i = 0; i < x.length; i++) {
-                                for (var j = i + 1; j < x.length; j++) {
-                                    if (greater(i, j) === x[i]) {
+                            for (var i = 0; i < sample.length; i++) {
+                                for (var j = i + 1; j < sample.length; j++) {
+                                    if (greater(i, j) === sample[i]) {
                                         swap(i, j);
                                     }
                                 }
