@@ -209,7 +209,7 @@
                     <li class = "example" id = "drumBeats">
                         <a class ="example-name">Drum Beats</a>
                         <script type="text/javascript">
-                            var animationDuration = 10;
+                            var animationDuration = 100;
                             var base = "http://www.randomthink.net/labs/html5drums/drumkit/";
                             var soundFiles = ["Bass%20Hit", "Clap", "Cow%20Bell", "Hi%20Hat%20Closed", "Hi%20Hat%20Long", "Hi%20Hat%20Short", "Rimshot", "Snare%wav", "Tambourine", "Tom%20Hi", "Tom%20Low", "Tom%20Mid"];
                             
@@ -430,23 +430,37 @@
                         </script>
                     </li>
                     <li class = "example">
+                        <a class = "example-name">Quick Sort</a>
+                        <script type = "text/javascript">
+                            function partition(begin, end, pivot){
+                                swap(pivot, end - 1);
+                                var store = begin;
+                                var ix;
+                                for (ix = begin; ix < end - 1; ++ix) {
+                                    if (greater(end - 1, ix) === sample[end - 1]) {
+                                        swap(store, ix);
+                                        ++store;
+                                    }
+                                }
+                                swap(end - 1, store);
+                                return store;
+                            }
+                            
+                            function qsort(begin, end){
+                                if (end - 1 > begin) {
+                                    var pivot = begin + Math.floor(Math.random() * (end - begin));
+                                    pivot = partition(begin, end, pivot);
+                                    qsort(begin, pivot);
+                                    qsort(pivot + 1, end);
+                                }
+                            }
+                            
+                            qsort(0, sample.length);
+                        </script>
+                    </li>
+                    <li class = "example">
                         <a class = "example-name">Shell Sort</a>
                         <script type = "text/javascript">
-                            var n = sample.length;
-                            var inc = Math.round(sample.length / 2);
-                            while (inc > 0) {
-                                for (var i = inc; i <= n - 1; i++) {
-                                    var temp = sample[i];
-                                    var j = i;
-                                    while (j >= inc && sample[j - inc] > temp) {
-                                        sample[j] = sample[j - inc];
-                                        j = j - inc;
-                                    }
-                                    sample[j] = temp;
-                                }
-                                inc = Math.round(inc / 2.2);
-                            }
-                            visualization.init();
                         </script>
                     </li>
                 </ul>
