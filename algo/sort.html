@@ -5,7 +5,7 @@
             #bars {
                 text-align: center;
                 padding: 0;
-                height: 100px;
+                height: 150px;
             }
             
             #bars div {
@@ -25,9 +25,10 @@
                 position: absolute;
                 width: 2em;
                 height: 0px;
-                background-color: BLUE;
+                background-color: GREEN;
                 border: DASHED 2px BLACK;
                 display: none;
+                opacity: 0.4;
             }
         </style>
         <script type = "text/javascript" src = "http://localhost:8080/ttd/trialtool/lib/jquery/jquery-1.4.2.min.js">
@@ -38,7 +39,7 @@
             
             function runSteps(){
                 var operation = steps[0];
-                if (isRunning || !operation) 
+                if (isRunning || !operation)         
                     return;
                 operation.op.apply(visualization, operation.args);
                 var timerHandler = window.setInterval(function(){
@@ -61,19 +62,19 @@
             var visualization = (function(){
                 var visualSet = [];
                 var lastAdded = null;
+                var setFunction = function(name){
+                    return function(){
+                        for (var i = 0; i < visualSet.length; i++) {
+                            isRunning++;
+                            visualSet[i][name].apply(visualSet[i], arguments);
+                        }
+                    }
+                }
+                
                 return {
-                    "swap": function(key1, val1, key2, val2){
-                        for (var i = 0; i < visualSet.length; i++) {
-                            isRunning++;
-                            visualSet[i].swap.apply(visualSet[i], [key1, val1, key2, val2]);
-                        }
-                    },
-                    "select": function(list){
-                        for (var i = 0; i < visualSet.length; i++) {
-                            isRunning++;
-                            visualSet[i].select.call(visualSet[i], list);
-                        }
-                    },
+                    "swap": setFunction("swap"),
+                    "assign": setFunction("assign"),
+                    "select": setFunction("select"),
                     "add": function(visual){
                         visualSet.push(visual);
                         lastAdded = visual;
@@ -95,11 +96,16 @@
                 (maxX < sample[i]) && (maxX = sample[i]);
             }
             
+            function assign(key, val){
+                sample[key] = val;
+                addStep(visualization.assign, [key, sample[key], val]);
+            }
+            
             function swap(a, b){
+                addStep(visualization.swap, [a, sample[a], b, sample[b]]);
                 var tmp = sample[b];
                 sample[b] = sample[a];
                 sample[a] = tmp;
-                addStep(visualization.swap, [a, sample[a], b, sample[b]]);
             }
             
             function greater(a, b){
@@ -138,7 +144,7 @@
                                         bar.css({
                                             "height": (sample[i] * 100 / maxX) + "%",
                                             "top": ((maxX - sample[i]) * 50 / maxX) + "%"
-                                        });
+                                        }).html(sample[i]);
                                     }
                                     isRunning--;
                                     $("<div>", {
@@ -158,21 +164,30 @@
                                         isRunning--;
                                     }, animationDuration);
                                 },
-                                
+                                assign: function(key, val, val1){
+                                    var bar = $("#bar_" + key);
+                                    bar.css("background-color", "GREEN").html(val1);
+                                    bar.animate({
+                                        "height": (val1 * 100 / maxX) + "%",
+                                        "top": ((maxX - val1) * 50 / maxX) + "%"
+                                    }, animationDuration, function(){
+                                        isRunning--;
+                                    });
+                                },
                                 swap: function(key1, val1, key2, val2){
-                                    var barA = $("#bar_" + key1);
-                                    var barB = $("#bar_" + key2);
+                                    var bar1 = $("#bar_" + key1);
+                                    var bar2 = $("#bar_" + key2);
                                     
-                                    var posA = barA.offset();
-                                    var posB = barB.offset();
+                                    var posA = bar1.offset();
+                                    var posB = bar2.offset();
                                     
                                     $("#barA").css({
-                                        "height": barA.height(),
+                                        "height": bar1.height(),
                                         "top": posA.top,
                                         "left": posA.left
                                     }).show();
                                     $("#barB").css({
-                                        "height": barB.height(),
+                                        "height": bar2.height(),
                                         "top": posB.top,
                                         "left": posB.left
                                     }).show();
@@ -182,24 +197,23 @@
                                     }, animationDuration);
                                     $("#barA").animate({
                                         "left": posB.left
-                                    }, animationDuration);
-                                    $("#bar_" + key1 + ",#bar_" + key2).css("opacity", 0.2);
-                                    window.setTimeout(function(){
-                                        $("#bar_" + key1).css({
+                                    }, animationDuration, function(){
+                                        bar2.css({
                                             "height": (val1 * 100 / maxX) + "%",
                                             "top": ((maxX - val1) * 50 / maxX) + "%"
-                                        });
-                                        $("#bar_" + key2).css({
+                                        }).html(val1);
+                                        bar1.css({
                                             "height": (val2 * 100 / maxX) + "%",
                                             "top": ((maxX - val2) * 50 / maxX) + "%"
-                                        });
+                                        }).html(val2);
                                         
                                         $("#bar_" + key1 + ",#bar_" + key2).css({
                                             "opacity": 1
                                         });
                                         $("#barA, #barB").hide();
                                         isRunning--;
-                                    }, animationDuration);
+                                    });
+                                    $("#bar_" + key1 + ",#bar_" + key2).css("opacity", 0.2);
                                 }
                             }
                             visualization.add(BarVisualization);
@@ -257,6 +271,12 @@
                                         for (var i = 0; i < list.length; i++) {
                                             audio[list[i]].play();
                                         }
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                    },
+                                    assign: function(key, val, val1){
+                                        audio[key].play();
                                         window.setTimeout(function(){
                                             isRunning--;
                                         }, animationDuration);
@@ -330,6 +350,12 @@
                                             isRunning--;
                                         }, animationDuration);
                                     },
+                                    assign: function(key, val, val1){
+                                        audio[key].play();
+                                        window.setTimeout(function(){
+                                            isRunning--;
+                                        }, animationDuration);
+                                    },
                                     swap: function(key1, val1, key2, val2){
                                         audio[val1 - 1].play();
                                         audio[val2 - 1].play();
@@ -360,8 +386,16 @@
                     <li class = "example">
                         <a class = "example-name">Randomize Input</a>
                         <script type = "text/javascript">
-                            addStep(visualization.init);
                             for (var i = 0; i < sample.length - 1; i++) {
+                                var b = i + 1 + parseInt(Math.random() * 100) % (sample.length - i - 1);
+                                swap(i, b);
+                            }
+                        </script>
+                    </li>
+                    <li class = "example">
+                        <a class ="example-name">Almost Sorted Input</a>
+                        <script type = "text/javascript">
+                            for (var i = 0; i < sample.length / 2; i++) {
                                 var b = i + 1 + parseInt(Math.random() * 100) % (sample.length - i - 1);
                                 swap(i, b);
                             }
@@ -370,29 +404,17 @@
                     <li class = "example">
                         <a class ="example-name">Sorted Input</a>
                         <script type = "text/javascript">
-                            for (var i = 0; i < maxX; i++) {
-                                sample[i] = i + 1;
-                            }
-                            visualization.init();
-                        </script>
-                    </li>
-                    <li class = "example">
-                        <a class ="example-name">Almost Sorted Input</a>
-                        <script type = "text/javascript">
-                            addStep(visualization.init);
-                            for (var i = 0; i < sample.length / 2; i++) {
-                                var b = i + 1 + parseInt(Math.random() * 100) % (sample.length - i - 1);
-                                swap(i, b);
+                            for (var i = 0; i < sample.length; i++) {
+                                assign(i, i + 1);
                             }
                         </script>
                     </li>
                     <li class = "example">
                         <a class ="example-name">Reverse Sorted Input</a>
                         <script type = "text/javascript">
-                            for (var i = 0; i < maxX; i++) {
-                                sample[i] = maxX - i;
+                            for (var i = 0; i < sample.length; i++) {
+                                assign(i, maxX - i);
                             }
-                            visualization.init();
                         </script>
                     </li>
                 </ul>
@@ -401,15 +423,61 @@
                 <a class = "example-set-name" href = "#">Sorting Algorithms</a>
                 <ul>
                     <li class = "example" id = "insertion-sort">
-                        <a class = "example-name" href = "#">Insertion Sort</a>
+                        <a class = "example-name" href = "#">Selection Sort</a>
                         <script type="text/javascript">
-                            for (var i = 0; i < sample.length; i++) {
+                            var i, minimum, tmp;
+                            for (i = 0; i < sample.length - 1; i++) {
+                                minimum = i;
                                 for (var j = i + 1; j < sample.length; j++) {
-                                    if (greater(i, j) === sample[i]) {
-                                        swap(i, j);
+                                    if (greater(j, minimum) == sample[minimum]) {
+                                        minimum = j;
                                     }
                                 }
+                                swap(i, minimum);
                             }
+                        </script>
+                    </li>
+                    <li class = "example" id = "heap-sort">
+                        <a class = "example-name" href = "#">Heap Sort</a>
+                        <script type="text/javascript">
+                            function maxHeapify(i){
+                                var largest;
+                                var left = 2 * i + 1;
+                                var right = 2 * i + 2;
+                                if (left <= heapSize && greater(left, i) === sample[left]) {
+                                    largest = left;
+                                }
+                                else {
+                                    largest = i
+                                }
+                                if (right <= heapSize && greater(right, largest) === sample[right]) {
+                                    largest = right;
+                                }
+                                if (largest != i) {
+                                    swap(i, largest);
+                                    maxHeapify(largest);
+                                }
+                            }
+                            
+                            function buildMaxHeap(A){
+                                heapSize = A.length - 1
+                                var i
+                                var mid = Math.floor(heapSize / 2)
+                                for (i = mid; i >= 0; i--) {
+                                    maxHeapify(i)
+                                }
+                            }
+                            
+                            function heapSort(){
+                                buildMaxHeap(sample)
+                                for (var i = sample.length - 1; i > 0; i--) {
+                                    swap(0, i);
+                                    heapSize -= 1;
+                                    maxHeapify(0);
+                                }
+                            }
+                            
+                            heapSort();
                         </script>
                     </li>
                     <li class = "example">
@@ -459,8 +527,28 @@
                         </script>
                     </li>
                     <li class = "example">
-                        <a class = "example-name">Shell Sort</a>
+                        <a class = "example-name">Insertion Sort</a>
                         <script type = "text/javascript">
+                            function insert(i){
+                                var v = sample[i];
+                                for (var j = i - 1; j >= 0; j--) {
+                                    if (sample[j] <= v) {
+                                        break
+                                    };
+                                    assign(j + 1, sample[j]);
+                                }
+                                assign(j + 1, v);
+                            }
+                            
+                            function insertionSort(){
+                                var i = 1
+                                while (i < sample.length) {
+                                    insert(i);
+                                    i = i + 1
+                                }
+                            }
+                            
+                            insertionSort();
                         </script>
                     </li>
                 </ul>
