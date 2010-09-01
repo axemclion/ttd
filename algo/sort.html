@@ -5,6 +5,7 @@
             #bars {
                 text-align: center;
                 padding: 0;
+                margin: 1em;
                 height: 150px;
             }
             
@@ -30,8 +31,32 @@
                 display: none;
                 opacity: 0.4;
             }
+            
+            .sounds {
+                margin: 0.5em;
+                clear: both;
+                background-color: gray;
+                color: white;
+                padding: 0.5em;
+                height: 2em;
+                vertical-align: middle;
+            }
+            
+            .audioButton {
+                height: 1.5em;
+                width: 1.5em;
+                background-color: #9F9F9F;
+                border: SOLID 1px BLACK;
+                float: left;
+                margin: 3px;
+                cursor: pointer;
+            }
+            
+            .audioLoaded {
+                background-color: WHITE;
+            }
         </style>
-        <script type = "text/javascript" src = "http://localhost:8080/ttd/trialtool/lib/jquery/jquery-1.4.2.min.js">
+        <script type = "text/javascript" src = "http://code.jquery.com/jquery-1.4.2.min.js">
         </script>
         <script>
             var steps = [];
@@ -39,7 +64,7 @@
             
             function runSteps(){
                 var operation = steps[0];
-                if (isRunning || !operation)         
+                if (isRunning || !operation) 
                     return;
                 operation.op.apply(visualization, operation.args);
                 var timerHandler = window.setInterval(function(){
@@ -88,6 +113,84 @@
                     "visualSet": visualSet
                 }
             })();
+            
+            var Sounds = function(name, sounds, base){
+                var audio = new Audio("");
+                var ext = "";
+                if (audio.play) {
+                    mime = audio.canPlayType("audio/mpeg");
+                    if (mime.length > 0 && mime != "no") {
+                        ext = ".mp3";
+                    }
+                    mime = audio.canPlayType("audio/x-wav");
+                    if (mime.length > 0 && mime != "no") {
+                        ext = ".wav";
+                    }
+                    mime = audio.canPlayType("audio/wav");
+                    if (mime.length > 0 && mime != "no") {
+                        ext = ".wav";
+                    }
+                }
+                var audio = [];
+                var init = function(){
+                    var audioLoader = $("#" + name.replace(/\s/g, "_"));
+                    if (audioLoader.length === 0) {
+                        audioLoader = $("<div>", {
+                            "id": name.replace(/\s/g, "_")
+                        }).addClass("sounds").appendTo("#console").html("<span style = 'font-size:1.5em; float:left'>" + name + "</span>&nbsp;&nbsp;");
+                    }
+                    for (var i = 0; i < soundFiles.length; i++) {
+                        $("<div>", {
+                            "id": name.replace(/\s/g, "_") + i
+                        }).addClass("audioButton").appendTo(audioLoader).data("key", i);
+                    }
+                    var onCanplaythrough = function(){
+                        $("#" + name.replace(/\s/g, "_") + (soundFiles.length - stillToLoad)).addClass("audioLoaded");
+                        stillToLoad--;
+                        if (!stillToLoad) {
+                            isRunning--;
+                        }
+                    };
+                    var stillToLoad = 0;
+                    for (var i = 0; i < soundFiles.length; i++) {
+                        audio[i] = new Audio("");
+                        audio[i].src = base + soundFiles[i] + ext;
+                        audio[i].load();
+                        stillToLoad++;
+                        audio[i].addEventListener("canplaythrough", onCanplaythrough, false);
+                        audio[i].addEventListener("error", onCanplaythrough, false);
+                    }
+                };
+                $("#" + name.replace(/\s/g, "_") + " > div.audioButton").live("click", function(){
+                    audio[$(this).data("key")].play();
+                });
+                
+                return {
+                    init: init,
+                    select: function(list){
+                        for (var i = 0; i < list.length; i++) {
+                            audio[list[i]].play();
+                        }
+                        window.setTimeout(function(){
+                            isRunning--;
+                        }, animationDuration);
+                    },
+                    assign: function(key, val, val1){
+                        audio[key].play();
+                        window.setTimeout(function(){
+                            isRunning--;
+                        }, animationDuration);
+                    },
+                    swap: function(key1, val1, key2, val2){
+                        audio[val1 - 1].play();
+                        audio[val2 - 1].play();
+                        window.setTimeout(function(){
+                            isRunning--;
+                        }, animationDuration);
+                    },
+                    "audio": audio
+                };
+            };
         </script>
         <script type="text/javascript">
             var sample = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -123,6 +226,7 @@
                 <ul>
                     <li class = "example">
                         <a class = "example-name">Bars</a>
+                        <link class = "example-docs" href = "div#bars"/>
                         <script type = "text/javascript">
                             var animationDuration = 200;
                             var BarVisualization = {
@@ -172,6 +276,7 @@
                                         "top": ((maxX - val1) * 50 / maxX) + "%"
                                     }, animationDuration, function(){
                                         isRunning--;
+                                        bar.css("background-color", "#ABCDEF").html(val1);
                                     });
                                 },
                                 swap: function(key1, val1, key2, val2){
@@ -222,152 +327,23 @@
                     </li>
                     <li class = "example" id = "drumBeats">
                         <a class ="example-name">Drum Beats</a>
+                        <link class = "example-docs" href = "div#drums"/>
                         <script type="text/javascript">
                             var animationDuration = 100;
                             var base = "http://www.randomthink.net/labs/html5drums/drumkit/";
                             var soundFiles = ["Bass%20Hit", "Clap", "Cow%20Bell", "Hi%20Hat%20Closed", "Hi%20Hat%20Long", "Hi%20Hat%20Short", "Rimshot", "Snare%wav", "Tambourine", "Tom%20Hi", "Tom%20Low", "Tom%20Mid"];
-                            
-                            var Sounds = (function(){
-                                var audio = new Audio("");
-                                var ext = "";
-                                if (audio.play) {
-                                    mime = audio.canPlayType("audio/mpeg");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".mp3";
-                                    }
-                                    mime = audio.canPlayType("audio/x-wav");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".wav";
-                                    }
-                                    mime = audio.canPlayType("audio/wav");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".wav";
-                                    }
-                                }
-                                var audio = [];
-                                var init = function(){
-                                    var onCanplaythrough = function(){
-                                        stillToLoad--;
-                                        if (!stillToLoad) {
-                                            document.write("Initialized Drum Beat Sounds. You should have heard a sound.");
-                                            audio[0].play();
-                                            isRunning--;
-                                        }
-                                    };
-                                    var stillToLoad = 0;
-                                    for (var i = 0; i < soundFiles.length; i++) {
-                                        audio[i] = new Audio("");
-                                        audio[i].src = base + soundFiles[i] + ext;
-                                        audio[i].load();
-                                        stillToLoad++;
-                                        audio[i].addEventListener("canplaythrough", onCanplaythrough, false);
-                                        audio[i].addEventListener("error", onCanplaythrough, false);
-                                    }
-                                };
-                                
-                                return {
-                                    init: init,
-                                    select: function(list){
-                                        for (var i = 0; i < list.length; i++) {
-                                            audio[list[i]].play();
-                                        }
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    assign: function(key, val, val1){
-                                        audio[key].play();
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    swap: function(key1, val1, key2, val2){
-                                        audio[val1 - 1].play();
-                                        audio[val2 - 1].play();
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    "audio": audio
-                                };
-                            })();
-                            
-                            visualization.add(Sounds);
+                            visualization.add(Sounds("Drum Beats", soundFiles, base));
                             addStep(visualization.init);
                         </script>
                     </li>
                     <li class = "example" depends = "drumBeats">
                         <a class = "example-name">Grand Piano</a>
+                        <link class = "example-docs" href = "div#piano"/>
                         <script type = "text/javascript">
                             var animationDuration = 100;
                             var base = "http://github.com/azoff/HTML5piano/raw/master/instruments/grandPiano/";
                             var soundFiles = ["a", "b", "bb", "c", "cs", "d", "e", "eb", "f", "fs", "g", "gs"];
-                            var Piano = (function(){
-                                var audio = new Audio("");
-                                var ext = "";
-                                if (audio.play) {
-                                    mime = audio.canPlayType("audio/mpeg");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".mp3";
-                                    }
-                                    mime = audio.canPlayType("audio/x-wav");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".wav";
-                                    }
-                                    mime = audio.canPlayType("audio/wav");
-                                    if (mime.length > 0 && mime != "no") {
-                                        ext = ".wav";
-                                    }
-                                }
-                                var audio = [];
-                                var init = function(){
-                                    var onCanplaythrough = function(){
-                                        stillToLoad--;
-                                        if (!stillToLoad) {
-                                            document.write("Initialized Grand Piano Sounds. You should have heard a sound.");
-                                            audio[0].play();
-                                            isRunning--;
-                                        }
-                                    };
-                                    var stillToLoad = 0;
-                                    for (var i = 0; i < soundFiles.length; i++) {
-                                        audio[i] = new Audio("");
-                                        audio[i].src = base + soundFiles[i] + ext;
-                                        audio[i].load();
-                                        stillToLoad++;
-                                        audio[i].addEventListener("canplaythrough", onCanplaythrough, false);
-                                        audio[i].addEventListener("error", onCanplaythrough, false);
-                                    }
-                                };
-                                
-                                return {
-                                    init: init,
-                                    select: function(list){
-                                        for (var i = 0; i < list.length; i++) {
-                                            audio[list[i]].play();
-                                        }
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    assign: function(key, val, val1){
-                                        audio[key].play();
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    swap: function(key1, val1, key2, val2){
-                                        audio[val1 - 1].play();
-                                        audio[val2 - 1].play();
-                                        window.setTimeout(function(){
-                                            isRunning--;
-                                        }, animationDuration);
-                                    },
-                                    "audio": audio
-                                };
-                            })();
-                            
-                            visualization.add(Piano);
+                            visualization.add(Sounds("Grand Piano", soundFiles, base));
                             addStep(visualization.init);
                         </script>
                     </li>
@@ -391,6 +367,7 @@
                                 swap(i, b);
                             }
                         </script>
+                        <link class = "example-docs" href = "div#input_randomize"/>
                     </li>
                     <li class = "example">
                         <a class ="example-name">Almost Sorted Input</a>
@@ -400,6 +377,7 @@
                                 swap(i, b);
                             }
                         </script>
+                        <link class = "example-docs" href = "div#input_almost_sorted"/>
                     </li>
                     <li class = "example">
                         <a class ="example-name">Sorted Input</a>
@@ -408,6 +386,7 @@
                                 assign(i, i + 1);
                             }
                         </script>
+                        <link class = "example-docs" href = "div#input_sorted"/>
                     </li>
                     <li class = "example">
                         <a class ="example-name">Reverse Sorted Input</a>
@@ -416,6 +395,7 @@
                                 assign(i, maxX - i);
                             }
                         </script>
+                        <link class = "example-docs" href = "div#input_reverse"/>
                     </li>
                 </ul>
             </li>
@@ -424,6 +404,7 @@
                 <ul>
                     <li class = "example" id = "insertion-sort">
                         <a class = "example-name" href = "#">Selection Sort</a>
+                        <link class = "example-docs" href = "div#sort_selection"/>
                         <script type="text/javascript">
                             var i, minimum, tmp;
                             for (i = 0; i < sample.length - 1; i++) {
@@ -439,6 +420,7 @@
                     </li>
                     <li class = "example" id = "heap-sort">
                         <a class = "example-name" href = "#">Heap Sort</a>
+                        <link class = "example-docs" href = "div#sort_heap"/>
                         <script type="text/javascript">
                             function maxHeapify(i){
                                 var largest;
@@ -482,6 +464,7 @@
                     </li>
                     <li class = "example">
                         <a class = "example-name">Bubble Sort</a>
+                        <link class = "example-docs" href = "div#sort_bubble"/>
                         <script type = "text/javascript">
                             var n = sample.length;
                             do {
@@ -499,6 +482,7 @@
                     </li>
                     <li class = "example">
                         <a class = "example-name">Quick Sort</a>
+                        <link class = "example-docs" href = "div#sort_quick"/>
                         <script type = "text/javascript">
                             function partition(begin, end, pivot){
                                 swap(pivot, end - 1);
@@ -528,22 +512,18 @@
                     </li>
                     <li class = "example">
                         <a class = "example-name">Insertion Sort</a>
+                        <link class = "example-docs" href = "div#sort_insertion"/>
                         <script type = "text/javascript">
-                            function insert(i){
-                                var v = sample[i];
-                                for (var j = i - 1; j >= 0; j--) {
-                                    if (sample[j] <= v) {
-                                        break
-                                    };
-                                    assign(j + 1, sample[j]);
-                                }
-                                assign(j + 1, v);
-                            }
-                            
                             function insertionSort(){
                                 var i = 1
                                 while (i < sample.length) {
-                                    insert(i);
+                                    var v = sample[i];
+                                    for (var j = i - 1; j >= 0; j--) {
+                                        if (sample[j] <= v) {
+                                            break
+                                        };
+                                        swap(j + 1, j);
+                                    }
                                     i = i + 1
                                 }
                             }
@@ -554,5 +534,95 @@
                 </ul>
             </li>
         </ul>
+        <div>
+            <div id = "bars">
+                <h1>Visualizing Algorithms</h1>
+                <p>
+                    This is a simple application that tries to visualize how sorting algorithms work. 
+                    <ol>
+                        <li>
+                            Click on any of the visualization (Bars, Drum Beats or Grand Piano) and select RUN to load a visualization
+                        </li>
+                        <li>
+                            Next, click on "Change Input" section to change the input and hit RUN.
+                        </li>
+                        <li>
+                            Click on a sorting algorithm and see how the sorting algorithm behaves. 
+                        </li>
+                    </ol>
+                </p>
+                <p>
+                    You can add your own sorting examples using the Fork Button (near examples - top left). <a href = "http://axemclion.github.com/contact.html" target = "_blank">Contact</a>
+                    me a mail for pull requests, suggestions of feedback. 
+                    Written by <a href = "http://nparashuram.com" target = "_blank">Parashuram</a>
+                </p>
+            </div>
+            <div id = "drums">
+                <h2>Drum Beats</h2>
+                <p>
+                    Every value in the input is assigned a drum beat and everytime it is compared or swapped,the drum plays. 
+                    Made possible using HTML5 <a href = "http://www.w3schools.com/html5/tag_audio.asp">audio </a>tag. 
+                    Individual drum sounds are from  from <a href = "http://www.randomthink.net/labs/html5drums/" target = "_blank">HTML5 Drums</a>. 
+                    <br/>
+                    Note that the sound files may take some time to load. You can click on the boxes to play the beats. 
+                </p>
+                <p>
+                    Tested on Firefox 3.6.8, Chrome 5.0 and Opera 10.6. 
+                </p>
+            </div>
+            <div id = "piano">
+                <h2>Grand Piano</h2>
+                <p>
+                    Every value in the input is assigned a drum beat and everytime it is compared or swapped,the piano note plays. 
+                    Made possible using HTML5 <a href = "http://www.w3schools.com/html5/tag_audio.asp">audio </a>tag. 
+                    Individual sounds are from  from <a href = "http://github.com/azoff/HTML5piano/" target = "_blank">the piano</a>
+                    <br/>
+                    Note that the sound files may take some time to load. You can click on the boxes to play the notes. 
+                </p>
+                <p>
+                    Tested on Firefox 3.6.8, Chrome 5.0 and Opera 10.6. 
+                </p>
+            </div>
+            <div id = "input_randomize">
+                <p>
+                    Select this and hit run to make the input random.
+                </p>
+            </div>
+            <div id = "input_alomst_sorter">
+                <p>
+                    Select this and hit run to make the input almost sorted.
+                </p>
+            </div>
+            <div id = "input_sorted">
+                <p>
+                    Select this and hit run to make the input sorted in ascending order.
+                </p>
+            </div>
+            <div id = "input_reverse">
+                <p>
+                    Select this and hit run to make the input sorted in descending order.
+                </p>
+            </div>
+            <div id = "sort_selection">
+                <iframe src = "http://en.wikipedia.org/wiki/Selection_sort" border = "0" style ="border : none; width : 100%; height : 99%">
+                </iframe>
+            </div>
+            <div id = "sort_heap">
+                <iframe src = "http://en.wikipedia.org/wiki/Selection_sort" border = "0" style ="border : none; width : 100%; height : 99%">
+                </iframe>
+            </div>
+            <div id = "sort_bubble">
+                <iframe src = "http://en.wikipedia.org/wiki/Selection_sort" border = "0" style ="border : none; width : 100%; height : 99%">
+                </iframe>
+            </div>
+            <div id = "sort_insertion">
+                <iframe src = "http://en.wikipedia.org/wiki/Selection_sort" border = "0" style ="border : none; width : 100%; height : 99%">
+                </iframe>
+            </div>
+            <div id = "sort_quick">
+                <iframe src = "http://en.wikipedia.org/wiki/Selection_sort" border = "0" style ="border : none; width : 100%; height : 99%">
+                </iframe>
+            </div>
+        </div>
     </body>
 </html>
