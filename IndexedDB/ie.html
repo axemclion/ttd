@@ -1,18 +1,88 @@
 <html>
     <head>
-        <title>Firefox 4 Beta Indexed DB</title>
+        <title>Internet Explorer Indexed DB</title>
     </head>
     <body>
         <ul>
             <li class = "example-set">
-                <a class = "example-set-name">moz-IndexedDB</a>
+                <a class = "example-set-name">IE-IndexedDB</a>
                 <ul>
                     <li class = "example" id = "prereq">
                         <a class = "example-name">Pre Requisites</a>
                         <script type = "text/javascript">
-                            // Initialising the window.IndexedDB Object
-                            window.indexedDB = window.moz_indexedDB;
-                            var DAO = {};
+                        // Include Bootlib.js to get all the constants and functions required for the prototype. 
+                        
+                        if (!window.indexedDB) {
+                            window.indexedDB = new ActiveXObject("SQLCE.Factory.4.0");
+                            window.indexedDBSync = new ActiveXObject("SQLCE.FactorySync.4.0");
+                            
+                            if (window.JSON) {
+                                window.indexedDB.json = window.JSON;
+                                window.indexedDBSync.json = window.JSON;
+                            }
+                            else {
+                                var jsonObject = {
+                                    parse: function(txt){
+                                        if (txt === "[]") 
+                                            return [];
+                                        if (txt === "{}") 
+                                            return {};
+                                        throw {
+                                            message: "Unrecognized JSON to parse: " + txt
+                                        };
+                                    }
+                                };
+                                window.indexedDB.json = jsonObject;
+                                window.indexedDBSync.json = jsonObject;
+                                
+                            }
+                            
+                            // Add some interface-level constants and methods.
+                            window.IDBDatabaseException = {
+                                UNKNOWN_ERR: 0,
+                                NON_TRANSIENT_ERR: 1,
+                                NOT_FOUND_ERR: 2,
+                                CONSTRAINT_ERR: 3,
+                                DATA_ERR: 4,
+                                NOT_ALLOWED_ERR: 5,
+                                SERIAL_ERR: 11,
+                                RECOVERABLE_ERR: 21,
+                                TRANSIENT_ERR: 31,
+                                TIMEOUT_ERR: 32,
+                                DEADLOCK_ERR: 33
+                            };
+                            
+                            window.IDBKeyRange = {
+                                SINGLE: 0,
+                                LEFT_OPEN: 1,
+                                RIGHT_OPEN: 2,
+                                LEFT_BOUND: 4,
+                                RIGHT_BOUND: 8
+                            };
+                            
+                            window.IDBRequest = {
+                                INITIAL: 0,
+                                LOADING: 1,
+                                DONE: 2
+                            }
+                            
+                            window.IDBKeyRange.only = function(value){
+                                return window.indexedDB.range.only(value);
+                            };
+                            
+                            window.IDBKeyRange.leftBound = function(bound, open){
+                                return window.indexedDB.range.leftBound(bound, open);
+                            };
+                            
+                            window.IDBKeyRange.rightBound = function(bound, open){
+                                return window.indexedDB.range.rightBound(bound, open);
+                            };
+                            
+                            window.IDBKeyRange.bound = function(left, right, openLeft, openRight){
+                                return window.indexedDB.range.bound(left, right, openLeft, openRight);
+                            };
+                        }
+                        var DAO = {};
                         </script>
                         <link class = "example-docs" href = "div#reference>div#prereq">
                     </li>
@@ -20,7 +90,7 @@
                         <a class = "example-name">Open Database</a>
                         <script type="text/javascript">
                             document.write("Trying to open database ...");
-                            var request = window.indexedDB.open("BookShop", "My Book Shop database");
+                            var request = window.indexedDB.open("BookShop", "My Book Shop Database");
                             request.onsuccess = function(event){
                                 DAO.db = event.result;
                                 document.write("Database Opened", DAO.db);
@@ -38,13 +108,12 @@
                                         var request = DAO.db.setVersion(parseInt(DAO.db.version) + 1);
                                         request.onsuccess = function(e){
                                             document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
-                                            DAO.objectStore = DAO.db.createObjectStore("BookList", "id", true);
-                                            document.write("Object store created: ", DAO.objectStore);
+                                            DAO.db.createObjectStore("BookList", "id", true);
+                                            document.write("Object store created");
                                         };
                                         request.onerror = function(e){
                                             document.write("Could not set the version, so cannot create database", e);
-                                        }
-                                        
+                                        };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#createObjectStore">
@@ -57,9 +126,16 @@
                                         function newTransaction(){
                                             try {
                                                 DAO.transaction = DAO.db.transaction(["BookList"], 0);
-                                                DAO.transaction.oncomplete = newTransaction;
+                                                DAO.transaction.oncomplete = function(e){
+                                                    document.write("===== Transaction Complete", e);
+                                                    newTransaction();
+                                                }
+                                                DAO.transaction.onabort = function(e){
+                                                    document.write("===== Transaction Aborted");
+                                                    newTransaction();
+                                                }
                                                 DAO.objectStore = DAO.transaction.objectStore("BookList");
-                                                document.write("Opened the object store with transaction", DAO.objectStore);
+                                                document.write("==== New Transaction", DAO.objectStore);
                                             } 
                                             catch (e) {
                                                 write("Could not open objectStore. You may have to create it first");
@@ -89,7 +165,7 @@
                                         request.onsuccess = function(e){
                                             DAO.db.deleteObjectStore("BookList");
                                             write("Deleted Object store Booklist. The remaining object stores are ", DAO.db.objectStoreNames);
-                                        }
+                                        };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#removeObjectStore">
@@ -112,9 +188,11 @@
                                                 request.onsuccess = function(event){
                                                     document.write("Saved id ", event.result)
                                                     DAO.objectId = event.result;
+                                                    DAO.transaction.commit();
                                                 };
                                                 request.onerror = function(){
                                                     document.write("Could not save object");
+                                                    DAO.transaction.abort();
                                                 };
                                             });
                                         </script>
@@ -129,9 +207,11 @@
                                                 request.onsuccess = function(event){
                                                     document.write("Got data ", event.result)
                                                     DAO.objectId = event.result;
+                                                    DAO.transaction.commit();
                                                 };
                                                 request.onerror = function(){
                                                     document.write("Could not get object");
+                                                    DAO.transaction.abort();
                                                 };
                                             });
                                         </script>
@@ -141,11 +221,11 @@
                                         <a class= "example-name">Delete Data</a>
                                         <script type="text/javascript">
                                             ConsoleHelper.waitFor("DAO.objectId", function(){
-                                                document.write("Trying to delete the last saved object using saved example...", DAO.objectId);
+                                                document.write("Trying to delete the last saved object using saved example ", DAO.objectId);
                                                 var request = DAO.objectStore.remove(DAO.objectId);
                                                 request.onsuccess = function(event){
-                                                    document.write("Removed id ", event.result)
-                                                    DAO.objectId = event.result;
+                                                    document.write("Removed id ", DAO.objectId);
+                                                    DAO.transaction.commit();
                                                 };
                                                 request.onerror = function(){
                                                     document.write("Could not delete object");
@@ -155,42 +235,52 @@
                                         <link class = "example-docs" href = "div#reference>div#delete">
                                     </li>
                                     <li class = "example" depends = "saveData">
-                                        <a class = "example-name">Modify data</a>
+                                        <a class = "example-name">Modify data (TODO)</a>
                                         <script type="text/javascript">
-                                            ConsoleHelper.waitFor("DAO.objectId", function(){
-                                                var modifiedData = {
-                                                    "bookName": "Modified-" + Math.random(),
-                                                    "new_prop": "Modified",
-                                                    "rating": (Math.random() > 0.5 ? "good" : "bad"),
-                                                    "id": DAO.objectId
-                                                };
-                                                document.write("Trying to modify the last saved object using saved example...", modifiedData);
-                                                var request = DAO.objectStore.modify(modifiedData);
-                                                request.onsuccess = function(event){
-                                                    document.write("Modified id ", event.result)
-                                                    DAO.objectId = event.result;
-                                                };
-                                                request.onerror = function(){
-                                                    document.write("Could not modify object");
-                                                };
-                                            });
+                                            /*
+                                             * TODO - Find the method required to modify data
+                                             */
+                                            //
+                                            //
+                                            /*ConsoleHelper.waitFor("DAO.objectId", function(){
+                                             var modifiedData = {
+                                             "bookName": "Modified-" + Math.random(),
+                                             "new_prop": "Modified",
+                                             "rating": (Math.random() > 0.5 ? "good" : "bad"),
+                                             "id": DAO.objectId
+                                             };
+                                             document.write("Trying to modify the last saved object using saved example...", modifiedData);
+                                             var request = DAO.objectStore.modify(modifiedData);
+                                             request.onsuccess = function(event){
+                                             document.write("Modified id ", event.result)
+                                             DAO.objectId = event.result;
+                                             };
+                                             request.onerror = function(){
+                                             document.write("Could not modify object");
+                                             };
+                                             });*/
                                         </script>
                                         <link class = "example-docs" href = "div#reference>div#modify">
                                     </li>
                                     <li class = "example" depends = "objectStore">
-                                        <a class = "example-name">Get All Data</a>
+                                        <a class = "example-name">Get All Data (TODO)</a>
                                         <script type = "text/javascript">
-                                            ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                                document.write("Getting all data ... ");
-                                                var request = DAO.objectStore.getAll();
-                                                request.onsuccess = function(event){
-                                                    document.write("List of objects ", event.result)
-                                                    DAO.objectId = event.result;
-                                                };
-                                                request.onerror = function(){
-                                                    document.write("Could not get all objects");
-                                                };
-                                            });
+                                            /*
+                                             *  TODO - Method to get all the data
+                                             */
+                                            //
+                                            //
+                                            /*ConsoleHelper.waitFor("DAO.objectStore", function(){
+                                             document.write("Getting all data ... ");
+                                             var request = DAO.objectStore.getAll();
+                                             request.onsuccess = function(event){
+                                             document.write("List of objects ", event.result)
+                                             DAO.objectId = event.result;
+                                             };
+                                             request.onerror = function(){
+                                             document.write("Could not get all objects");
+                                             };
+                                             });*/
                                         </script>
                                         <link class = "example-docs" href = "div#reference>div#getAllData">
                                     </li>
@@ -225,10 +315,11 @@
                                     ConsoleHelper.waitFor("DAO.cursorIterator", function(){
                                         DAO.cursorIterator(function(cursor){
                                             if (!DAO.cursor) {
+                                                write("Reached end of cursor");
                                                 return;
                                             }
+                                            DAO.cursor.move();
                                             write(DAO.cursor.key, DAO.cursor.value);
-                                            DAO.cursor["continue"]();
                                         });
                                     });
                                 </script>
@@ -244,7 +335,7 @@
                                             }
                                             write("Removing", cursor.key, cursor.value);
                                             DAO.cursor.remove();
-                                            DAO.cursor["continue"]();
+                                            DAO.cursor.move();
                                         });
                                     });
                                 </script>
