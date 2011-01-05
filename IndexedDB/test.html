@@ -93,43 +93,20 @@
             
             DAO.transaction = DAO.db.transaction(["BookList"], 0);
             DAO.objectStore = DAO.transaction.objectStore("BookList");
-            document.write("Transaction Created");
-            var req = DAO.objectStore.openCursor();
-            req.onsuccess = function(e){
-                DAO.cursor = e.result;
-                document.write("Cursor Ready");
-                (function iterateOnCursor(){
-                    var moveReq = DAO.cursor.move();
-                    document.write("Cursor Moved");
-                    moveReq.onsuccess = function(e){
-                        if (e.result) {
-                            write("Updating", DAO.cursor.value);
-                            DAO.cursor.value["new_cursor_property"] = Math.random();
-                            var updateReq = DAO.cursor.update(DAO.cursor.value);
-                            updateReq.onsuccess = function(e){
-                                document.write("Updated ", e.result);
-                                iterateOnCursor();
-                            };
-                            updateReq.onerror = function(e){
-                                writeError(e);
-                                DAO.transaction.abort();
-                            };
-                        }
-                        else {
-                            document.write("Reached end of cursor");
-                            DAO.transaction.commit();
-                            delete DAO.cursor;
-                        }
-                    };
-                    moveReq.onerror = function(e){
-                        writeError(e);
-                        DAO.transaction.abort();
-                    }
-                })();
-            }
-            
-            req.onerror = function(e){
-                writeError(e.message);
+            var r = DAO.objectStore.put({
+                "id": 1,
+                "a": 20
+            });
+            r.onsuccess = function(e){
+                document.write("done");
+                DAO.objectStore = DAO.transaction.objectStore("BookList");
+                DAO.objectStore.get(1).onsuccess = function(e){
+                    document.write(e.result);
+                }
+                DAO.transaction.commit();
+            };
+            r.onerror = function(e){
+                writeError(e);
             }
         };
         </script>

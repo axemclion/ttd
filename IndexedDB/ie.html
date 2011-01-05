@@ -140,6 +140,7 @@
                                             catch (e) {
                                                 write("Could not open objectStore. You may have to create it first");
                                                 writeError(e);
+                                                DAO.transaction.abort();
                                                 DAO.transaction = DAO.objectStore = null;
                                             }
                                         }
@@ -206,7 +207,7 @@
                                                 var request = DAO.objectStore.get(DAO.objectId);
                                                 request.onsuccess = function(event){
                                                     document.write("Got data ", event.result)
-                                                    DAO.objectId = event.result;
+                                                    DAO.objectId = event.result.id;
                                                     DAO.transaction.commit();
                                                 };
                                                 request.onerror = function(){
@@ -216,6 +217,31 @@
                                             });
                                         </script>
                                         <link class = "example-docs" href = "div#reference>div#get">
+                                    </li>
+                                    <li class = "example" depends = "saveData">
+                                        <a class = "example-name">Modify data</a>
+                                        <script type="text/javascript">
+                                            ConsoleHelper.waitFor("DAO.objectId", function(){
+                                                var modifiedData = {
+                                                    "bookName": "Modified-" + Math.random(),
+                                                    "new_prop": "Modified",
+                                                    "rating": (Math.random() > 0.5 ? "good" : "bad"),
+                                                    "id": DAO.objectId
+                                                };
+                                                document.write("Trying to modify the last saved object using saved example...", modifiedData);
+                                                var request = DAO.objectStore.put(modifiedData);
+                                                request.onsuccess = function(event){
+                                                    document.write("Modified id ", event.result)
+                                                    DAO.objectId = event.result;
+                                                    DAO.transaction.commit();
+                                                };
+                                                request.onerror = function(){
+                                                    document.write("Could not modify object");
+                                                    DAO.transaction.abort();
+                                                };
+                                            });
+                                        </script>
+                                        <link class = "example-docs" href = "div#reference>div#modify">
                                     </li>
                                     <li class = "example" depends = "saveData">
                                         <a class= "example-name">Delete Data</a>
@@ -233,34 +259,6 @@
                                             });
                                         </script>
                                         <link class = "example-docs" href = "div#reference>div#delete">
-                                    </li>
-                                    <li class = "example" depends = "saveData">
-                                        <a class = "example-name">Modify data (TODO)</a>
-                                        <script type="text/javascript">
-                                            /*
-                                             * TODO - Find the method required to modify data
-                                             */
-                                            //
-                                            //
-                                            /*ConsoleHelper.waitFor("DAO.objectId", function(){
-                                             var modifiedData = {
-                                             "bookName": "Modified-" + Math.random(),
-                                             "new_prop": "Modified",
-                                             "rating": (Math.random() > 0.5 ? "good" : "bad"),
-                                             "id": DAO.objectId
-                                             };
-                                             document.write("Trying to modify the last saved object using saved example...", modifiedData);
-                                             var request = DAO.objectStore.modify(modifiedData);
-                                             request.onsuccess = function(event){
-                                             document.write("Modified id ", event.result)
-                                             DAO.objectId = event.result;
-                                             };
-                                             request.onerror = function(){
-                                             document.write("Could not modify object");
-                                             };
-                                             });*/
-                                        </script>
-                                        <link class = "example-docs" href = "div#reference>div#modify">
                                     </li>
                                     <li class = "example" depends = "objectStore">
                                         <a class = "example-name">Get All Data (TODO)</a>
@@ -291,72 +289,117 @@
                     <li class = "example-set">
                         <a class = "example-set-name">Cursors</a>
                         <ul>
-                            <li class = "example" id = "cursorIterator" depends = "objectStore">
+                            <li class = "example" id = "openCursor" depends = "objectStore">
                                 <a class = "example-name">Open Cursor</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        DAO.cursorIterator = function(callback){
-                                            var request = DAO.objectStore.openCursor();
-                                            request.onsuccess = function(event){
-                                                DAO.cursor = event.result;
-                                                callback(DAO.cursor);
-                                            };
-                                            request.onerror = function(event){
-                                                write("Could not open cursor", DAO.cursor);
-                                            };
+                                        var request = DAO.objectStore.openCursor();
+                                        request.onsuccess = function(event){
+                                            DAO.cursor = event.result;
+                                            document.write("Cursor created", DAO.cursor);
+                                        };
+                                        request.onerror = function(event){
+                                            write("Could not open cursor", DAO.cursor);
                                         };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor">
                             </li>
-                            <li class = "example" depends = "cursorIterator">
-                                <a class = "example-name">Iterate on data</a>
+                            <li class = "example" depends = "openCursor">
+                                <a class = "example-name">Get All Objects</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.cursorIterator", function(){
-                                        DAO.cursorIterator(function(cursor){
-                                            if (!DAO.cursor) {
-                                                write("Reached end of cursor");
-                                                return;
-                                            }
-                                            DAO.cursor.move();
-                                            write(DAO.cursor.key, DAO.cursor.value);
-                                        });
+                                    ConsoleHelper.waitFor("DAO.cursor", function(){
+                                        var i = 0;
+                                        (function iterateOnCursor(){
+                                            var moveReq = DAO.cursor.move();
+                                            moveReq.onsuccess = function(e){
+                                                if (e.result) {
+                                                    i++;
+                                                    document.write(i + ":", DAO.cursor.key, DAO.cursor.value);
+                                                    iterateOnCursor();
+                                                }
+                                                else {
+                                                    document.write("Reached end of cursor");
+                                                    DAO.transaction.commit();
+                                                    delete DAO.cursor;
+                                                }
+                                            };
+                                            moveReq.onerror = function(e){
+                                                writeError(e);
+                                                DAO.transaction.abort();
+                                            };
+                                        })();
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor_continue">
                             </li>
-                            <li class = "example" depends = "cursorIterator">
-                                <a class = "example-name">Remove All Objects</a>
-                                <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.iterateOnCursor", function(){
-                                        DAO.cursorIterator(function(cursor){
-                                            if (!cursor) {
-                                                return;
-                                            }
-                                            write("Removing", cursor.key, cursor.value);
-                                            DAO.cursor.remove();
-                                            DAO.cursor.move();
-                                        });
-                                    });
-                                </script>
-                                <link class = "example-docs" href = "div#reference>div#cursor_remove">
-                            </li>
-                            <li class = "example" depends = "cursorIterator">
+                            <li class = "example" depends = "openCursor">
                                 <a class = "example-name">Update data</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.iterateOnCursor", function(){
-                                        DAO.cursorIterator(function(cursor){
-                                            if (!cursor) {
-                                                return;
-                                            }
-                                            cursor.value["new_prop_cursor"] = Math.random();
-                                            write("Updating", cursor.key, cursor.value);
-                                            DAO.cursor.update(cursor.value);
-                                            DAO.cursor["continue"]();
-                                        });
+                                    ConsoleHelper.waitFor("DAO.cursor", function(){
+                                        (function iterateOnCursor(){
+                                            var moveReq = DAO.cursor.move();
+                                            moveReq.onsuccess = function(e){
+                                                if (e.result) {
+                                                    DAO.cursor.value["new_cursor_property"] = Math.random();
+                                                    var updateReq = DAO.cursor.update(DAO.cursor.value);
+                                                    updateReq.onsuccess = function(e){
+                                                        document.write("Updated ", e.result);
+                                                        iterateOnCursor();
+                                                    };
+                                                    updateReq.onerror = function(e){
+                                                        writeError(e);
+                                                        DAO.transaction.abort();
+                                                    };
+                                                }
+                                                else {
+                                                    document.write("Reached end of cursor");
+                                                    DAO.transaction.commit();
+                                                    delete DAO.cursor;
+                                                }
+                                            };
+                                            moveReq.onerror = function(e){
+                                                writeError(e);
+                                                DAO.transaction.abort();
+                                            };
+                                        })();
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor_update">
+                            </li>
+                            <li class = "example" depends = "openCursor">
+                                <a class = "example-name">Remove All Objects</a>
+                                <script type = "text/javascript">
+                                    ConsoleHelper.waitFor("DAO.cursor", function(){
+                                        (function iterateOnCursor(){
+                                            var moveReq = DAO.cursor.move();
+                                            moveReq.onsuccess = function(e){
+                                                if (e.result) {
+                                                    DAO.cursor.value["new_cursor_property"] = Math.random();
+                                                    var removeReq = DAO.cursor.remove();
+                                                    removeReq.onsuccess = function(e){
+                                                        document.write("Updated ", e.result);
+                                                        iterateOnCursor();
+                                                    };
+                                                    removeReq.onerror = function(e){
+                                                        writeError(e);
+                                                        DAO.transaction.abort();
+                                                    };
+                                                }
+                                                else {
+                                                    document.write("Reached end of cursor");
+                                                    DAO.transaction.commit();
+                                                    delete DAO.cursor;
+                                                }
+                                            };
+                                            moveReq.onerror = function(e){
+                                                writeError(e);
+                                                DAO.transaction.abort();
+                                            };
+                                        })();
+                                    });
+                                </script>
+                                <link class = "example-docs" href = "div#reference>div#cursor_remove">
                             </li>
                         </ul>
                     </li>
@@ -377,6 +420,7 @@
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.objectStore", function(){
                                         DAO.objectStore.createIndex("priceIndex", "price", false);
+                                        DAO.transaction.commit();
                                         write("Index created");
                                     });
                                 </script>
@@ -386,17 +430,76 @@
                                 <a class = "example-name">Open Index</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        try {
-                                            DAO.index = DAO.objectStore.index("priceIndex");
+                                        var request = DAO.objectStore.index("priceIndex");
+                                        request.onsuccess = function(e){
+                                            DAO.index = e.result;
                                             write("Opened Index", DAO.index);
-                                        } 
-                                        catch (e) {
+                                        };
+                                        request.onerror = function(){
                                             write("Could not open Index, create it first");
                                             writeError(e);
-                                        }
+                                        };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_open">
+                            </li>
+                            <li class = "example" depends = "index">
+                                <a class = "example-name">Key Cursor on Index</a>
+                                <script type = "text/javascript">
+                                    ConsoleHelper.waitFor("DAO.index", function(){
+                                        write("Starting to iterate on object cursor...");
+                                        var request = DAO.index.openKeyCursor();
+                                        request.onsuccess = function(event){
+                                            var objectCursor = event.result;
+                                            (function cursorIterator(){
+                                                var cursorReq = objectCursor.move();
+                                                cursorReq.onsuccess = function(e){
+                                                    if (e.result) {
+                                                        write(objectCursor.key, objectCursor.value);
+                                                        cursorIterator();
+                                                    }
+                                                    else {
+                                                        write("Reached end of cursor");
+                                                        delete objectCursor;
+                                                    }
+                                                };
+                                            })();
+                                        };
+                                        request.onerror = function(event){
+                                            write("Could not open Object Store", event);
+                                        };
+                                    });
+                                </script>
+                                <link class = "example-docs" href = "div#reference>div#index_cursor">
+                            </li>
+                            <li class = "example" depends = "index">
+                                <a class = "example-name">Object Cursor on Index</a>
+                                <script type = "text/javascript">
+                                    ConsoleHelper.waitFor("DAO.index", function(){
+                                        write("Starting to iterate on object cursor...");
+                                        var request = DAO.index.openCursor();
+                                        request.onsuccess = function(event){
+                                            var objectCursor = event.result;
+                                            (function cursorIterator(){
+                                                var cursorReq = objectCursor.move();
+                                                cursorReq.onsuccess = function(e){
+                                                    if (e.result) {
+                                                        write(objectCursor.key, objectCursor.value);
+                                                        cursorIterator();
+                                                    }
+                                                    else {
+                                                        write("Reached end of cursor");
+                                                        delete objectCursor;
+                                                    }
+                                                };
+                                            })();
+                                        };
+                                        request.onerror = function(event){
+                                            write("Could not open Object Store", event);
+                                        };
+                                    });
+                                </script>
+                                <link class = "example-docs" href = "div#reference>div#index_objectCursor">
                             </li>
                             <li class = "example" depends = "objectStore">
                                 <a class = "example-name">Remove Index</a>
@@ -415,48 +518,6 @@
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_remove">
-                            </li>
-                            <li class = "example" depends = "index">
-                                <a class = "example-name">Cursor on Index</a>
-                                <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.index", function(){
-                                        write("Starting to iterate on object cursor...");
-                                        var request = DAO.index.openCursor();
-                                        request.onsuccess = function(event){
-                                            var objectCursor = event.result;
-                                            if (!objectCursor) {
-                                                return;
-                                            }
-                                            write(objectCursor);
-                                            objectCursor["continue"]();
-                                        };
-                                        request.onerror = function(event){
-                                            write("Could not open Object Store", event);
-                                        };
-                                    });
-                                </script>
-                                <link class = "example-docs" href = "div#reference>div#index_cursor">
-                            </li>
-                            <li class = "example" depends = "index">
-                                <a class = "example-name">Object Cursor on Index</a>
-                                <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.index", function(){
-                                        write("Starting to iterate on object cursor...");
-                                        var request = DAO.index.openObjectCursor();
-                                        request.onsuccess = function(event){
-                                            var objectCursor = event.result;
-                                            if (!objectCursor) {
-                                                return;
-                                            }
-                                            write(objectCursor, DAO.index);
-                                            objectCursor["continue"]();
-                                        };
-                                        request.onerror = function(event){
-                                            write("Could not open Object Store", event);
-                                        };
-                                    });
-                                </script>
-                                <link class = "example-docs" href = "div#reference>div#index_objectCursor">
                             </li>
                         </ul>
                     </li>
