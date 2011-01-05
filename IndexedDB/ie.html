@@ -131,8 +131,7 @@
                                                     newTransaction();
                                                 }
                                                 DAO.transaction.onabort = function(e){
-                                                    document.write("===== Transaction Aborted");
-                                                    newTransaction();
+                                                    document.write("===== Transaction Aborted", e);
                                                 }
                                                 DAO.objectStore = DAO.transaction.objectStore("BookList");
                                                 document.write("==== New Transaction", DAO.objectStore);
@@ -235,7 +234,7 @@
                                                     DAO.objectId = event.result;
                                                     DAO.transaction.commit();
                                                 };
-                                                request.onerror = function(){
+                                                request.onerror = function(e){
                                                     document.write("Could not modify object");
                                                     DAO.transaction.abort();
                                                 };
@@ -435,7 +434,7 @@
                                             DAO.index = e.result;
                                             write("Opened Index", DAO.index);
                                         };
-                                        request.onerror = function(){
+                                        request.onerror = function(e){
                                             write("Could not open Index, create it first");
                                             writeError(e);
                                         };
