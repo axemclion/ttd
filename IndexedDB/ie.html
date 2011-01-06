@@ -539,8 +539,28 @@
             <div id = "prereq">
                 <h3>Pre Requisites</h3>
                 <p>
-                    Firefox 4.0 implements the <a target = '_blank' href = '../firefox/Speclet_023_IDB_API_Asynchronous_APIs.html'>IndexedDB</a>
-                    as window.moz_indexedDB. The pre requisities function assigns it to the Window object. The examples here show the asynchronous API. Hence, dependencies are loaded using a ConsoleHelper.waitFor function that waits for a specific variable to get defined by examples that are required for this example to run.
+                    IE 9 has implemented the <a target = '_blank' href = '../firefox/Speclet_023_IDB_API_Asynchronous_APIs.html'>IndexedDB</a>
+                    as as ActiveX control. The pre requisities function assigns it to the Window object. The examples here show the asynchronous API. Hence, dependencies are loaded using a ConsoleHelper.waitFor function that waits for a specific variable to get defined by examples that are required for this example to run.
+                    <br/>
+                    You can download the prototype from <a href = "http://html5labs.interoperabilitybridges.com/prototypes/available-for-download/indexeddb">here</a>.<h3>To install:</h3>
+                    Run vcredist_x86.exe, if you are running 32-bit version of Windows. 
+                    <br/>
+                    <h1>
+                        <center>
+                            Run IE in Admin mode. In the security popup, select "Run Activex control on all websites 
+                        </center>
+                    </h1>
+                    Run the following commands from an elevated command prompt.
+                    <br/>
+                    (For instructions on opening an elevated command prompt, see: http://windows.microsoft.com/en-US/windows7/Command-Prompt-frequently-asked-questions)
+                    <br/>
+                    <code>
+                        cd "[path where files were unpacked into]"
+                    </code>
+                    <br/>
+                    <code>
+                        regsvr32.exe sqlcejse40.dll
+                    </code>
                 </p>
                 <p>
                     You can find more details about IndexedDB <a target = '_blank' href = 'http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/'>here</a>, <a target="_blank" href = 'http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/'>here</a>
