@@ -34,7 +34,7 @@
                     <li class = "example-set">
                         <a class = "example-set-name">Object Stores</a>
                         <ul>
-                            <li class = "example" depends = "db">
+                            <li class = "example" depends = "db" id = "createObjectStore">
                                 <a class = "example-name">Create Object store</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.db", function(){
@@ -43,6 +43,8 @@
                                             document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
                                             DAO.objectStore = DAO.db.createObjectStore("BookList", "id", true);
                                             document.write("Object store created: ", DAO.objectStore);
+                                            DAO.index = DAO.objectStore.createIndex("priceIndex", "price", true);
+                                            document.write("Index created on Object Store", DAO.index);
                                         };
                                         request.onerror = function(e){
                                             document.write("Could not set the version, so cannot create database", e);
@@ -58,7 +60,7 @@
                                         document.write("Opening an Object Store using a transaction...");
                                         DAO.newTransactionObjectStore = function(){
                                             try {
-                                                var transaction = DAO.db.transaction(["BookList"], 0);
+                                                var transaction = DAO.db.transaction(["BookList"], 0 /*Read-Write*/, 1000 /*Time out in ms*/);
                                                 transaction.oncomplete = function(e){
                                                     document.write("===== Transaction Complete");
                                                 }
@@ -232,7 +234,7 @@
                     <li class = "example-set">
                         <a class = "example-set-name">Cursors</a>
                         <ul>
-                            <li class = "example" id = "cursorIterator" depends = "objectStore">
+                            <li class = "example" id = "cursor" depends = "objectStore">
                                 <a class = "example-name">Open Cursor</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
@@ -256,11 +258,14 @@
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor">
                             </li>
-                            <li class = "example" depends = "onCursor">
+                            <li class = "example" depends = "cursor">
                                 <a class = "example-name">Get data using cursor</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.onCursor", function(){
                                         DAO.onCursor(function(){
+                                            if (!DAO.cursor) {
+                                                return;
+                                            }
                                             write(DAO.cursor.key, DAO.cursor.value);
                                             DAO.cursor["continue"]();
                                         });
@@ -268,11 +273,14 @@
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor_continue">
                             </li>
-                            <li class = "example" depends = "cursorIterator">
+                            <li class = "example" depends = "cursor">
                                 <a class = "example-name">Update data</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.onCursor", function(){
                                         DAO.onCursor(function(){
+                                            if (!DAO.cursor) {
+                                                return;
+                                            }
                                             DAO.cursor.value["new_prop_cursor"] = Math.random();
                                             write("Updating", DAO.cursor.key, DAO.cursor.value);
                                             DAO.cursor.update(DAO.cursor.value);
@@ -282,11 +290,14 @@
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor_update">
                             </li>
-                            <li class = "example" depends = "cursorIterator">
+                            <li class = "example" depends = "cursor">
                                 <a class = "example-name">Remove All Objects</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.onCursor", function(){
                                         DAO.onCursor(function(){
+                                            if (!DAO.cursor) {
+                                                return;
+                                            }
                                             write("Removing", DAO.cursor.key, DAO.cursor.value);
                                             DAO.cursor["delete"]();
                                             DAO.cursor["continue"]();
@@ -303,18 +314,18 @@
                             <li class = "example" depends = "objectStore">
                                 <a class = "example-name">List Indexes</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        write("Indexes", DAO.objectStore.indexNames);
+                                    ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
+                                        var objectStore = DAO.newTransactionObjectStore();
+                                        write("Indexes", objectStore.indexNames);
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_names">
                             </li>
-                            <li class = "example" depends = "objectStore">
+                            <li class = "example" depends = "createObjectStore">
                                 <a class = "example-name">Create Index</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        DAO.objectStore.createIndex("priceIndex", "price", false);
-                                        write("Index created");
+                                    ConsoleHelper.waitFor("DAO.index", function(){
+                                        write("Index already created when creating a new object store", DAO.index);
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_create">
@@ -322,49 +333,36 @@
                             <li class = "example" depends = "objectStore" id = "index">
                                 <a class = "example-name">Open Index</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        try {
-                                            DAO.index = DAO.objectStore.index("priceIndex");
-                                            write("Opened Index", DAO.index);
-                                        } 
-                                        catch (e) {
-                                            write("Could not open Index, create it first");
-                                            writeError(e);
+                                    ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
+                                        DAO.getIndex = function(){
+                                            try {
+                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.index = objectStore.index("priceIndex");
+                                            } 
+                                            catch (e) {
+                                                write("Could not open Index, create it first");
+                                                writeError(e);
+                                            }
                                         }
+                                        DAO.getIndex();
+                                        write("Opened Index", DAO.index);
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_open">
-                            </li>
-                            <li class = "example" depends = "objectStore">
-                                <a class = "example-name">Remove Index</a>
-                                <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        try {
-                                            DAO.objectStore.removeIndex("priceIndex");
-                                            write("Removed Index", DAO.index);
-                                            delete DAO.index;
-                                        } 
-                                        catch (e) {
-                                            write("Could not remove Index, create it first");
-                                            writeError(e);
-                                        }
-                                        
-                                    });
-                                </script>
-                                <link class = "example-docs" href = "div#reference>div#index_remove">
                             </li>
                             <li class = "example" depends = "index">
                                 <a class = "example-name">Cursor on Index</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.index", function(){
                                         write("Starting to iterate on object cursor...");
-                                        var request = DAO.index.openCursor();
-                                        request.onsuccess = function(event){
+                                        DAO.getIndex();
+                                        var cursorRequest = DAO.index.openCursor();
+                                        cursorRequest.onsuccess = function(event){
                                             var objectCursor = event.result;
                                             if (!objectCursor) {
                                                 return;
                                             }
-                                            write(objectCursor);
+                                            write("Indexed on price:", objectCursor.key, "Object id-", objectCursor.value);
                                             objectCursor["continue"]();
                                         };
                                         request.onerror = function(event){
@@ -379,13 +377,14 @@
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.index", function(){
                                         write("Starting to iterate on object cursor...");
-                                        var request = DAO.index.openObjectCursor();
-                                        request.onsuccess = function(event){
+                                        DAO.getIndex();
+                                        var cursorRequest = DAO.index.openObjectCursor();
+                                        cursorRequest.onsuccess = function(event){
                                             var objectCursor = event.result;
                                             if (!objectCursor) {
                                                 return;
                                             }
-                                            write(objectCursor, DAO.index);
+                                            write(objectCursor.key, objectCursor.value);
                                             objectCursor["continue"]();
                                         };
                                         request.onerror = function(event){
@@ -394,6 +393,24 @@
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_objectCursor">
+                            </li>
+                            <li class = "example" depends = "objectStore">
+                                <a class = "example-name">Remove Index</a>
+                                <script type = "text/javascript">
+                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
+                                        try {
+                                            DAO.objectStore.deleteIndex("priceIndex");
+                                            write("Removed Index", DAO.index);
+                                            delete DAO.index;
+                                        } 
+                                        catch (e) {
+                                            write("Could not remove Index, create it first");
+                                            writeError(e);
+                                        }
+                                        
+                                    });
+                                </script>
+                                <link class = "example-docs" href = "div#reference>div#index_remove">
                             </li>
                         </ul>
                     </li>
@@ -408,6 +425,14 @@
                             });
                         </script>
                         <link class = "example-docs" href = "div#reference>div#version">
+                    </li>
+                    <li class = "example" depends = "db">
+                        <a class = "example-name">Close Database</a>
+                        <script type = "text/javascript">
+                            ConsoleHelper.waitFor("DAO.db", function(){
+                                DAO.db.close();
+                            });
+                        </script>
                     </li>
                 </ul>
             </li>
