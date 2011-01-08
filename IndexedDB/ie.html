@@ -127,11 +127,11 @@
                                             try {
                                                 DAO.transaction = DAO.db.transaction(["BookList"], 0);
                                                 DAO.transaction.oncomplete = function(e){
-                                                    document.write("===== Transaction Complete", e);
+                                                    document.write("===== Transaction Complete");
                                                     newTransaction();
                                                 }
                                                 DAO.transaction.onabort = function(e){
-                                                    document.write("===== Transaction Aborted", e);
+                                                    document.write("===== Transaction Aborted");
                                                 }
                                                 DAO.objectStore = DAO.transaction.objectStore("BookList");
                                                 document.write("==== New Transaction", DAO.objectStore);
@@ -483,7 +483,7 @@
                                                 var cursorReq = objectCursor.move();
                                                 cursorReq.onsuccess = function(e){
                                                     if (e.result) {
-                                                        write(objectCursor.key, objectCursor.value);
+                                                        write("Indexed on price: ",objectCursor.value.price, ", value:", objectCursor.value);
                                                         cursorIterator();
                                                     }
                                                     else {
