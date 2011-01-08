@@ -95,6 +95,9 @@
                                 DAO.db = event.result;
                                 document.write("Database Opened", DAO.db);
                             };
+                            request.onerror = function(e){
+                                writeError(e);
+                            };
                         </script>
                         <link class = "example-docs" href = "div#reference>div#openDatabase">
                     </li>
@@ -123,7 +126,7 @@
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.db", function(){
                                         document.write("Opening an Object Store using a transaction...");
-                                        function newTransaction(){
+                                        (function newTransaction(){
                                             try {
                                                 DAO.transaction = DAO.db.transaction(["BookList"], 0);
                                                 DAO.transaction.oncomplete = function(e){
@@ -142,8 +145,7 @@
                                                 DAO.transaction.abort();
                                                 DAO.transaction = DAO.objectStore = null;
                                             }
-                                        }
-                                        newTransaction();
+                                        })();
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#openObjectStore">
@@ -483,7 +485,7 @@
                                                 var cursorReq = objectCursor.move();
                                                 cursorReq.onsuccess = function(e){
                                                     if (e.result) {
-                                                        write("Indexed on price: ",objectCursor.value.price, ", value:", objectCursor.value);
+                                                        write("Indexed on price: ", objectCursor.value.price, ", value:", objectCursor.value);
                                                         cursorIterator();
                                                     }
                                                     else {
