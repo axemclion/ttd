@@ -57,25 +57,28 @@
                                 <a class = "example-name">Open Object Stores</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.db", function(){
-                                        document.write("Opening an Object Store using a transaction...");
+                                        document.write("Opening an Object Store using a transaction.");
                                         DAO.newTransactionObjectStore = function(){
                                             try {
                                                 var transaction = DAO.db.transaction(["BookList"], 0 /*Read-Write*/, 1000 /*Time out in ms*/);
                                                 transaction.oncomplete = function(e){
+                                                    delete DAO.objectStore;
                                                     document.write("===== Transaction Complete");
-                                                }
+                                                };
                                                 transaction.onabort = function(e){
                                                     document.write("===== Transaction Aborted");
-                                                }
-                                                var objectStore = transaction.objectStore("BookList");
+                                                };
+                                                DAO.objectStore = transaction.objectStore("BookList");
                                                 document.write("==== New Transaction", DAO.objectStore);
-                                                return objectStore;
                                             } 
                                             catch (e) {
                                                 write("Could not open objectStore. You may have to create it first");
                                                 writeError(e);
                                             }
                                         };
+                                        DAO.newTransactionObjectStore();
+                                        write("Object Store Opened", DAO.objectStore);
+                                        
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#openObjectStore">
@@ -116,9 +119,9 @@
                                             };
                                             
                                             ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Trying to save...", data);
-                                                var request = objectStore.add(data);
+                                                var request = DAO.objectStore.add(data);
                                                 request.onsuccess = function(event){
                                                     document.write("Saved id ", event.result)
                                                     DAO.objectId = event.result;
@@ -135,12 +138,12 @@
                                         <a class= "example-name">Get Data</a>
                                         <script type="text/javascript">
                                             ConsoleHelper.waitFor("DAO.objectId", function(){
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Trying to get the last saved object using saved example with id ", DAO.objectId);
-                                                var request = objectStore.get(DAO.objectId);
+                                                var request = DAO.objectStore.get(DAO.objectId);
                                                 request.onsuccess = function(event){
                                                     document.write("Got data ", event.result)
-                                                    DAO.objectId = event.result;
+                                                    DAO.objectId = event.result.id;
                                                 };
                                                 request.onerror = function(e){
                                                     document.write("Could not get object");
@@ -160,11 +163,11 @@
                                                     "rating": (Math.random() > 0.5 ? "good" : "bad"),
                                                     "id": DAO.objectId
                                                 };
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Trying to modify the last saved object using saved example...", modifiedData);
-                                                var request = objectStore.put(modifiedData);
+                                                var request = DAO.objectStore.put(modifiedData);
                                                 request.onsuccess = function(event){
-                                                    document.write("Modified id ", event.result)
+                                                    document.write("Modified id ", event.result);
                                                     DAO.objectId = event.result;
                                                 };
                                                 request.onerror = function(){
@@ -178,14 +181,14 @@
                                         <a class = "example-name">Get All Data</a>
                                         <script type = "text/javascript">
                                             ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Getting all data ... ");
-                                                var request = objectStore.getAll();
+                                                var request = DAO.objectStore.getAll();
                                                 request.onsuccess = function(e){
                                                     document.write("List of objects ", e.result)
-                                                    DAO.objectId = event.result;
+                                                    DAO.objectId = e.result[e.result.length - 1].id;
                                                 };
-                                                request.onerror = function(){
+                                                request.onerror = function(e){
                                                     document.write("Could not get all objects");
                                                 };
                                             });
@@ -196,12 +199,12 @@
                                         <a class= "example-name">Delete Data</a>
                                         <script type="text/javascript">
                                             ConsoleHelper.waitFor("DAO.objectId", function(){
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Trying to delete the last saved object using saved example...", DAO.objectId);
-                                                var request = objectStore["delete"](DAO.objectId);
+                                                var request = DAO.objectStore["delete"](DAO.objectId);
                                                 request.onsuccess = function(event){
-                                                    document.write("Removed id ", event.result)
-                                                    DAO.objectId = event.result;
+                                                    document.write("Removed id ", event.result);
+                                                    delete DAO.objectId;
                                                 };
                                                 request.onerror = function(){
                                                     document.write("Could not delete object");
@@ -214,11 +217,11 @@
                                         <a class= "example-name">Clear ObjectStore</a>
                                         <script type="text/javascript">
                                             ConsoleHelper.waitFor("DAO.objectId", function(){
-                                                var objectStore = DAO.newTransactionObjectStore();
+                                                DAO.newTransactionObjectStore();
                                                 document.write("Trying to delete the last saved object using saved example...", DAO.objectId);
-                                                var request = objectStore.clear()
+                                                var request = DAO.objectStore.clear();
                                                 request.onsuccess = function(event){
-                                                    document.write("Cleared ObjectStore")
+                                                    document.write("Cleared ObjectStore");
                                                 };
                                                 request.onerror = function(){
                                                     document.write("Could not delete object");
@@ -240,8 +243,8 @@
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
                                         // Function to call when a new cursor is required
                                         DAO.onCursor = function(callback){
-                                            var objectStore = DAO.newTransactionObjectStore();
-                                            var request = objectStore.openCursor();
+                                            DAO.newTransactionObjectStore();
+                                            var request = DAO.objectStore.openCursor();
                                             request.onsuccess = function(event){
                                                 DAO.cursor = event.result;
                                                 callback();
@@ -257,6 +260,35 @@
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#cursor">
+                            </li>
+                            <li class = "example" depends = "objectStore">
+                                <a class = "example-name">Ranged Cursor</a>
+                                <script type = "text/javascript">
+                                    /**
+                                     * Args : Lower Bound, Upper Bound, Include Lower val? , Include Upper Val?
+                                     */
+                                    ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
+                                        // Function to call when a new cursor is required
+                                        DAO.keyRange = new IDBKeyRange.bound(1, 30, true, false);
+                                        write("Range Defined", DAO.keyRange);
+                                        
+                                        DAO.onCursor = function(callback){
+                                            DAO.newTransactionObjectStore();
+                                            var request = DAO.objectStore.openCursor(DAO.keyRange);
+                                            request.onsuccess = function(event){
+                                                DAO.cursor = event.result;
+                                                callback();
+                                            };
+                                            request.onerror = function(event){
+                                                write("Could not open cursor", DAO.cursor);
+                                                writeError(e);
+                                            };
+                                        };
+                                        DAO.onCursor(function(){
+                                            write("Cursor Created", DAO.cursor);
+                                        });
+                                    });
+                                </script>
                             </li>
                             <li class = "example" depends = "cursor">
                                 <a class = "example-name">Get data using cursor</a>
@@ -315,8 +347,8 @@
                                 <a class = "example-name">List Indexes</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
-                                        var objectStore = DAO.newTransactionObjectStore();
-                                        write("Indexes", objectStore.indexNames);
+                                        DAO.newTransactionObjectStore();
+                                        write("Indexes", DAO.objectStore.indexNames);
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_names">
@@ -336,8 +368,8 @@
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
                                         DAO.getIndex = function(){
                                             try {
-                                                var objectStore = DAO.newTransactionObjectStore();
-                                                DAO.index = objectStore.index("priceIndex");
+                                                DAO.newTransactionObjectStore();
+                                                DAO.index = DAO.objectStore.index("priceIndex");
                                             } 
                                             catch (e) {
                                                 write("Could not open Index, create it first");
@@ -419,6 +451,7 @@
                         <script type = "text/javascript">
                             ConsoleHelper.waitFor("DAO.db", function(){
                                 var request = DAO.db.setVersion(parseInt(Math.random() * 100));
+                                write("Trying to change the version of the database");
                                 request.onsuccess = function(){
                                     write("Set the version of the database to", DAO.db.version);
                                 };
