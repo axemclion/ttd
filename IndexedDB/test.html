@@ -5,14 +5,14 @@
     <body>
         <div id = "console">
         </div>
-        <script type = "text/javascript" src = "../trialtool/lib/jquery/jquery-1.4.2.min.js">
+        <script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js">
         </script>
         <script type = "text/javascript" src = "../trialtool/js/ConsoleHelper.js">
         </script>
         <script type = "text/javascript">
             /*Pre Requisites*/
             
-            window.indexedDB = window.moz_indexedDB;
+            window.indexedDB = window.moz_indexedDB || window.webkitIndexedDB;
             var DAO = {};
             
             document.write("Trying to open database ...");
@@ -27,7 +27,7 @@
                             document.write("===== Transaction Complete");
                         };
                         transaction.onabort = function(e){
-                            document.write("===== Transaction Aborted");
+                            document.write("===== Transaction Aborted", e);
                         };
                         DAO.objectStore = transaction.objectStore("BookList");
                         document.write("==== New Transaction", DAO.objectStore);
@@ -38,7 +38,7 @@
                     }
                 };
                 DAO.newTransactionObjectStore();
-                var request = DAO.objectStore["delete"](62);
+                var request = DAO.objectStore.clear();
                 request.onsuccess = function(e){
                     write(e.result);
                 };

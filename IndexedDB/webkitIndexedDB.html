@@ -5,13 +5,14 @@
     <body>
         <ul>
             <li class = "example-set">
-                <a class = "example-set-name">moz-IndexedDB</a>
+                <a class = "example-set-name">webkitIndexedDB</a>
                 <ul>
                     <li class = "example" id = "prereq">
                         <a class = "example-name">Pre Requisites</a>
                         <script type = "text/javascript">
                             // Initialising the window.IndexedDB Object
                             window.indexedDB = window.moz_indexedDB || window.webkitIndexedDB;
+                            window.IDBKeyRange = window.webkitIDBKeyRange;
                             var DAO = {};
                         </script>
                         <link class = "example-docs" href = "div#reference>div#prereq">
@@ -41,7 +42,9 @@
                                         var request = DAO.db.setVersion(parseInt(DAO.db.version) + 1);
                                         request.onsuccess = function(e){
                                             document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
-                                            DAO.objectStore = DAO.db.createObjectStore("BookList", "id", true);
+                                            DAO.objectStore = DAO.db.createObjectStore("BookList", {
+                                                "keyPath": "id"
+                                            }, true);
                                             document.write("Object store created: ", DAO.objectStore);
                                             DAO.index = DAO.objectStore.createIndex("priceIndex", "price", true);
                                             document.write("Index created on Object Store", DAO.index);
@@ -115,7 +118,8 @@
                                                 "bookName": "Book-" + Math.random(),
                                                 "author": "asdasd",
                                                 "price": parseInt(Math.random() * 1000),
-                                                "rating": (Math.random() > 0.5 ? "good" : "bad")
+                                                "rating": (Math.random() > 0.5 ? "good" : "bad"),
+                                                "id": new Date().getTime()
                                             };
                                             
                                             ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
@@ -170,15 +174,15 @@
                                                     document.write("Modified id ", event.result);
                                                     DAO.objectId = event.result;
                                                 };
-                                                request.onerror = function(){
-                                                    document.write("Could not modify object");
+                                                request.onerror = function(e){
+                                                    writeError(e);
                                                 };
                                             });
                                         </script>
                                         <link class = "example-docs" href = "div#reference>div#modify">
                                     </li>
                                     <li class = "example" depends = "objectStore">
-                                        <a class = "example-name">Get All Data</a>
+                                        <a class = "example-name">Get All Data (No method)</a>
                                         <script type = "text/javascript">
                                             ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
                                                 DAO.newTransactionObjectStore();
@@ -214,7 +218,7 @@
                                         <link class = "example-docs" href = "div#reference>div#delete">
                                     </li>
                                     <li class = "example" depends = "newTransactionObjectStore">
-                                        <a class= "example-name">Clear ObjectStore</a>
+                                        <a class= "example-name">Clear ObjectStore (No Method)</a>
                                         <script type="text/javascript">
                                             ConsoleHelper.waitFor("DAO.objectId", function(){
                                                 DAO.newTransactionObjectStore();
@@ -269,7 +273,7 @@
                                      */
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
                                         // Function to call when a new cursor is required
-                                        DAO.keyRange = new IDBKeyRange.bound(1, 30, true, false);
+                                        DAO.keyRange = new IDBKeyRange.bound(1, new Date().getTime(), true, false);
                                         write("Range Defined", DAO.keyRange);
                                         
                                         DAO.onCursor = function(callback){
@@ -306,7 +310,7 @@
                                 <link class = "example-docs" href = "div#reference>div#cursor_continue">
                             </li>
                             <li class = "example" depends = "cursor">
-                                <a class = "example-name">Update data</a>
+                                <a class = "example-name">Update data (TODO)</a>
                                 <script type = "text/javascript">
                                     ConsoleHelper.waitFor("DAO.onCursor", function(){
                                         DAO.onCursor(function(){
@@ -388,7 +392,7 @@
                                     ConsoleHelper.waitFor("DAO.index", function(){
                                         write("Starting to iterate on object cursor...");
                                         DAO.getIndex();
-                                        var cursorRequest = DAO.index.openCursor();
+                                        var cursorRequest = DAO.index.openKeyCursor();
                                         cursorRequest.onsuccess = function(event){
                                             var objectCursor = event.result;
                                             if (!objectCursor) {
@@ -410,7 +414,7 @@
                                     ConsoleHelper.waitFor("DAO.index", function(){
                                         write("Starting to iterate on object cursor...");
                                         DAO.getIndex();
-                                        var cursorRequest = DAO.index.openObjectCursor();
+                                        var cursorRequest = DAO.index.openCursor();
                                         cursorRequest.onsuccess = function(event){
                                             var objectCursor = event.result;
                                             if (!objectCursor) {
