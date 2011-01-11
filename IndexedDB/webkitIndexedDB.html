@@ -46,8 +46,6 @@
                                                 "keyPath": "id"
                                             }, true);
                                             document.write("Object store created: ", DAO.objectStore);
-                                            DAO.index = DAO.objectStore.createIndex("priceIndex", "price", true);
-                                            document.write("Index created on Object Store", DAO.index);
                                         };
                                         request.onerror = function(e){
                                             document.write("Could not set the version, so cannot create database", e);
@@ -360,8 +358,17 @@
                             <li class = "example" depends = "createObjectStore">
                                 <a class = "example-name">Create Index</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.index", function(){
-                                        write("Index already created when creating a new object store", DAO.index);
+                                    ConsoleHelper.waitFor("DAO.db", function(){
+                                        var request = DAO.db.setVersion(parseInt(DAO.db.version) + 1);
+                                        request.onsuccess = function(e){
+                                            var transaction = e.result;
+                                            var objectStore = transaction.objectStore("BookList");
+                                            DAO.index = objectStore.createIndex("priceIndex", "price", true);
+                                            write("Index Created", DAO.index);
+                                        };
+                                        request.onerror = function(e){
+                                            writeError(e);
+                                        };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_create">
@@ -433,17 +440,17 @@
                             <li class = "example" depends = "objectStore">
                                 <a class = "example-name">Remove Index</a>
                                 <script type = "text/javascript">
-                                    ConsoleHelper.waitFor("DAO.objectStore", function(){
-                                        try {
-                                            DAO.objectStore.deleteIndex("priceIndex");
-                                            write("Removed Index", DAO.index);
-                                            delete DAO.index;
-                                        } 
-                                        catch (e) {
-                                            write("Could not remove Index, create it first");
+                                    ConsoleHelper.waitFor("DAO.db", function(){
+                                        var request = DAO.db.setVersion(parseInt(DAO.db.version) + 1);
+                                        request.onsuccess = function(e){
+                                            var transaction = e.result;
+                                            var objectStore = transaction.objectStore("BookList");
+                                            DAO.index = objectStore.deleteIndex("priceIndex");
+                                            write("Index Deleted");
+                                        };
+                                        request.onerror = function(e){
                                             writeError(e);
-                                        }
-                                        
+                                        };
                                     });
                                 </script>
                                 <link class = "example-docs" href = "div#reference>div#index_remove">
