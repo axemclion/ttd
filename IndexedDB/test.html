@@ -12,19 +12,53 @@
         <script type = "text/javascript">
             /*Pre Requisites*/
             
-            window.indexedDB = window.moz_indexedDB || window.webkitIndexedDB;
+            window.indexedDB = window.mozIndexedDB || window.webkitIndexedDB;
             var DAO = {};
             
             document.write("Trying to open database ...");
-            var request = window.indexedDB.open("BookShop", "My Book Shop Database");
+            var request = window.indexedDB.open("BookShop-1", "My Book Shop Database");
             request.onsuccess = function(event){
                 write("Dataase opened");
-                DAO.db = event.result;
+                DAO.db = request.result;
                 var r = DAO.db.setVersion(100);
                 r.onsuccess = function(e){
-                    DAO.transaction = e.result;
+                    DAO.transaction = r.result;
+                    try {
+                        var transaction = DAO.db.transaction(["BookList"], 0 /*Read-Write*/, 1000 /*Time out in ms*/);
+                        transaction.oncomplete = function(e){
+                            delete DAO.objectStore;
+                            document.write("===== Transaction Complete");
+                        };
+                        transaction.onabort = function(e){
+                            document.write("===== Transaction Aborted");
+                        };
+                        DAO.objectStore = transaction.objectStore("BookList");
+                        document.write("==== New Transaction", DAO.objectStore);
+                    } 
+                    catch (e) {
+                        write("Could not open objectStore. You may have to create it first");
+                        writeError(e);
+                    }
+                    
+                    
+                    var request = DAO.objectStore.openCursor();
+                    request.onsuccess = function(event){
+                        console.log(event, request)
+                    };
+                    request.onerror = function(event){
+                        write("Could not open cursor", DAO.cursor);
+                        writeError(e);
+                    };
+                    
+                }
+                r.onerror = function(e){
+                    writeError(e);
                 }
             };
+            
+            request.onerror = function(e){
+                console.log(e);
+            }
         </script>
     </body>
 </html>
