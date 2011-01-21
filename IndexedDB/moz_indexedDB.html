@@ -271,7 +271,7 @@
                                      */
                                     ConsoleHelper.waitFor("DAO.newTransactionObjectStore", function(){
                                         // Function to call when a new cursor is required
-                                        DAO.keyRange = new IDBKeyRange.bound(1, 30, true, false);
+                                        DAO.keyRange = new IDBKeyRange.bound(1, new Date().getTime(), true, false);
                                         write("Range Defined", DAO.keyRange);
                                         
                                         DAO.onCursor = function(callback){
@@ -403,7 +403,7 @@
                                         DAO.getIndex();
                                         var cursorRequest = DAO.index.openKeyCursor();
                                         cursorRequest.onsuccess = function(event){
-                                            var objectCursor = event.result;
+                                            var objectCursor = cursorRequest.result;
                                             if (!objectCursor) {
                                                 return;
                                             }
@@ -425,7 +425,7 @@
                                         DAO.getIndex();
                                         var cursorRequest = DAO.index.openCursor();
                                         cursorRequest.onsuccess = function(event){
-                                            var objectCursor = event.result;
+                                            var objectCursor = cursorRequest.result;
                                             if (!objectCursor) {
                                                 return;
                                             }
