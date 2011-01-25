@@ -60,5 +60,18 @@
                 console.log(e);
             }
         </script>
+        <script>
+            var elem = document.getElementById('myCanvas');
+            var context = elem.getContext('2d');
+            
+            context.fillRect(0, 0, 150, 100);
+            
+            context.moveTo(10, 10); // give the (x,y) coordinates context.lineTo(100, 10); 
+            context.lineTo(10, 100);
+            context.stroke();
+            context.closePath();
+            context.drawImage(img_elem, dx, dy, dw, dh);
+            
+        </script>
     </body>
 </html>
