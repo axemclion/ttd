@@ -47,8 +47,9 @@
                                         request.onsuccess = function(e){
                                             document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
                                             DAO.objectStore = DAO.db.createObjectStore("BookList", {
-                                                "keyPath": "id"
-                                            }, true);
+                                                "keyPath": "id",
+												"autoIncrement" : true
+                                            });
                                             document.write("Object store created: ", DAO.objectStore);
                                         };
                                         request.onerror = function(e){
