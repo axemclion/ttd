@@ -5,73 +5,16 @@
     <body>
         <div id = "console">
         </div>
-        <script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js">
+        <script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js">
         </script>
-        <script type = "text/javascript" src = "/trialtool/js/ConsoleHelper.js">
+        <script type = "text/javascript" src = "jquery.indexeddb.js">
         </script>
         <script type = "text/javascript">
-            /*Pre Requisites*/
-            
-            window.indexedDB = window.mozIndexedDB || window.webkitIndexedDB;
-            var DAO = {};
-            
-            document.write("Trying to open database ...");
-            var request = window.indexedDB.open("BookShop-1", "My Book Shop Database");
-            request.onsuccess = function(event){
-                write("Dataase opened");
-                DAO.db = request.result;
-                var r = DAO.db.setVersion(100);
-                r.onsuccess = function(e){
-                    DAO.transaction = r.result;
-                    try {
-                        var transaction = DAO.db.transaction(["BookList"], 0 /*Read-Write*/, 1000 /*Time out in ms*/);
-                        transaction.oncomplete = function(e){
-                            delete DAO.objectStore;
-                            document.write("===== Transaction Complete");
-                        };
-                        transaction.onabort = function(e){
-                            document.write("===== Transaction Aborted");
-                        };
-                        DAO.objectStore = transaction.objectStore("BookList");
-                        document.write("==== New Transaction", DAO.objectStore);
-                    } 
-                    catch (e) {
-                        write("Could not open objectStore. You may have to create it first");
-                        writeError(e);
-                    }
-                    
-                    
-                    var request = DAO.objectStore.openCursor();
-                    request.onsuccess = function(event){
-                        console.log(event, request)
-                    };
-                    request.onerror = function(event){
-                        write("Could not open cursor", DAO.cursor);
-                        writeError(e);
-                    };
-                    
-                }
-                r.onerror = function(e){
-                    writeError(e);
-                }
-            };
-            
-            request.onerror = function(e){
-                console.log(e);
-            }
-        </script>
-        <script>
-            var elem = document.getElementById('myCanvas');
-            var context = elem.getContext('2d');
-            
-            context.fillRect(0, 0, 150, 100);
-            
-            context.moveTo(10, 10); // give the (x,y) coordinates context.lineTo(100, 10); 
-            context.lineTo(10, 100);
-            context.stroke();
-            context.closePath();
-            context.drawImage(img_elem, dx, dy, dw, dh);
-            
+            $.indexedDB.open("BookList").done(function(db){
+                db.setVersion(10).done(function(){
+                    console.log(arguments);
+                })
+            });
         </script>
     </body>
 </html>

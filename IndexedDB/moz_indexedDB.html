@@ -24,11 +24,11 @@
                             request.onsuccess = function(event){
                                 DAO.db = request.result;
                                 document.write("Database Opened", DAO.db);
-								DAO.db.onversionchange = function(){
-									write("Version change request, so closing the database");
-									DAO.db.close();
-									delete DAO.db;
-								};
+                                DAO.db.onversionchange = function(){
+                                    write("Version change request, so closing the database");
+                                    DAO.db.close();
+                                    delete DAO.db;
+                                };
                             };
                             request.onerror = function(e){
                                 writeError(e);
@@ -48,7 +48,7 @@
                                             document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
                                             DAO.objectStore = DAO.db.createObjectStore("BookList", {
                                                 "keyPath": "id",
-												"autoIncrement" : true
+                                                "autoIncrement": true
                                             });
                                             document.write("Object store created: ", DAO.objectStore);
                                         };
@@ -688,6 +688,12 @@
                     Gets all the objects in the object store
                 </p>
             </div>
+        </div>
+        <div class = "splash">
+            <h1>IndexedDB API - Firefox</h1>
+            <p style ="font-size : 1.2em">
+                The list of examples illustrate the IndexedDB API Implemented in Firefox 4.
+            </p>
         </div>
     </body>
 </html>
